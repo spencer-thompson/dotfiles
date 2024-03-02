@@ -2,6 +2,14 @@
 
 These are my main configs currently
 
+## How to use
+
+```
+git clone --recurse-submodules
+```
+
+Personal note: `git push --recurse-submodules`
+
 ---
 
 Useful commands:
