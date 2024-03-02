@@ -11,3 +11,4 @@ export STARSHIP_CACHE="$XDG_CACHE_HOME/starship/cache"
 
 # hyprland
 export WLR_NO_HARDWARE_CURSORS=1
+alias H="Hyprland"
