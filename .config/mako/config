@@ -1,29 +1,30 @@
 # Take a look at the mako manpage with the command:
 #   man 5 mako
-# To view all configuration options.
+# To view all configuration options. top, lr, bottom
 
-font=Fira Code
-format=<b>%a ⏵</b> %s\n%b
+font=FiraCode 16
+format=<b>%a -></b> %s\n%b
 sort=-time
 output=DP-1
 layer=overlay
 anchor=bottom-center
-background-color=#2e3440
-width=300
-height=110
+background-color=#111111
+width=720
+height=240
 margin=5
-padding=0,5,10
-border-size=2
+padding=16,16,16
+border-size=3
 border-color=#88c0d0
-border-radius=15
-icons=0
-max-icon-size=64
+border-radius=8
+icons=1
+max-icon-size=128
 default-timeout=5000
 ignore-timeout=1
+text-alignment=center
 
 [urgency=normal]
-border-color=#d08770
+border-color=#ec7c01
 
 [urgency=high]
-border-color=#bf616a
+border-color=#EC0101
 default-timeout=0

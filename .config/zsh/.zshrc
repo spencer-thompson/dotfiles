@@ -44,6 +44,14 @@ lfcd () {
 }
 bindkey -s '^o' '^ulfcd\n'
 
+# Personal Aliases
+alias \
+	ordm="ollama run dolphin-mistral" \
+	ls="exa" \
+	ll="exa -lah" \
+	tree="exa -tree" \
+	home="cd ~" \
+
 # Verbosity and settings that you pretty much just always are going to want.
 alias \
 	cp="cp -iv" \
