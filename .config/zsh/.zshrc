@@ -88,6 +88,8 @@ source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
+source "$HOME/.env"
+
 eval "$(starship init zsh)"
 
 neofetch
