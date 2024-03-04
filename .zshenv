@@ -1,6 +1,8 @@
+# default programs
 export EDITOR='nvim'
 export BROWSER='firefox'
 
+# directories
 export ZDOTDIR="$HOME/.config/zsh" # zsh files
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
