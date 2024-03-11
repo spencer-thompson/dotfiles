@@ -10,32 +10,30 @@ vimcmd_symbol = "[](bold green)"
 [package]
 disabled = true
 
-[git_branch]
-symbol = " "
+# [git_branch] # default
+# symbol = " "
 #  
 
 [git_commit]
 tag_symbol = " "
 
 [git_status]
-format = '([\[ $all_status | $ahead_behind \]]($style) )'
-conflicted = '!=${count}'
-stashed = '*${count}'
-deleted = "✘${count}"
-renamed = "»${count}"
-modified = '+${count}'
-staged = '^${count}'
-untracked = '?${count}'
-ahead = '->${count}'
-behind = '<-${count}'
-up_to_date = '🗸'
-
-# 
+format = '([$all_status$ahead_behind]($style) )'
+# format = '$all_status$ahead_behind'
+conflicted = '\[!=${count}\]'
+stashed = '[\[*${count}\]](bold yellow)'
+deleted = '\[✘${count}\]'
+renamed = '\[»${count}\]'
+modified = '\[+${count}\]'
+staged = '[\[++${count}\]](bold yellow)'
+untracked = '\[?${count}\]'
+ahead = '\[->${count}\]'
+behind = '\[<-${count}\]'
+up_to_date = '[\[✓\]](bold green)'
 
 [directory]
 home_symbol = "~"
 read_only = " "
-# style = "bg:red fg:black"
 truncation_length = 4
 truncation_symbol = "••/"
 format = '[\[](bold fg:green)[$path]($style)[$read_only]($read_only_style)[\]](bold fg:green)'
