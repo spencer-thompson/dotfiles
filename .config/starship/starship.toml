@@ -3,189 +3,209 @@ format = """$directory$character"""
 right_format = """$all"""
 
 [character]
-success_symbol = "[>](bold green)"
-error_symbol = "[x](bold red)"
-vimcmd_symbol = "[<](bold green)"
+success_symbol = "[](bold green)"
+error_symbol = "[](bold red)"
+vimcmd_symbol = "[](bold green)"
+
+[package]
+disabled = true
+
+[git_branch]
+symbol = " "
+#  
 
 [git_commit]
-tag_symbol = " tag "
+tag_symbol = " "
 
 [git_status]
-ahead = ">"
-behind = "<"
-diverged = "<>"
+ahead = '-> ${count}'
+behind = "<-"
+diverged = "!="
 renamed = "r"
 deleted = "x"
 
-[aws]
-symbol = "aws "
-
-[bun]
-symbol = "bun "
-
-[c]
-symbol = "C "
-
-[cobol]
-symbol = "cobol "
-
-[conda]
-symbol = "conda "
-
-[crystal]
-symbol = "cr "
-
-[cmake]
-symbol = "cmake "
-
-[daml]
-symbol = "daml "
-
-[dart]
-symbol = "dart "
-
-[deno]
-symbol = "deno "
-
-[dotnet]
-symbol = ".NET "
+# 
 
 [directory]
-read_only = " ro"
+home_symbol = "~"
+read_only = " "
+# style = "bg:red fg:black"
+truncation_length = 4
+truncation_symbol = "••/"
+format = '[\[](bold fg:green)[$path]($style)[$read_only]($read_only_style)[\]](bold fg:green)'
 
-[docker_context]
-symbol = "docker "
+[directory.substitutions]
+"Desktop" = "  "
+"Documents" = "  "
+"Downloads" = "  "
+"Music" = " 󰎈 "
+"Pictures" = "  "
+"Videos" = "  "
 
-[elixir]
-symbol = "exs "
-
-[elm]
-symbol = "elm "
-
-[git_branch]
-symbol = "git "
-
-[golang]
-symbol = "go "
-
-[guix_shell]
-symbol = "guix "
-
-[hg_branch]
-symbol = "hg "
-
-[java]
-symbol = "java "
-
-[julia]
-symbol = "jl "
-
-[kotlin]
-symbol = "kt "
-
-[lua]
-symbol = "lua "
-
-[nodejs]
-symbol = "nodejs "
-
-[memory_usage]
-symbol = "memory "
-
-[meson]
-symbol = "meson "
-
-[nim]
-symbol = "nim "
-
-[nix_shell]
-symbol = "nix "
-
-[ocaml]
-symbol = "ml "
-
-[opa]
-symbol = "opa "
-
-[os.symbols]
-Alpine = "alp "
-Amazon = "amz "
-Android = "andr "
-Arch = "rch "
-CentOS = "cent "
-Debian = "deb "
-DragonFly = "dfbsd "
-Emscripten = "emsc "
-EndeavourOS = "ndev "
-Fedora = "fed "
-FreeBSD = "fbsd "
-Garuda = "garu "
-Gentoo = "gent "
-HardenedBSD = "hbsd "
-Illumos = "lum "
-Linux = "lnx "
-Macos = "mac "
-Manjaro = "mjo "
-Mariner = "mrn "
-MidnightBSD = "mid "
-Mint = "mint "
-NetBSD = "nbsd "
-NixOS = "nix "
-OpenBSD = "obsd "
-openSUSE = "osuse "
-OracleLinux = "orac "
-Pop = "pop "
-Raspbian = "rasp "
-Redhat = "rhl "
-RedHatEnterprise = "rhel "
-Redox = "redox "
-Solus = "sol "
-SUSE = "suse "
-Ubuntu = "ubnt "
-Unknown = "unk "
-Windows = "win "
-
-[package]
-symbol = "pkg "
-
-[perl]
-symbol = "pl "
-
-[php]
-symbol = "php "
-
-[pulumi]
-symbol = "pulumi "
-
-[purescript]
-symbol = "purs "
-
-[python]
-symbol = "py "
-
-[raku]
-symbol = "raku "
-
-[ruby]
-symbol = "rb "
-
-[rust]
-symbol = "rs "
-
-[scala]
-symbol = "scala "
-
-[spack]
-symbol = "spack "
-
-[sudo]
-symbol = "sudo "
-
-[swift]
-symbol = "swift "
-
-[terraform]
-symbol = "terraform "
-
-[zig]
-symbol = "zig "
+# [aws]
+# symbol = "aws "
+#
+# [bun]
+# symbol = "bun "
+#
+# [c]
+# symbol = "C "
+#
+# [cobol]
+# symbol = "cobol "
+#
+# [conda]
+# symbol = "conda "
+#
+# [crystal]
+# symbol = "cr "
+#
+# [cmake]
+# symbol = "cmake "
+#
+# [daml]
+# symbol = "daml "
+#
+# [dart]
+# symbol = "dart "
+#
+# [deno]
+# symbol = "deno "
+#
+# [dotnet]
+# symbol = ".NET "
+#
+# [directory]
+# read_only = " ro"
+#
+# [docker_context]
+# symbol = "docker "
+#
+# [elixir]
+# symbol = "exs "
+#
+# [elm]
+# symbol = "elm "
+#
+#
+# [golang]
+# symbol = "go "
+#
+# [guix_shell]
+# symbol = "guix "
+#
+# [hg_branch]
+# symbol = "hg "
+#
+# [java]
+# symbol = "java "
+#
+# [julia]
+# symbol = "jl "
+#
+# [kotlin]
+# symbol = "kt "
+#
+# [lua]
+# symbol = "lua "
+#
+# [nodejs]
+# symbol = "nodejs "
+#
+# [memory_usage]
+# symbol = "memory "
+#
+# [meson]
+# symbol = "meson "
+#
+# [nim]
+# symbol = "nim "
+#
+# [nix_shell]
+# symbol = "nix "
+#
+# [ocaml]
+# symbol = "ml "
+#
+# [opa]
+# symbol = "opa "
+#
+# [os.symbols]
+# Alpine = "alp "
+# Amazon = "amz "
+# Android = "andr "
+# Arch = "rch "
+# CentOS = "cent "
+# Debian = "deb "
+# DragonFly = "dfbsd "
+# Emscripten = "emsc "
+# EndeavourOS = "ndev "
+# Fedora = "fed "
+# FreeBSD = "fbsd "
+# Garuda = "garu "
+# Gentoo = "gent "
+# HardenedBSD = "hbsd "
+# Illumos = "lum "
+# Linux = "lnx "
+# Macos = "mac "
+# Manjaro = "mjo "
+# Mariner = "mrn "
+# MidnightBSD = "mid "
+# Mint = "mint "
+# NetBSD = "nbsd "
+# NixOS = "nix "
+# OpenBSD = "obsd "
+# openSUSE = "osuse "
+# OracleLinux = "orac "
+# Pop = "pop "
+# Raspbian = "rasp "
+# Redhat = "rhl "
+# RedHatEnterprise = "rhel "
+# Redox = "redox "
+# Solus = "sol "
+# SUSE = "suse "
+# Ubuntu = "ubnt "
+# Unknown = "unk "
+# Windows = "win "
+#
+# [perl]
+# symbol = "pl "
+#
+# [php]
+# symbol = "php "
+#
+# [pulumi]
+# symbol = "pulumi "
+#
+# [purescript]
+# symbol = "purs "
+#
+# [python]
+# symbol = "py "
+#
+# [raku]
+# symbol = "raku "
+#
+# [ruby]
+# symbol = "rb "
+#
+# [rust]
+# symbol = "rs "
+#
+# [scala]
+# symbol = "scala "
+#
+# [spack]
+# symbol = "spack "
+#
+# [sudo]
+# symbol = "sudo "
+#
+# [swift]
+# symbol = "swift "
+#
+# [terraform]
+# symbol = "terraform "
+#
+# [zig]
+# symbol = "zig "
