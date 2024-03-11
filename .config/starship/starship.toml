@@ -18,11 +18,17 @@ symbol = " "
 tag_symbol = " "
 
 [git_status]
-ahead = '-> ${count}'
-behind = "<-"
-diverged = "!="
-renamed = "r"
-deleted = "x"
+format = '([\[ $all_status | $ahead_behind \]]($style) )'
+conflicted = '!=${count}'
+stashed = '*${count}'
+deleted = "✘${count}"
+renamed = "»${count}"
+modified = '+${count}'
+staged = '^${count}'
+untracked = '?${count}'
+ahead = '->${count}'
+behind = '<-${count}'
+up_to_date = '🗸'
 
 # 
 
@@ -106,9 +112,11 @@ format = '[\[](bold fg:green)[$path]($style)[$read_only]($read_only_style)[\]](b
 # [kotlin]
 # symbol = "kt "
 #
-# [lua]
-# symbol = "lua "
-#
+[lua]
+version_format = '${raw}'
+symbol = "󰢱 "
+style = 'bold fg:cyan'
+
 # [nodejs]
 # symbol = "nodejs "
 #
