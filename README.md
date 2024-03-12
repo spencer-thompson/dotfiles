@@ -16,10 +16,16 @@ Useful commands:
 
 List Unused
 ```
-sudo pacman -Qtdq
+pacman -Qtdq
 ```
 
 Remove Unused
 ```
 sudo pacman -R $(pacman -Qtdq)
 ```
+
+Update Default Directories
+```
+xdg-user-dirs-update --set DOWNLOAD ~/dl
+```
+*and others*
