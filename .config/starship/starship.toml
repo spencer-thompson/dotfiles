@@ -185,10 +185,12 @@ style = 'bold fg:cyan'
 #
 # [purescript]
 # symbol = "purs "
-#
-# [python]
-# symbol = "py "
-#
+
+[python]
+version_format = '${raw}'
+symbol = "󰌠 "
+style = 'bold fg:cyan'
+
 # [raku]
 # symbol = "raku "
 #

@@ -67,3 +67,5 @@ source "$HOME/.env"
 eval "$(starship init zsh)"
 
 neofetch
+# neofetch # mono12 and thin and chunky univers speed slant
+# toilet -f univers -F metal "spencer" | sed '1,4 d; s/^/ /'
