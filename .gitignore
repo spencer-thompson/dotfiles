@@ -1,5 +1,7 @@
 .env
 
+*/tmux/plugins/*
+
 tt.*
 .tests
 doc/tags
