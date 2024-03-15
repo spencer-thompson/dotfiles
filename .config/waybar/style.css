@@ -1,6 +1,6 @@
 @define-color bg-hover #272E32;
 @define-color lbg #2D363B;
-@define-color bg #141b1f;
+@define-color bg #111111;
 @define-color blue #A2C8C3;
 @define-color sky #A2C8C3;
 @define-color red #E67E80;
@@ -26,7 +26,7 @@
   padding: 0;
   border-radius: 7px;
   font-family: "Fira Code Nerd Font";
-  font-size: 10pt;
+  font-size: 12pt;
   font-weight: 700;
   padding-bottom: 0px;
 }
@@ -38,31 +38,35 @@ tooltip {
 }
 
 #window {
-	margin: 5px 5px 2px 5px;
-	padding-left: 10px;
-	padding-right: 7px;
-	border-radius: 7px;
-	border-bottom: 2px solid @bg;
-	border-right: 2px solid @bg;
-	background-color: @lbg;
-	color: @fg;
+  margin: 5px 5px 2px 5px;
+  padding-left: 10px;
+  padding-right: 7px;
+  border-radius: 7px;
+  border-bottom: 2px solid @bg;
+  border-right: 2px solid @bg;
+  background-color: @lbg;
+  color: @fg;
 }
 
 window#waybar.empty #window {
-	background-color: transparent;
-	border-bottom: none;
-	border-right: none;
+  background-color: transparent;
+  border-bottom: none;
+  border-right: none;
 }
 
 window#waybar {
-  background-color:transparent;
+  background-color: transparent;
   color: @lavender;
 }
 
 /* Workspaces */
 @keyframes button_activate {
-	from { opacity: .3 }
-	to { opacity: 1.; }
+  from {
+    opacity: 0.3;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 #workspaces {
@@ -71,7 +75,6 @@ window#waybar {
   padding: 1px;
   background-color: @bg;
   color: @bg;
-
 }
 
 #workspaces button {
@@ -84,14 +87,13 @@ window#waybar {
 }
 
 #workspaces button.active {
-    background-color:@red;
-    color: @bg;
-    /*color: @bg;*/
-
+  background-color: @red;
+  color: @bg;
+  /*color: @bg;*/
 }
 
 #workspaces button.urgent {
-	color: #F38BA8;
+  color: #f38ba8;
 }
 
 #workspaces button:hover {
@@ -113,7 +115,7 @@ window#waybar {
   padding-left: 10px;
   padding-right: 10px;
   background-color: @bg;
-  color: @fg; 
+  color: @fg;
 }
 
 #idle_inhibitor {
@@ -143,26 +145,23 @@ window#waybar {
 }
 
 #custom-subs {
-	color: @bg;
-	margin: 5px 5px 2px 5px;
-    padding-left: 10px;
-    padding-right: 12px;
-    border-radius: 7px;
-	border-bottom: 2px solid @bg;
-	border-right: 2px solid @bg;
-background-color: @red;
-
+  color: @bg;
+  margin: 5px 5px 2px 5px;
+  padding-left: 10px;
+  padding-right: 12px;
+  border-radius: 7px;
+  border-bottom: 2px solid @bg;
+  border-right: 2px solid @bg;
+  background-color: @red;
 }
 
-
 #custom-cliphist {
-	color: @peach;
-	margin: 5px 5px 2px 5px;
-    padding-left: 10px;
-    padding-right: 12px;
-    border-radius: 7px;
-    background-color: @bg;
-
+  color: @peach;
+  margin: 5px 5px 2px 5px;
+  padding-left: 10px;
+  padding-right: 12px;
+  border-radius: 7px;
+  background-color: @bg;
 }
 
 #custom-gpu-temp,
@@ -199,31 +198,30 @@ background-color: @red;
   border-bottom-right-radius: 0px;
   border-top-left-radius: 7px;
   border-bottom-left-radius: 7px;
-
 }
 
 #battery,
 #bluetooth {
-	margin-left: 0px;
-	margin-right: 5px;
-	padding-left: 7.5px;
-	padding-right: 10px;
-	border-top-left-radius: 0px;
-	border-bottom-left-radius: 0px;
-	border-top-right-radius: 7px;
-	border-bottom-right-radius: 7px;
+  margin-left: 0px;
+  margin-right: 5px;
+  padding-left: 7.5px;
+  padding-right: 10px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
 }
 
 #backlight,
 #pulseaudio {
-	margin-right: 0px;
-	margin-left: 5px;
-	padding-left: 10px;
-  	padding-right: 7.5px;
-	border-top-right-radius: 0px;
-	border-bottom-right-radius: 0px;
-	border-top-left-radius: 7px;
-	border-bottom-left-radius: 7px;
+  margin-right: 0px;
+  margin-left: 5px;
+  padding-left: 10px;
+  padding-right: 7.5px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-top-left-radius: 7px;
+  border-bottom-left-radius: 7px;
 }
 
 #clock {
@@ -243,9 +241,6 @@ background-color: @red;
   background-color: @bg;
   color: @peach;
 }
-
-
-
 
 /* * { */
 /*   border: none; */
