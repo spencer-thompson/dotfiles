@@ -63,6 +63,7 @@ bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
 source "$HOME/.env"
+export PATH="$HOME/.local/bin:$PATH"
 
 eval "$(starship init zsh)"
 
