@@ -1,6 +1,7 @@
 .env
 
 */tmux/plugins/*
+*/hypr/modules/device.conf
 
 tt.*
 .tests
