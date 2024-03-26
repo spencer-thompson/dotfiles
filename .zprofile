@@ -56,3 +56,5 @@ export XDG_CURRENT_DESKTOP=Hyprland
 export XDG_SESSION_TYPE=wayland
 export XDG_SESSION_DESKTOP=Hyprland
 # exec Hyprland
+
+[ "$(tty)" = "/dev/tty1" ] && exec Hyprland
