@@ -1,3 +1,5 @@
+export MPLBACKEND='module://matplotlib-backend-kitty'
+
 export LF_ICONS="\
 tw=:\
 st=:\
