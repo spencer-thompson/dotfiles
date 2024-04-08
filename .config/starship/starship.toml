@@ -46,6 +46,12 @@ format = '[\[](bold fg:green)[$path]($style)[$read_only]($read_only_style)[\]](b
 "Pictures" = "  "
 "Videos" = "  "
 
+
+[gcloud]
+# format = 'on [$symbol$account(@$domain)(\($region\))]($style) '
+format = 'on [$symbol$active]($style) '
+symbol = "☁️ "
+
 # [aws]
 # symbol = "aws "
 #
