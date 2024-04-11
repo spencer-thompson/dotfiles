@@ -51,6 +51,7 @@ format = '[\[](bold fg:green)[$path]($style)[$read_only]($read_only_style)[\]](b
 # format = 'on [$symbol$account(@$domain)(\($region\))]($style) '
 format = 'on [$symbol$active]($style) '
 symbol = "☁️ "
+disabled = true
 
 # [aws]
 # symbol = "aws "
