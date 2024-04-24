@@ -1,3 +1,15 @@
+set adjust-open "best-fit"
+set pages-per-row 1
+
+#stop at page boundries
+set scroll-page-aware "true"
+set smooth-scroll "true"
+set scroll-full-overlap 0.01
+set scroll-step 100
+
+set statusbar-fg "#B0B0B0" #04
+set statusbar-bg "#202020" #01
+
 set sandbox none
 set statusbar-h-padding 0
 set statusbar-v-padding 0
