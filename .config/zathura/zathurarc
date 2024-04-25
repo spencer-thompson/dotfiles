@@ -7,8 +7,8 @@ set smooth-scroll "true"
 set scroll-full-overlap 0.01
 set scroll-step 100
 
-set statusbar-fg "#B0B0B0" #04
-set statusbar-bg "#202020" #01
+set statusbar-fg "#a9b1d6" #04
+set statusbar-bg "#10111c" #01
 
 set sandbox none
 set statusbar-h-padding 0
