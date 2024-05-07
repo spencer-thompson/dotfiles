@@ -3,6 +3,12 @@
 */tmux/plugins/*
 */hypr/modules/device.conf
 
+.local/bin/f2py
+.local/bin/fonttools
+.local/bin/pyftmerge
+.local/bin/pyftsubset
+.local/bin/ttx
+
 tt.*
 .tests
 doc/tags
