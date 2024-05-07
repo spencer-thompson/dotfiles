@@ -2,10 +2,9 @@
 
 alias \
 	ordm="ollama run dolphin-mistral" \
-	ls="exa --icons --group-directories-first" \
-	ll="exa -lah --icons --group-directories-first" \
-	tree="exa -tree" \
-	home="cd ~" \
+	ls="eza --icons --group-directories-first" \
+	ll="eza --color=always -lah --git --no-filesize --icons=always --no-user --no-permissions --group-directories-first" \
+	tree="eza --tree" \
 
 # Verbosity and settings that you pretty much just always are going to want.
 alias \
