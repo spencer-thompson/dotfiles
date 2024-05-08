@@ -122,4 +122,6 @@ eval "$(zoxide init zsh)"
 
 alias cd="z"
 
+fastfetch
+
 # toilet -f univers -F metal "spencer" | sed '1,4 d; s/^/ /'
