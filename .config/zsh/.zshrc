@@ -115,9 +115,6 @@ eval "$(starship init zsh)"
 # Bat theme
 export BAT_THEME=tokyonight_night
 
-eval $(thefuck --alias)
-eval $(thefuck --alias fk)
-
 eval "$(zoxide init zsh)"
 
 alias cd="z"
