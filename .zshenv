@@ -11,6 +11,7 @@ export XDG_CACHE_HOME="$HOME/.cache"
 export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/starship.toml"
 export STARSHIP_CACHE="$XDG_CACHE_HOME/starship/cache"
 
+export MOZ_ENABLE_WAYLAND=1
 # bemenu
 # export BEMENU_OPTS='-H 30 -W 0.5 -l 25 -n --fn "FiraCode 12" --tb 0b0b0b0b'
 
