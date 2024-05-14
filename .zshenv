@@ -15,11 +15,14 @@ export R_HOME_USER="$XDG_CONFIG_HOME/R"
 export R_PROFILE_USER="$XDG_CONFIG_HOME/R/profile"
 
 export MOZ_ENABLE_WAYLAND=1
+
+export HOSTNAME=$(hostname)
 # bemenu
 # export BEMENU_OPTS='-H 30 -W 0.5 -l 25 -n --fn "FiraCode 12" --tb 0b0b0b0b'
 
 # hyprland
 export WLR_NO_HARDWARE_CURSORS=1
+
 alias H="Hyprland"
 
 export LC_ALL=en_US.UTF-8
