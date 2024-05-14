@@ -10,7 +10,9 @@ export XDG_CACHE_HOME="$HOME/.cache"
 
 export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/starship.toml"
 export STARSHIP_CACHE="$XDG_CACHE_HOME/starship/cache"
-export R_PROFILE_USER="$XDG_CONFIG_HOME/R/.Rprofile"
+
+export R_HOME_USER="$XDG_CONFIG_HOME/R"
+export R_PROFILE_USER="$XDG_CONFIG_HOME/R/profile"
 
 export MOZ_ENABLE_WAYLAND=1
 # bemenu
