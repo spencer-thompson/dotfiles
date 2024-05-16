@@ -19,33 +19,77 @@
 @define-color black3 #131721;
 @define-color maroon #d95757;
 @define-color yellow #FF8F40;
+/* @define-color tokyo-night-back #10111c; */
+
+@define-color foreground #a9b1d6;
+@define-color background #10111c;
+
+/* # Black */
+@define-color color0 #414868;
+@define-color color8 #414868;
+
+/* # Red */
+@define-color color1 #f7768e;
+@define-color color9 #f7768e;
+
+/* # Green */
+@define-color color2  #73daca;
+@define-color color10 #73daca;
+
+/* # Yellow */
+@define-color color3  #e0af68;
+@define-color color11 #e0af68;
+
+/* # Blue */
+@define-color color4  #7aa2f7;
+@define-color color12 #7aa2f7;
+
+/* # Magenta */
+@define-color color5  #bb9af7;
+@define-color color13 #bb9af7;
+
+/* # Cyan */
+@define-color color6  #7dcfff;
+@define-color color14 #7dcfff;
+
+/* # White */
+@define-color color7  #c0caf5;
+@define-color color15 #c0caf5;
 
 * {
-  min-height: 0;
-  margin: 0;
-  padding: 0;
-  border-radius: 7px;
+  /* min-height: 0; */
+  /* margin: 0; */
+  /* padding: 0; */
+  /* border-radius: 50px; */
   font-family: "Fira Code Nerd Font";
   font-size: 12pt;
-  font-weight: 700;
-  padding-bottom: 0px;
+  font-weight: bold;
+  /* padding-bottom: 0px; */
 }
 
 tooltip {
-  background: @bg;
+  background: @background;
   border-radius: 7px;
   border: 2px solid @border;
 }
 
 #window {
-  margin: 5px 5px 2px 5px;
+  margin: 5px 20px 5px 20px;
   padding-left: 10px;
-  padding-right: 7px;
+  padding-right: 10px;
   border-radius: 7px;
-  border-bottom: 2px solid @bg;
-  border-right: 2px solid @bg;
-  background-color: @lbg;
-  color: @fg;
+  border-bottom: 2px solid @background;
+  border-right: 2px solid @background;
+  background-color: transparent;
+  color: @foreground;
+}
+
+.modules-left {
+  margin-left: 20px;
+}
+
+.modules-right {
+  margin-right: 20px;
 }
 
 window#waybar.empty #window {
@@ -54,8 +98,10 @@ window#waybar.empty #window {
   border-right: none;
 }
 
+/* Main window */
 window#waybar {
-  background-color: transparent;
+  background-color: rgba(16, 17, 28, 0.75);
+  /* border-bottom: 3px solid red; */
   color: @lavender;
 }
 
@@ -73,8 +119,8 @@ window#waybar {
   margin: 5px 5px 2px 5px;
   border-radius: 7px;
   padding: 1px;
-  background-color: @bg;
-  color: @bg;
+  background-color: @background;
+  color: @foreground;
 }
 
 #workspaces button {
@@ -82,14 +128,14 @@ window#waybar {
   border-radius: 5px;
   padding-left: 1px;
   padding-right: 1px;
-  background-color: @bg;
-  color: @fg;
+  background-color: @background;
+  color: @foreground;
 }
 
 #workspaces button.active {
-  background-color: @red;
-  color: @bg;
-  /*color: @bg;*/
+  background-color: @color1;
+  color: @background;
+  /*color: @background;*/
 }
 
 #workspaces button.urgent {
@@ -105,8 +151,8 @@ window#waybar {
   padding-left: 10px;
   padding-right: 10px;
   border-radius: 7px;
-  background-color: @bg;
-  color: @fg;
+  background-color: @background;
+  color: @foreground;
 }
 
 #tray {
@@ -114,8 +160,8 @@ window#waybar {
   border-radius: 7px;
   padding-left: 10px;
   padding-right: 10px;
-  background-color: @bg;
-  color: @fg;
+  background-color: @background;
+  color: @foreground;
 }
 
 #idle_inhibitor {
@@ -123,8 +169,8 @@ window#waybar {
   padding-left: 10px;
   padding-right: 12px;
   border-radius: 7px;
-  background-color: @bg;
-  color: @fg;
+  background-color: @background;
+  color: @foreground;
 }
 
 #network {
@@ -132,7 +178,7 @@ window#waybar {
   padding-left: 10px;
   padding-right: 12px;
   border-radius: 7px;
-  background-color: @bg;
+  background-color: @background;
   color: @lavender;
 }
 
@@ -145,13 +191,13 @@ window#waybar {
 }
 
 #custom-subs {
-  color: @bg;
+  color: @background;
   margin: 5px 5px 2px 5px;
   padding-left: 10px;
   padding-right: 12px;
   border-radius: 7px;
-  border-bottom: 2px solid @bg;
-  border-right: 2px solid @bg;
+  border-bottom: 2px solid @background;
+  border-right: 2px solid @background;
   background-color: @red;
 }
 
@@ -161,7 +207,7 @@ window#waybar {
   padding-left: 10px;
   padding-right: 12px;
   border-radius: 7px;
-  background-color: @bg;
+  background-color: @background;
 }
 
 #custom-gpu-temp,
@@ -173,8 +219,8 @@ window#waybar {
   padding-left: 10px;
   padding-right: 10px;
   border-radius: 7px;
-  color: @fg;
-  background-color: @bg;
+  color: @foreground;
+  background-color: @background;
 }
 
 #custom-playerctl {
@@ -182,8 +228,8 @@ window#waybar {
   padding-left: 10px;
   padding-right: 10px;
   border-radius: 7px;
-  color: @fg;
-  background-color: @bg;
+  color: @foreground;
+  background-color: @background;
 }
 
 #battery,
@@ -192,8 +238,8 @@ window#waybar {
 #pulseaudio {
   margin-top: 5px;
   margin-bottom: 2px;
-  color: @fg;
-  background-color: @bg;
+  color: @foreground;
+  background-color: @background;
   border-top-right-radius: 0px;
   border-bottom-right-radius: 0px;
   border-top-left-radius: 7px;
@@ -229,8 +275,8 @@ window#waybar {
   padding-left: 10px;
   padding-right: 10px;
   border-radius: 7px;
-  color: @fg;
-  background-color: @bg;
+  color: @foreground;
+  background-color: @background;
 }
 
 #mode {
@@ -238,7 +284,7 @@ window#waybar {
   padding-left: 10px;
   padding-right: 10px;
   border-radius: 7px;
-  background-color: @bg;
+  background-color: @background;
   color: @peach;
 }
 
