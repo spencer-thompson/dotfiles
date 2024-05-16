@@ -39,6 +39,8 @@ export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 # killall xcape 2>/dev/null ; xcape -e 'Super_L=Escape'
 # Turn off caps lock if on since there is no longer a key for it.
 # xset -q | grep -q "Caps Lock:\s*on" && xdotool key Caps_Lock
+# ==> Source [/home/sthom/.cache/yay/google-cloud-cli/pkg/google-cloud-cli/opt/google-cloud-cli/completion.zsh.inc] in your profile to enable shell command completion for gcloud.
+# ==> Source [/home/sthom/.cache/yay/google-cloud-cli/pkg/google-cloud-cli/opt/google-cloud-cli/path.zsh.inc] in your profile to add the Google Cloud SDK command line tools to your $PATH.
 
 
 xdg-user-dirs-update --set DESKTOP ~/desk
