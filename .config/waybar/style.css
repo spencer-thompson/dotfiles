@@ -57,13 +57,14 @@
 @define-color color15 #c0caf5;
 
 * {
-  /* min-height: 0; */
-  /* margin: 0; */
-  /* padding: 0; */
-  /* border-radius: 50px; */
+  /* min-height: 3px; */
+  margin: 3;
+  /* padding: 2; */
   font-family: "Fira Code Nerd Font";
-  font-size: 12pt;
   font-weight: bold;
+  font-size: 15pt;
+  border-radius: 80px;
+  letter-spacing: 0.8px;
   /* padding-bottom: 0px; */
 }
 
@@ -74,22 +75,25 @@ tooltip {
 }
 
 #window {
-  margin: 5px 20px 5px 20px;
-  padding-left: 10px;
-  padding-right: 10px;
-  border-radius: 7px;
-  border-bottom: 2px solid @background;
-  border-right: 2px solid @background;
-  background-color: transparent;
-  color: @foreground;
+  margin: 0px 24px 0px 24px;
+  /* padding-left: 10px; */
+  /* padding-right: 10px; */
+  /* border-radius: 7px; */
+  /* border-bottom: 2px solid @background; */
+  /* border-right: 2px solid @background; */
+  background-color: @background;
+  color: @color7;
+  /* color: black; */
+  /* margin: 0 8px 0 8px; */
+  padding: 0 24px 0 24px; /* top, right, bottom, left */
 }
 
 .modules-left {
-  margin-left: 20px;
+  margin-left: 24px;
 }
 
 .modules-right {
-  margin-right: 20px;
+  margin-right: 24px;
 }
 
 window#waybar.empty #window {
@@ -100,9 +104,14 @@ window#waybar.empty #window {
 
 /* Main window */
 window#waybar {
-  background-color: rgba(16, 17, 28, 0.75);
+  /* background-color: rgba(16, 17, 28, 0.5); */
+  background-color: transparent;
+  /* padding: 8px; */
+  /* margin: 8px; */
   /* border-bottom: 3px solid red; */
-  color: @lavender;
+  /* color: @lavender; */
+  margin: 0 8px 0 8px;
+  padding: 0 16px 0 16px; /* top, right, bottom, left */
 }
 
 /* Workspaces */
@@ -116,26 +125,35 @@ window#waybar {
 }
 
 #workspaces {
-  margin: 5px 5px 2px 5px;
-  border-radius: 7px;
-  padding: 1px;
+  /* margin: 5px 5px 2px 5px; */
+  /* border-radius: 7px; */
+  /* padding: 0px; */
+  /* margin: 4px 4px 4px 4px; */
+  /* margin: 4 4px 4 4px; */
+  padding: 0 8px 0 8px;
   background-color: @background;
-  color: @foreground;
+  color: @color7;
 }
 
 #workspaces button {
-  margin: 5px 2px 5px 2px;
-  border-radius: 5px;
-  padding-left: 1px;
-  padding-right: 1px;
+  /* margin: 5px 2px 5px 2px; */
+  /* border-radius: 5px; */
+  /* padding-left: 1px; */
+  /* padding-right: 1px; */
+  /* margin: 4px 4px 4px 4px; */
+  /* padding: 2 0 0 0; */
+  /* margin: 0 4px 0 4px; */
+  padding: 0 4px 0 4px;
   background-color: @background;
-  color: @foreground;
+  color: @color7;
 }
 
 #workspaces button.active {
+  /* padding: 8px 8px 8px 8px; */
+  /* margin: 4px 4px 4px 4px; */
+  padding: 0 7px 0 7px;
   background-color: @color1;
   color: @background;
-  /*color: @background;*/
 }
 
 #workspaces button.urgent {
@@ -146,147 +164,184 @@ window#waybar {
   border: solid transparent;
 }
 
-#custom-gpu-util {
-  margin: 5px 5px 2px 5px;
-  padding-left: 10px;
-  padding-right: 10px;
-  border-radius: 7px;
-  background-color: @background;
-  color: @foreground;
-}
-
-#tray {
-  margin: 5px 5px 2px 5px;
-  border-radius: 7px;
-  padding-left: 10px;
-  padding-right: 10px;
-  background-color: @background;
-  color: @foreground;
-}
-
-#idle_inhibitor {
-  margin: 5px 5px 2px 5px;
-  padding-left: 10px;
-  padding-right: 12px;
-  border-radius: 7px;
-  background-color: @background;
-  color: @foreground;
+#battery,
+#pulseaudio,
+#bluetooth,
+#backlight,
+#temperature,
+#memory,
+#cpu {
+  color: @light-blue;
+  background-color: @bg;
+  margin: 0 8px 0 8px;
+  padding: 0 16px 0 16px; /* top, right, bottom, left */
 }
 
 #network {
-  margin: 5px 5px 2px 5px;
-  padding-left: 10px;
-  padding-right: 12px;
-  border-radius: 7px;
-  background-color: @background;
-  color: @lavender;
-}
-
-#network.linked {
-  color: @peach;
-}
-#network.disconnected,
-#network.disabled {
-  color: @red;
-}
-
-#custom-subs {
-  color: @background;
-  margin: 5px 5px 2px 5px;
-  padding-left: 10px;
-  padding-right: 12px;
-  border-radius: 7px;
-  border-bottom: 2px solid @background;
-  border-right: 2px solid @background;
-  background-color: @red;
-}
-
-#custom-cliphist {
-  color: @peach;
-  margin: 5px 5px 2px 5px;
-  padding-left: 10px;
-  padding-right: 12px;
-  border-radius: 7px;
-  background-color: @background;
-}
-
-#custom-gpu-temp,
-#cpu,
-#memory,
-#custom-clipboard,
-#temperature {
-  margin: 5px 5px 2px 5px;
-  padding-left: 10px;
-  padding-right: 10px;
-  border-radius: 7px;
-  color: @foreground;
-  background-color: @background;
-}
-
-#custom-playerctl {
-  margin: 5px 5px 2px 5px;
-  padding-left: 10px;
-  padding-right: 10px;
-  border-radius: 7px;
-  color: @foreground;
-  background-color: @background;
-}
-
-#battery,
-#backlight,
-#bluetooth,
-#pulseaudio {
-  margin-top: 5px;
-  margin-bottom: 2px;
-  color: @foreground;
-  background-color: @background;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-  border-top-left-radius: 7px;
-  border-bottom-left-radius: 7px;
-}
-
-#battery,
-#bluetooth {
-  margin-left: 0px;
-  margin-right: 5px;
-  padding-left: 7.5px;
-  padding-right: 10px;
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
-  border-top-right-radius: 7px;
-  border-bottom-right-radius: 7px;
-}
-
-#backlight,
-#pulseaudio {
-  margin-right: 0px;
-  margin-left: 5px;
-  padding-left: 10px;
-  padding-right: 7.5px;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-  border-top-left-radius: 7px;
-  border-bottom-left-radius: 7px;
+  color: @light-blue;
+  background-color: @bg;
+  margin: 0 8px 0 8px;
+  padding: 0 16px 0 16px; /* top, right, bottom, left */
 }
 
 #clock {
-  margin: 5px 5px 2px 5px;
-  padding-left: 10px;
-  padding-right: 10px;
-  border-radius: 7px;
-  color: @foreground;
+  color: @color7;
   background-color: @background;
+  margin: 0 8px 0 8px;
+  padding: 0 16px 0 16px; /* top, right, bottom, left */
+  /* padding: 8px 15px 8px 15px; */
 }
 
-#mode {
-  margin: 5px 5px 2px 5px;
-  padding-left: 10px;
-  padding-right: 10px;
-  border-radius: 7px;
-  background-color: @background;
-  color: @peach;
+#tray {
+  color: @color7;
+  background-color: @bg;
+  margin: 0 8px 0 8px;
+  padding: 0 16px 0 16px; /* top, right, bottom, left */
 }
+
+/* #custom-gpu-util { */
+/*   margin: 5px 5px 2px 5px; */
+/*   padding-left: 10px; */
+/*   padding-right: 10px; */
+/*   border-radius: 7px; */
+/*   background-color: @background; */
+/*   color: @foreground; */
+/* } */
+/**/
+/* #tray { */
+/*   margin: 5px 5px 2px 5px; */
+/*   border-radius: 7px; */
+/*   padding-left: 10px; */
+/*   padding-right: 10px; */
+/*   background-color: @background; */
+/*   color: @foreground; */
+/* } */
+/**/
+/* #idle_inhibitor { */
+/*   margin: 5px 5px 2px 5px; */
+/*   padding-left: 10px; */
+/*   padding-right: 12px; */
+/*   border-radius: 7px; */
+/*   background-color: @background; */
+/*   color: @foreground; */
+/* } */
+/**/
+/* #network { */
+/*   margin: 5px 5px 2px 5px; */
+/*   padding-left: 10px; */
+/*   padding-right: 12px; */
+/*   border-radius: 7px; */
+/*   background-color: @background; */
+/*   color: @lavender; */
+/* } */
+/**/
+/* #network.linked { */
+/*   color: @peach; */
+/* } */
+/* #network.disconnected, */
+/* #network.disabled { */
+/*   color: @red; */
+/* } */
+/**/
+/* #custom-subs { */
+/*   color: @background; */
+/*   margin: 5px 5px 2px 5px; */
+/*   padding-left: 10px; */
+/*   padding-right: 12px; */
+/*   border-radius: 7px; */
+/*   border-bottom: 2px solid @background; */
+/*   border-right: 2px solid @background; */
+/*   background-color: @red; */
+/* } */
+/**/
+/* #custom-cliphist { */
+/*   color: @peach; */
+/*   margin: 5px 5px 2px 5px; */
+/*   padding-left: 10px; */
+/*   padding-right: 12px; */
+/*   border-radius: 7px; */
+/*   background-color: @background; */
+/* } */
+/**/
+/* #custom-gpu-temp, */
+/* #cpu, */
+/* #memory, */
+/* #custom-clipboard, */
+/* #temperature { */
+/*   margin: 5px 5px 2px 5px; */
+/*   padding-left: 10px; */
+/*   padding-right: 10px; */
+/*   border-radius: 7px; */
+/*   color: @foreground; */
+/*   background-color: @background; */
+/* } */
+/**/
+/* #custom-playerctl { */
+/*   margin: 5px 5px 2px 5px; */
+/*   padding-left: 10px; */
+/*   padding-right: 10px; */
+/*   border-radius: 7px; */
+/*   color: @foreground; */
+/*   background-color: @background; */
+/* } */
+/**/
+/* #battery, */
+/* #backlight, */
+/* #bluetooth, */
+/* #pulseaudio { */
+/*   margin-top: 5px; */
+/*   margin-bottom: 2px; */
+/*   color: @foreground; */
+/*   background-color: @background; */
+/*   border-top-right-radius: 0px; */
+/*   border-bottom-right-radius: 0px; */
+/*   border-top-left-radius: 7px; */
+/*   border-bottom-left-radius: 7px; */
+/* } */
+/**/
+/* #battery, */
+/* #bluetooth { */
+/*   margin-left: 0px; */
+/*   margin-right: 5px; */
+/*   padding-left: 7.5px; */
+/*   padding-right: 10px; */
+/*   border-top-left-radius: 0px; */
+/*   border-bottom-left-radius: 0px; */
+/*   border-top-right-radius: 7px; */
+/*   border-bottom-right-radius: 7px; */
+/* } */
+/**/
+/* #backlight, */
+/* #pulseaudio { */
+/*   margin-right: 0px; */
+/*   margin-left: 5px; */
+/*   padding-left: 10px; */
+/*   padding-right: 7.5px; */
+/*   border-top-right-radius: 0px; */
+/*   border-bottom-right-radius: 0px; */
+/*   border-top-left-radius: 7px; */
+/*   border-bottom-left-radius: 7px; */
+/* } */
+/**/
+/* #clock { */
+/*   margin: 5px 5px 2px 5px; */
+/*   padding-left: 10px; */
+/*   padding-right: 10px; */
+/*   border-radius: 7px; */
+/*   color: @foreground; */
+/*   background-color: @background; */
+/* } */
+/**/
+/* #mode { */
+/*   margin: 5px 5px 2px 5px; */
+/*   padding-left: 10px; */
+/*   padding-right: 10px; */
+/*   border-radius: 7px; */
+/*   background-color: @background; */
+/*   color: @peach; */
+/* } */
+
+/* ---- */
 
 /* * { */
 /*   border: none; */
