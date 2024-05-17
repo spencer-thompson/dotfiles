@@ -13,7 +13,7 @@
 @define-color active-green #B2C98F;
 @define-color dark-fg #9DA9A0;
 @define-color peach #f2966b;
-@define-color border @lavender;
+@define-color border #ec0101;
 @define-color gray2 #9DA9A0;
 @define-color black4 #0d1017;
 @define-color black3 #131721;
@@ -62,7 +62,7 @@
   /* padding: 2; */
   font-family: "Fira Code Nerd Font";
   font-weight: bold;
-  font-size: 15pt;
+  font-size: 14pt;
   border-radius: 80px;
   letter-spacing: 0.8px;
   /* padding-bottom: 0px; */
@@ -70,19 +70,20 @@
 
 tooltip {
   background: @background;
-  border-radius: 7px;
-  border: 2px solid @border;
+  border-radius: 0px;
+  border: 3px solid @border;
 }
 
 #window {
-  margin: 0px 24px 0px 24px;
+  margin: 0px 8px 0px 8px;
   /* padding-left: 10px; */
   /* padding-right: 10px; */
   /* border-radius: 7px; */
   /* border-bottom: 2px solid @background; */
   /* border-right: 2px solid @background; */
   background-color: @background;
-  color: @color7;
+  background-color: @bg;
+  /* color: @color7; */
   /* color: black; */
   /* margin: 0 8px 0 8px; */
   padding: 0 24px 0 24px; /* top, right, bottom, left */
@@ -132,7 +133,8 @@ window#waybar {
   /* margin: 4 4px 4 4px; */
   padding: 0 8px 0 8px;
   background-color: @background;
-  color: @color7;
+  background-color: @bg;
+  /* color: @color7; */
 }
 
 #workspaces button {
@@ -143,9 +145,11 @@ window#waybar {
   /* margin: 4px 4px 4px 4px; */
   /* padding: 2 0 0 0; */
   /* margin: 0 4px 0 4px; */
-  padding: 0 4px 0 4px;
+  padding: 0 7px 0 7px;
   background-color: @background;
-  color: @color7;
+  background-color: @bg;
+  border: 2px solid @bg;
+  /* color: @color7; */
 }
 
 #workspaces button.active {
@@ -154,6 +158,7 @@ window#waybar {
   padding: 0 7px 0 7px;
   background-color: @color1;
   color: @background;
+  border: 2px solid @color1;
 }
 
 #workspaces button.urgent {
@@ -161,7 +166,9 @@ window#waybar {
 }
 
 #workspaces button:hover {
-  border: solid transparent;
+  /* background-color: transparent; */
+  border: 2px solid @color6;
+  color: @color1;
 }
 
 #battery,
@@ -170,30 +177,34 @@ window#waybar {
 #backlight,
 #temperature,
 #memory,
+#network,
+#clock,
 #cpu {
   color: @light-blue;
   background-color: @bg;
   margin: 0 8px 0 8px;
-  padding: 0 16px 0 16px; /* top, right, bottom, left */
+  padding: 0 24px 0 24px; /* top, right, bottom, left */
 }
 
-#network {
-  color: @light-blue;
-  background-color: @bg;
-  margin: 0 8px 0 8px;
-  padding: 0 16px 0 16px; /* top, right, bottom, left */
-}
+/* #network { */
+/*   color: @light-blue; */
+/*   background-color: @bg; */
+/*   background-color: @bg; */
+/*   margin: 0 8px 0 8px; */
+/*   padding: 0 16px 0 16px; */
+/* } */
 
-#clock {
-  color: @color7;
-  background-color: @background;
-  margin: 0 8px 0 8px;
-  padding: 0 16px 0 16px; /* top, right, bottom, left */
-  /* padding: 8px 15px 8px 15px; */
-}
+/* #clock { */
+/*    color: @color7;  */
+/*   background-color: @background; */
+/*   background-color: @bg; */
+/*   margin: 0 8px 0 8px; */
+/*   padding: 0 16px 0 16px; */
+/*   padding: 8px 15px 8px 15px; */
+/* } */
 
 #tray {
-  color: @color7;
+  /* color: @color7; */
   background-color: @bg;
   margin: 0 8px 0 8px;
   padding: 0 16px 0 16px; /* top, right, bottom, left */
