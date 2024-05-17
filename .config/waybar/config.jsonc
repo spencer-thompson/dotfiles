@@ -26,7 +26,7 @@
     "seperate-outputs": true,
   },
   "clock": {
-    "format": "<span foreground='#E69875'> </span><span> {:%I:%M %a %d}</span>",
+    "format": "<span foreground='#E69875'> </span><span> {:%I:%M %p %a %d}</span>",
     "tooltip-format": "{calendar}",
     "calendar": {
       "mode": "month",

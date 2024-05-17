@@ -1,0 +1,2 @@
+- [ ] Waybar config
+- [ ] Mako integration with waybar
