@@ -1,27 +1,28 @@
 {
   "layer": "top",
-  // "margin-top": 10,
-  // "margin-bottom": -20,
+  "margin-top": -16,
+  "margin-bottom": 12,
   // "margin-left": 30,
   // "margin-right": 30,
+  "position": "bottom",
   "modules-left": ["clock", "hyprland/window"],
   "modules-center": ["hyprland/workspaces"],
   "modules-right": [
     "tray",
-    "custom/subs",
+    // "custom/subs",
     "cpu",
     "temperature",
     "memory",
-    "idle_inhibitor",
+    // "idle_inhibitor",
     "pulseaudio",
-    "bluetooth",
+    // "bluetooth",
     "backlight",
     "battery",
   ],
 
   "hyprland/window": {
     "format": "{title}",
-    "max-length": 333,
+    "max-length": 500,
     "seperate-outputs": true,
   },
   "clock": {
@@ -54,16 +55,16 @@
     "format": "<span foreground='#88C096'>󰍛</span> {}%",
     "interval": 1,
   },
-  "custom/gpu-util": {
-    "exec": "./scripts/gpu-util",
-    "format": "<span foreground='#67b0e8'>󰯿</span> {}",
-    "interval": 1,
-  },
-  "custom/gpu-temp": {
-    "exec": "./scripts/gpu-temp",
-    "format": "<span foreground='#e57474'></span> {}",
-    "interval": 1,
-  },
+  // "custom/gpu-util": {
+  //   "exec": "./scripts/gpu-util",
+  //   "format": "<span foreground='#67b0e8'>󰯿</span> {}",
+  //   "interval": 1,
+  // },
+  // "custom/gpu-temp": {
+  //   "exec": "./scripts/gpu-temp",
+  //   "format": "<span foreground='#e57474'></span> {}",
+  //   "interval": 1,
+  // },
   "temperature": {
     "hwmon-path": "/sys/class/hwmon/hwmon1/temp1_input",
     "critical-threshold": 80,
@@ -87,7 +88,8 @@
       "critical": 15,
     },
     "format": "<span foreground='#E6FFF5'>{icon}</span> {capacity}%",
-    "format-icons": ["", "", "", "", ""],
+    "format-charging": "󰂄  {capacity}%",
+    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
     "max-length": 25,
   },
 
@@ -100,6 +102,7 @@
   },
   "network": {
     "format": "󰤭 Off",
+    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
     "format-wifi": "{essid} ({signalStrength}%)",
     "format-ethernet": "<span foreground='#b48ead'>󰈀</span>",
     "format-disconnected": "󰤭 Disconnected",
@@ -139,17 +142,17 @@
   },
   "tray": {
     "format": "<span foreground='#D3C6AA'>{icon}</span>",
-    "icon-size": 14,
-    "spacing": 5,
+    "icon-size": 24,
+    "spacing": 8,
   },
 
-  "idle_inhibitor": {
-    "format": "{icon}",
-    "format-icons": {
-      "activated": "󱠛",
-      "deactivated": "󱤱",
-    },
-  },
+  // "idle_inhibitor": {
+  //   "format": "{icon}",
+  //   "format-icons": {
+  //     "activated": "󱠛",
+  //     "deactivated": "󱤱",
+  //   },
+  // },
 
   //  "custom/subs": {
   // 	"format": "<span foreground='#272E32'>󰗃 </span> {}",
