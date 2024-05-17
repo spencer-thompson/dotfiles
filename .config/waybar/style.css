@@ -210,6 +210,14 @@ window#waybar {
   padding: 0 16px 0 16px; /* top, right, bottom, left */
 }
 
+#tray:last-child {
+  /* color: @color7; */
+  /* visible:  */
+  background-color: @bg;
+  margin: 0 8px 0 8px;
+  padding: 0 16px 0 16px; /* top, right, bottom, left */
+}
+
 /* #custom-gpu-util { */
 /*   margin: 5px 5px 2px 5px; */
 /*   padding-left: 10px; */
