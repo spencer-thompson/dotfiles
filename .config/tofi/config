@@ -3,7 +3,7 @@ prompt-text = "-> "
 text-color = #cdd6f4
 prompt-color = #585b70
 selection-color = #f7768e
-background-color = #10111c
+background-color = #10111c40
 
 width = 100%
 height = 100%
