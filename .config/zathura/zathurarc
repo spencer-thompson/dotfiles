@@ -22,3 +22,4 @@ map r reload
 map R rotate
 map J zoom out
 map K zoom in
+map <C-i> recolor
