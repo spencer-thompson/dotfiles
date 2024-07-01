@@ -1,24 +1,13 @@
 @define-color bg-hover #272E32;
 @define-color lbg #2D363B;
 @define-color bg #111111;
-@define-color blue #A2C8C3;
-@define-color sky #A2C8C3;
 @define-color red #E67E80;
-@define-color pink #f28779;
-@define-color lavender #D699B6;
-@define-color rosewater #f07178;
-@define-color flamingo #f07178;
 @define-color fg #D3C6AA;
 @define-color green #B2C98F;
 @define-color active-green #B2C98F;
 @define-color dark-fg #9DA9A0;
 @define-color peach #f2966b;
 @define-color border #ec0101;
-@define-color gray2 #9DA9A0;
-@define-color black4 #0d1017;
-@define-color black3 #131721;
-@define-color maroon #d95757;
-@define-color yellow #FF8F40;
 /* @define-color tokyo-night-back #10111c; */
 
 @define-color foreground #a9b1d6;
@@ -82,9 +71,39 @@ box.module {
 
 #hardware {
   background-color: @bg;
-  margin: 0 0px 0 0px;
-  /* padding: 0 16px 0 16px; */
+  margin: 0 8px 0 8px;
+  padding: 0 8px 0 8px;
 }
+
+#hardware label.module {
+  background-color: @bg;
+  /* margin: 0 0px 0 0px; */
+  padding: 0 8px 0 8px;
+}
+#power {
+  background-color: @bg;
+  margin: 0 8px 0 8px;
+  padding: 0 8px 0 8px;
+}
+#power label.module {
+  background-color: @bg;
+  padding: 0 8px 0 6px;
+}
+
+#audio {
+  background-color: @bg;
+  margin: 0 8px 0 8px;
+  padding: 0 16px 0 16px;
+}
+
+#audio label.module {
+  background-color: @bg;
+  padding: 0 0px 0 0px;
+}
+/* label.power { */
+/*   background-color: @bg; */
+/*   padding: 0 0px 0 0px; */
+/* } */
 
 /* hidden.module { */
 /*   background-color: @bg; */
