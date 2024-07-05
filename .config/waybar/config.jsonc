@@ -108,7 +108,8 @@
   "custom/pacman": {
     "format": "{} <span foreground='#bb9af7'>󰆧</span>",
     "interval": 3600, // every hour
-    "exec": "pacman -Qu | wc -l", // # of updates
+    // "exec": "pacman -Qu | wc -l", // # of updates
+    "exec": "checkupdates | wc -l", // # of updates
     "exec-if": "exit 0", // always run; consider advanced run conditions
     // "on-click": "termite -e 'sudo pacman -Syu'; pkill -SIGRTMIN+8 waybar", // update system
     "signal": 8,
