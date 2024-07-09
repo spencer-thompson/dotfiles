@@ -2,6 +2,7 @@
 
 */tmux/plugins/*
 */hypr/modules/device.conf
+.ipython/profile_default/history.sqlite
 
 .local/bin/f2py
 .local/bin/fonttools

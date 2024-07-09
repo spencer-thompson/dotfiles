@@ -160,7 +160,7 @@
     "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
     "format-wifi": "<span foreground='#E6FFF5'>{icon} </span> {signalStrength}%",
     // "format-wifi": "<span foreground='#E6FFF5'>{icon} </span> {essid}",
-    "format-ethernet": "<span foreground='#E6FFF5'>󰈀</span> {signalStrength}%",
+    "format-ethernet": "<span foreground='#E6FFF5'>󰈀</span>",
     "format-disconnected": "󰤭 ",
     "tooltip-format": "{ifname} via {gwaddr} ",
     "tooltip-format-wifi": "{essid}({signalStrength}%)  ",
