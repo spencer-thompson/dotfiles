@@ -53,7 +53,7 @@ xdg-user-dirs-update --set PICTURES ~/pics
 xdg-user-dirs-update --set VIDEOS ~/vids
 
 
-export WLR_NO_HARDWARE_CURSORS=1
+# export WLR_NO_HARDWARE_CURSORS=1
 export XDG_CURRENT_DESKTOP=Hyprland
 export XDG_SESSION_TYPE=wayland
 export XDG_SESSION_DESKTOP=Hyprland
