@@ -28,3 +28,5 @@ alias \
 	ccat="highlight --out-format=ansi" \
 	ip="ip -color=auto"
 
+alias killbg='kill ${${(v)jobstates##*:*:}%=*}'
+

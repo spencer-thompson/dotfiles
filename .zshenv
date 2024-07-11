@@ -23,6 +23,9 @@ export HOSTNAME=$(hostname)
 # hyprland
 # export WLR_NO_HARDWARE_CURSORS=1
 
+export QT_IM_MODULES="wayland;fcitx;ibus"
+export XMODIFIERS=@im=fcitx
+
 alias H="Hyprland"
 
 export LC_ALL=en_US.UTF-8
