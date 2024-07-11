@@ -7,7 +7,13 @@
   "position": "bottom",
   // "mode": "dock",
   "output": ["DP-1", "eDP-1", "!HDMI-*"],
-  "modules-left": ["clock", "custom/pacman", "tray", "hyprland/window"],
+  "modules-left": [
+    "clock",
+    "custom/pacman",
+    "tray",
+    // "hyprland/language",
+    "hyprland/window",
+  ],
   "modules-center": ["hyprland/workspaces"],
   "modules-right": [
     // "custom/subs",
@@ -18,6 +24,7 @@
     // "mpris",
     // "pulseaudio",
     "group/audio",
+    "idle_inhibitor",
     "group/hardware",
     // "bluetooth",
     "network",
@@ -149,11 +156,34 @@
   },
 
   "hyprland/workspaces": {
-    "format": "{name}",
+    "format": "{icon}",
+    "format-icons": {
+      "veritcal": "",
+      "1": "一",
+      "2": "二",
+      "3": "三",
+      "4": "四",
+      "5": "五",
+      "6": "六",
+      "7": "七",
+      "8": "八",
+      "9": "九",
+      "10": "十",
+      // "active": "",
+      // "default": "",
+    },
+    "ignore-workspaces": ["vertical"],
     "active-only": false,
     "sort-by-number": true,
     "on-click": "activate",
     "all-outputs": true,
+  },
+  "hyprland/language": {
+    "format": "{}",
+    "format-en": "English",
+    "format-zh": "中文",
+    "format-tr": "As bayrakları",
+    "keyboard-name": "at-translated-set-2-keyboard",
   },
   "network": {
     "format": "󰤭 Off",
@@ -237,13 +267,13 @@
     "spacing": 8,
   },
 
-  // "idle_inhibitor": {
-  //   "format": "{icon}",
-  //   "format-icons": {
-  //     "activated": "󱠛",
-  //     "deactivated": "󱤱",
-  //   },
-  // },
+  "idle_inhibitor": {
+    "format": "<span foreground='#f2966b'>{icon}</span>",
+    "format-icons": {
+      "activated": "󰅶",
+      "deactivated": "󰾪",
+    },
+  },
 
   "bluetooth": {
     "on-click": "./scripts/bluetooth-control",
