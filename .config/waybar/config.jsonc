@@ -24,7 +24,7 @@
     // "mpris",
     // "pulseaudio",
     "group/audio",
-    "idle_inhibitor",
+    // "idle_inhibitor",
     "group/hardware",
     // "bluetooth",
     "network",
@@ -37,7 +37,7 @@
     "format": "{title}",
     "rewrite": {
       "(.*) — Mozilla Firefox": "󰈹  $1",
-      "nvim": "",
+      "nvim": "  Neovim",
     },
     "max-length": 500,
     "seperate-outputs": true,
@@ -90,7 +90,13 @@
       "children-class": "hidden",
       "transition-left-to-right": false,
     },
-    "modules": ["custom/power", "custom/exit", "custom/lock", "custom/reboot"],
+    "modules": [
+      "custom/power",
+      "idle_inhibitor",
+      "custom/exit",
+      "custom/lock",
+      "custom/reboot",
+    ],
   },
   "custom/power": {
     "format": "<span foreground='#f7768e'>󰐥</span>",
@@ -137,7 +143,7 @@
     "device": "intel_backlight",
     "format": "<span foreground='#FFA066'>{icon}</span>  {percent}%",
     "states": [0, 25, 50, 100],
-    "format-icons": ["", "󰃝", "󰃟", ""],
+    "format-icons": ["󰃜", "󰃞", "󰃟", "󰃝", "󰃠", ""],
     "tooltip-format": "{percent}%",
     "tooltip": true,
   },
@@ -194,8 +200,8 @@
     "format-disconnected": "󰤭 ",
     "tooltip-format": "{ifname} via {gwaddr} ",
     "tooltip-format-wifi": "{essid}({signalStrength}%)  ",
-    "tooltip-format-ethernet": "󰈀 {ifname}",
-    "tooltip-format-disconnected": "Disconnected",
+    "tooltip-format-ethernet": "󰕞 {signalStrength}", // 󰈀
+    "tooltip-format-disconnected": "󰌙",
   },
   "pulseaudio": {
     // "format": "<span foreground='#A2C8C3'>{icon} </span> {volume}%  {format_source}",
@@ -270,8 +276,8 @@
   "idle_inhibitor": {
     "format": "<span foreground='#f2966b'>{icon}</span>",
     "format-icons": {
-      "activated": "󰅶",
-      "deactivated": "󰾪",
+      "activated": "󰛊",
+      "deactivated": "󰾫",
     },
   },
 

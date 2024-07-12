@@ -45,6 +45,14 @@
 @define-color color7  #c0caf5;
 @define-color color15 #c0caf5;
 
+/* @define-color border-color #242436; */
+/* @define-color border-color #272E32; */
+/* @define-color border-color #022496; */
+/* @define-color border-color #290296; */
+/* @define-color border-color #220080; */
+@define-color border-color #1e0070;
+@define-color border-color-hover #bb9af7;
+
 * {
   /* min-height: 3px; */
   margin: 3;
@@ -61,44 +69,75 @@ label.module {
   background-color: @bg;
   margin: 0 8px 0 8px;
   padding: 0 24px 0 24px; /* top, right, bottom, left */
+  border: 2px solid @border-color;
+}
+
+label.module:hover {
+  border: 2px solid @border-color-hover;
 }
 
 box.module {
   background-color: @bg;
   margin: 0 8px 0 8px;
   padding: 0 16px 0 16px; /* top, right, bottom, left */
+  border: 2px solid @border-color;
+}
+
+box.module:hover {
+  border: 2px solid @border-color-hover;
 }
 
 #hardware {
   background-color: @bg;
   margin: 0 8px 0 8px;
   padding: 0 8px 0 8px;
+  border: 2px solid @border-color;
+}
+
+#hardware:hover {
+  border: 2px solid @border-color-hover;
 }
 
 #hardware label.module {
   background-color: @bg;
   /* margin: 0 0px 0 0px; */
+  /* margin: 0 8px 0 8px; */
   padding: 0 8px 0 8px;
+  border: 0px solid @bg;
 }
+
 #power {
   background-color: @bg;
   margin: 0 8px 0 8px;
   padding: 0 8px 0 8px;
+  border: 2px solid @border-color;
 }
+
+#power:hover {
+  border: 2px solid @border-color-hover;
+}
+
 #power label.module {
   background-color: @bg;
   padding: 0 8px 0 6px;
+  border: 0px solid @bg;
 }
 
 #audio {
   background-color: @bg;
   margin: 0 8px 0 8px;
   padding: 0 16px 0 16px;
+  border: 2px solid @border-color;
+}
+
+#audio:hover {
+  border: 2px solid @border-color-hover;
 }
 
 #audio label.module {
   background-color: @bg;
   padding: 0 0px 0 0px;
+  border: 0px solid @bg;
 }
 /* label.power { */
 /*   background-color: @bg; */
@@ -174,10 +213,16 @@ window#waybar {
   /* padding: 0px; */
   /* margin: 4px 4px 4px 4px; */
   /* margin: 4 4px 4 4px; */
-  padding: 0 8px 0 8px;
+  /* padding: 0 8px 0 8px; */
+  padding: 0 4px 0 4px;
   background-color: @bg;
+  border: 2px solid @border-color;
   /* color: @color7; */
 }
+
+/* #workspaces:hover { */
+/*   border: 2px solid @border-color-hover; */
+/* } */
 
 #workspaces button {
   /* margin: 5px 2px 5px 2px; */
@@ -187,10 +232,13 @@ window#waybar {
   /* margin: 4px 4px 4px 4px; */
   /* padding: 2 0 0 0; */
   /* margin: 0 4px 0 4px; */
-  padding: 0 7px 0 7px;
+  /* english */
+  /* padding: 0 7px 0 7px; */
+  padding: 0 4px 0 4px;
   background-color: @background;
   background-color: @bg;
   border: 2px solid @bg;
+  /* border: 2px solid @color0; */
   /* color: @color7; */
 }
 
