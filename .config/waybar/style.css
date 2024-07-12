@@ -216,7 +216,8 @@ window#waybar {
   /* padding: 0 8px 0 8px; */
   padding: 0 4px 0 4px;
   background-color: @bg;
-  border: 2px solid @border-color;
+  border: 0px solid @bg;
+  /* border: 2px solid @border-color; */
   /* color: @color7; */
 }
 
