@@ -126,7 +126,8 @@ box.module:hover {
 #audio {
   background-color: @bg;
   margin: 0 8px 0 8px;
-  padding: 0 16px 0 16px;
+  /* padding: 0 16px 0 16px; */
+  padding: 0 8px 0 8px;
   border: 2px solid @border-color;
 }
 
@@ -136,7 +137,8 @@ box.module:hover {
 
 #audio label.module {
   background-color: @bg;
-  padding: 0 0px 0 0px;
+  /* padding: 0 0px 0 0px; */
+  padding: 0 8px 0 8px;
   border: 0px solid @bg;
 }
 /* label.power { */
