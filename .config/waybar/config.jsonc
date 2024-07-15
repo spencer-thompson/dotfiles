@@ -5,6 +5,7 @@
   // "margin-left": 30,
   // "margin-right": 30,
   "position": "bottom",
+  "fixed-center": true,
   // "mode": "dock",
   "output": ["DP-1", "eDP-1", "!HDMI-*"],
   "modules-left": [
@@ -234,14 +235,21 @@
     },
   },
   "mpris": {
-    "format": "{player_icon} {title} | {artist} |",
-    "format-paused": "{status_icon} {title} | {artist} |",
+    "format": "{player_icon} {dynamic}",
+    "format-paused": "{status_icon} {dynamic}",
+    "dynamic-separator": " | ",
+    "dynamic-order": ["title", "artist", "position", "length"],
+    "dynamic-importance-order": ["title", "artist", "position", "length"],
+    "dynamic-len": 50,
+    "title-len": 18,
+    "interval": 1,
     "player-icons": {
       "default": " ",
       "mpv": "󰃽 ",
       "spotify": " ",
     },
     "status-icons": {
+      "playing": " ",
       "paused": " ",
     },
   },

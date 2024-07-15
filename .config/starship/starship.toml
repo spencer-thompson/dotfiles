@@ -99,8 +99,10 @@ disabled = true
 # symbol = "elm "
 #
 #
-# [golang]
-# symbol = "go "
+[golang]
+version_format = '${raw}'
+symbol = "󰟓 "
+style = 'bold fg:cyan'
 #
 # [guix_shell]
 # symbol = "guix "
