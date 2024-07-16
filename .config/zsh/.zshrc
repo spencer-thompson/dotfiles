@@ -50,29 +50,27 @@ source /usr/share/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 ZVM_INIT_MODE=sourcing
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 ZVM_VI_VISUAL_ESCAPE_BINDKEY=jk
-zvm_after_init_commands+=('[ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh')
+# zvm_after_init_commands+=('[ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh')
+zvm_after_init_commands+=(eval "$(atuin init zsh)")
 
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
+# source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+# bindkey '^[[A' history-substring-search-up
+# bindkey '^[[B' history-substring-search-down
+
+# toilet -f univers -F metal "spencer" | sed '1,4 d; s/^/ /'
 
 source "$HOME/.env"
 export PATH="$HOME/.local/bin:$PATH"
 
-eval "$(starship init zsh)"
-
 # Bat theme
 export BAT_THEME=tokyonight_night
 
+eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 eval "$(atuin init zsh)"
 
-alias cd="z"
-
 fastfetch
-
-# toilet -f univers -F metal "spencer" | sed '1,4 d; s/^/ /'
