@@ -30,3 +30,4 @@ alias \
 
 alias killbg='kill ${${(v)jobstates##*:*:}%=*}'
 
+alias cd="z"
