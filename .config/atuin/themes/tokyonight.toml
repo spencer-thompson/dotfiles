@@ -1,0 +1,8 @@
+[theme]
+name = "tokyonight"
+parent = "autumn"
+
+[colors]
+# Base = "green"
+# AlertInfo = "red"
+# Guidance = "red"
