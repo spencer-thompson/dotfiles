@@ -1,15 +1,20 @@
 set adjust-open "best-fit"
 set pages-per-row 1
 
-#stop at page boundries
+# stop at page boundries
 set scroll-page-aware "true"
-set smooth-scroll "true"
 set scroll-full-overlap 0.01
 set scroll-step 100
 
-set statusbar-fg "#a9b1d6" #04
-set statusbar-bg "#10111c" #01
+# set statusbar-fg "#a9b1d6" #04
 
+include tokyonight.conf
+
+set statusbar-bg "#10111c" #01
+set recolor-lightcolor "#10111c" #01
+
+
+set database "sqlite"
 set sandbox none
 set statusbar-h-padding 0
 set statusbar-v-padding 0
