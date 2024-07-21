@@ -5,6 +5,7 @@ alias \
 	ls="eza --icons --group-directories-first" \
 	ll="eza --color=always -lah --git --no-filesize --icons=always --no-user --no-permissions --group-directories-first" \
 	tree="eza --tree" \
+	cat="bat"
 
 # Verbosity and settings that you pretty much just always are going to want.
 alias \
@@ -22,12 +23,21 @@ alias \
 
 # Colorize commands when possible.
 alias \
-	ls="ls -hN --color=auto --group-directories-first" \
 	grep="grep --color=auto" \
 	diff="diff --color=auto" \
 	ccat="highlight --out-format=ansi" \
 	ip="ip -color=auto"
+	# ls="ls -hN --color=auto --group-directories-first" \
 
 alias killbg='kill ${${(v)jobstates##*:*:}%=*}'
 
 alias cd="z"
+
+# directories
+alias ..="cd .." \
+      ...="cd ../.." \
+      ....="cd ../../.." \
+      .....="cd ../../../.." \
+      ......="cd ../../../../.."
+
+alias glog="git log --graph --topo-order --pretty='%w(100,0,6)%C(yellow)%h%C(bold)%C(black)%d %C(cyan)%ar %C(green)%an%n%C(bold)%C(white)%s %N' --abbrev-commit"
