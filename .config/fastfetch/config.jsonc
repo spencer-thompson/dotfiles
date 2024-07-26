@@ -9,7 +9,9 @@
     },
   },
   "display": {
-    "keyWidth": 8,
+    "key": {
+      "width": 8,
+    },
     "bar": {
       "charElapsed": "=",
       "charTotal": "-",
