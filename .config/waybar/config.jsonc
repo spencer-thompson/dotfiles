@@ -121,7 +121,7 @@
   },
   "custom/pacman": {
     "format": "{} <span foreground='#bb9af7'>󰆧</span>",
-    "interval": 3600, // every hour
+    "interval": 600, // 3600 every hour
     // "exec": "pacman -Qu | wc -l", // # of updates
     "exec": "checkupdates | wc -l", // # of updates
     "exec-if": "exit 0", // always run; consider advanced run conditions
