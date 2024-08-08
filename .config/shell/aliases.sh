@@ -5,7 +5,7 @@ alias \
 	ls="eza --icons --group-directories-first" \
 	ll="eza --color=always -lah --git --no-filesize --icons=always --no-user --no-permissions --group-directories-first" \
 	tree="eza --tree" \
-	cat="bat"
+	cat="bat -p"
 
 # Verbosity and settings that you pretty much just always are going to want.
 alias \
@@ -19,7 +19,8 @@ alias \
 	yta="yt -x -f bestaudio/best" \
 	ytt="yt --skip-download --write-thumbnail" \
 	ffmpeg="ffmpeg -hide_banner" \
-	update="sudo pacman -Syu && yay -Syu"
+	update="sudo pacman -Syu; yay -Syu; pacman -Sc; yay -Sc"
+	# update="sudo pacman -Syu && yay -Syu"
 
 # Colorize commands when possible.
 alias \
