@@ -34,28 +34,53 @@ bindkey -v '^?' backward-delete-char
 
 
 function yy() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-		cd -- "$cwd"
-	fi
-	rm -f -- "$tmp"
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+    yazi "$@" --cwd-file="$tmp"
+    if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+        cd -- "$cwd"
+    fi
+    rm -f -- "$tmp"
+}
+
+# function zvm_config() {
+#
+# }
+
+
+function pkill() {
+    ps aux | fzf --height 40% --layout=reverse --prompt="Select process to kill: " | awk '{print $2}' | xargs -r sudo kill
 }
 
 # Aliases
 [ -f "${XDG_CONFIG_HOME}/shell/aliases.sh" ] && source "${XDG_CONFIG_HOME}/shell/aliases.sh"
 
 # plugins
+
+
 source /usr/share/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 ZVM_INIT_MODE=sourcing
-ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
-ZVM_VI_VISUAL_ESCAPE_BINDKEY=jk
+
+# ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
+# ZVM_VI_VISUAL_ESCAPE_BINDKEY=jk
 # zvm_after_init_commands+=('[ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh')
+
+function zvm_config() {
+    ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT
+    # ZVM_VI_INSERT_ESCAPE_BINDKEY=\;\;
+    ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
+    ZVM_VI_VISUAL_ESCAPE_BINDKEY=jk
+    ZVM_CURSOR_STYLE_ENABLED=false
+    ZVM_VI_EDITOR=nvim
+    # export KEYTIMEOUT=1
+}
+
 zvm_after_init_commands+=(eval "$(atuin init zsh)")
+
 
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
 
 # source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 # bindkey '^[[A' history-substring-search-up
