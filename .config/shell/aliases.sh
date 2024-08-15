@@ -19,7 +19,8 @@ alias \
 	yta="yt -x -f bestaudio/best" \
 	ytt="yt --skip-download --write-thumbnail" \
 	ffmpeg="ffmpeg -hide_banner" \
-	update="sudo pacman -Syu; yay -Syu; pacman -Sc; yay -Sc"
+	update="sudo pacman -Syu --noconfirm && yay -Syu --noconfirm" \
+	clean="sudo pacman -Sc --noconfirm; yay -Sc --noconfirm"
 	# update="sudo pacman -Syu && yay -Syu"
 
 # Colorize commands when possible.

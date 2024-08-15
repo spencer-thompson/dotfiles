@@ -60,8 +60,8 @@ function pkill() {
 source /usr/share/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 ZVM_INIT_MODE=sourcing
 
-# ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
-# ZVM_VI_VISUAL_ESCAPE_BINDKEY=jk
+ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
+ZVM_VI_VISUAL_ESCAPE_BINDKEY=jk
 # zvm_after_init_commands+=('[ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh')
 
 function zvm_config() {
