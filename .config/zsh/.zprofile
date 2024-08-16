@@ -1,7 +1,7 @@
 export MPLBACKEND='module://matplotlib-backend-kitty'
 
 # auto start hyprland after login
-[[ "$(tty)" = "/dev/tty1" ]] && exec Hyprland
+# [[ "$(tty)" = "/dev/tty1" ]] && exec Hyprland
 
 # export LF_ICONS="\
 # tw=:\
