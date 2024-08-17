@@ -100,5 +100,6 @@ export BAT_THEME=tokyonight_night
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 eval "$(atuin init zsh)"
+eval "$(direnv hook zsh)"
 
 fastfetch
