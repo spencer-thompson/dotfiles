@@ -50,8 +50,13 @@ function yy() {
 # }
 
 
+# Functions
 function pkill() {
     ps aux | fzf --height 40% --layout=reverse --prompt="Select process to kill: " | awk '{print $2}' | xargs -r sudo kill
+}
+
+function aiclip() {
+    printf "Context: [%s]\n\nUsing the context, %s concisely and effectively\n" "$(wl-paste)" "$1" | ollama run llama3.1
 }
 
 # Aliases
