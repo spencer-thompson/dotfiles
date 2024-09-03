@@ -45,9 +45,15 @@ function yy() {
     rm -f -- "$tmp"
 }
 
-# function zvm_config() {
-#
-# }
+function nushell_oneshot() {
+    nu
+    # zle reset-prompt
+}
+
+zle -N nushell_oneshot
+
+# custom binds
+bindkey '^n' nushell_oneshot
 
 
 # Functions
