@@ -9,6 +9,7 @@
 .local/bin/pyftmerge
 .local/bin/pyftsubset
 .local/bin/ttx
+.local/bin/easyocr
 
 tt.*
 .tests
