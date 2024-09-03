@@ -1,5 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
-while IFS= read -r line; do
-    printf '%s\n' "$line"
-done < "$HOME/dotfiles/README.md"
+
+function ask() {
+    read -p "$1 (y/n): " response
+    [ -z "$response" ] || [ "$response" = "y" ]
+}
+
+
