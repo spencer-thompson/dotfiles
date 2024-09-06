@@ -1,0 +1,21 @@
+fork = false
+frame = "full"
+idle = true
+maximized = false
+neovim-bin = "/usr/bin/nvim" # in reality found dynamically on $PATH if unset
+no-multigrid = false
+srgb = false
+tabs = true
+theme = "darn"
+title-hidden = true
+vsync = true
+wsl = false
+
+[font]
+normal = ["JetBrainsMono Nerd Font"]
+# normal = ["RecMonoDuotone Nerd Font Mono"]
+# normal = "FiraCode Nerd Font Mono"
+edging = "subpixelantialias"
+hinting = "none"
+# edging = "alias"
+size = 14

@@ -55,6 +55,9 @@ zle -N nushell_oneshot
 # custom binds
 bindkey '^n' nushell_oneshot
 
+function ide() {
+    neovide
+}
 
 # Functions
 function pkill() {
