@@ -2,7 +2,7 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 add_newline = false
-continuation_prompt = "[▸▹ ](dimmed white)"
+continuation_prompt = "[▎ ](dimmed white)"
 format = """$shell$directory$character"""
 
 right_format = """$all"""
