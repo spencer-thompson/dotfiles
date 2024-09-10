@@ -12,7 +12,7 @@ vsync = true
 wsl = false
 
 [font]
-normal = ["JetBrainsMono Nerd Font"]
+normal = ["JetBrainsMono Nerd Font Mono"]
 # normal = ["RecMonoDuotone Nerd Font Mono"]
 # normal = "FiraCode Nerd Font Mono"
 edging = "subpixelantialias"
