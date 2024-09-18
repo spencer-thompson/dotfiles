@@ -3,7 +3,7 @@
 
 add_newline = false
 continuation_prompt = "[▎ ](dimmed white)"
-format = """$shell$directory$character"""
+format = """$battery$shell$directory$character"""
 
 right_format = """$all"""
 
@@ -11,10 +11,14 @@ right_format = """$all"""
 symbol = ' '
 
 [character]
-success_symbol = "[󱋱](bold green)"
+success_symbol = "[│](bold green)"
+# success_symbol = "[║](bold green)"
 # success_symbol = "[󰅂󱋱](bold green)"
-error_symbol = "[󰇝](bold red)"
+# error_symbol = "[󰇝](bold red)"
+error_symbol = "[┊](bold red)"
+# error_symbol = "[┋](bold red)"
 vimcmd_symbol = "[](bold green)"
+# vimcmd_symbol = "[├](bold bright-green)"
 # vimcmd_symbol = "[󰅁󰇝](bold green)"
 
 # [package]
@@ -32,7 +36,7 @@ format = '([$all_status$ahead_behind]($style) )'
 # format = '$all_status$ahead_behind'
 conflicted = '\[!=${count}\]'
 stashed = '[\[*${count}\]](bold yellow)'
-deleted = '\[✘${count}\]'
+deleted = '\[󰧧${count}\]'
 renamed = '\[»${count}\]'
 modified = '\[+${count}\]'
 staged = '[\[++${count}\]](bold yellow)'
@@ -58,24 +62,77 @@ format = '[$path]($style)[$read_only]($read_only_style) '
 "Videos" = "  "
 
 [battery]
-format = "[ $percentage $symbol]($style)"
-full_symbol = "█"
-charging_symbol = "[↑](italic bold green)"
-discharging_symbol = "↓"
-unknown_symbol = "░"
-empty_symbol = "▃"
+# format = "[ $symbol $percentage]($style)"
+format = '([$symbol]($style) )'
+# full_symbol = "█"
+full_symbol = "󰁹"
+# charging_symbol = "[↑](italic bold green)"
+charging_symbol = "[󰂄](italic bold green)"
+# discharging_symbol = "↓"
+unknown_symbol = "󰂑"
+empty_symbol = "󰂎"
+# disabled = false
+
+[[battery.display]]
+threshold = 5
+style = "italic bold red"
+# charging_symbol = "[↑](italic bold green)"
+charging_symbol = "󰂄"
+discharging_symbol = "󰂃"
+
+[[battery.display]]
+threshold = 10
+style = "italic bold red"
+charging_symbol = "󰂄"
+discharging_symbol = "󰁺"
 
 [[battery.display]]
 threshold = 20
-style = "italic bold red"
+style = "italic dimmed bright-red"
+charging_symbol = "󰂄"
+discharging_symbol = "󰁻"
+
+[[battery.display]]
+threshold = 30
+style = "italic dimmed bright-yellow"
+charging_symbol = "󰂄"
+discharging_symbol = "󰁼"
+
+[[battery.display]]
+threshold = 40
+style = "italic dimmed bright-yellow"
+charging_symbol = "󰂄"
+discharging_symbol = "󰁽"
+
+[[battery.display]]
+threshold = 50
+style = "italic dimmed bright-yellow"
+charging_symbol = "󰂄"
+discharging_symbol = "󰁾"
 
 [[battery.display]]
 threshold = 60
-style = "italic dimmed bright-purple"
+style = "italic dimmed bright-green"
+charging_symbol = "󰂄"
+discharging_symbol = "󰁿"
 
 [[battery.display]]
 threshold = 70
-style = "italic dimmed yellow"
+style = "italic dimmed bright-green"
+charging_symbol = "󰂄"
+discharging_symbol = "󰂀"
+
+[[battery.display]]
+threshold = 80
+style = "italic dimmed bright-green"
+charging_symbol = "󰂄"
+discharging_symbol = "󰂁"
+
+[[battery.display]]
+threshold = 90
+style = "italic bold green"
+charging_symbol = "󰂄"
+discharging_symbol = "󰂂"
 
 [shell]
 bash_indicator = 'B'
