@@ -63,7 +63,7 @@ format = '[$path]($style)[$read_only]($read_only_style) '
 
 [battery]
 # format = "[ $symbol $percentage]($style)"
-format = '([$symbol]($style) )'
+format = '[$symbol]($style) '
 # full_symbol = "█"
 full_symbol = "󰁹"
 # charging_symbol = "[↑](italic bold green)"
@@ -94,7 +94,7 @@ discharging_symbol = "󰁻"
 
 [[battery.display]]
 threshold = 30
-style = "italic dimmed bright-yellow"
+style = "italic bright-yellow"
 charging_symbol = "󰂄"
 discharging_symbol = "󰁼"
 
@@ -106,33 +106,39 @@ discharging_symbol = "󰁽"
 
 [[battery.display]]
 threshold = 50
-style = "italic dimmed bright-yellow"
+style = "italic bright-purple"
 charging_symbol = "󰂄"
 discharging_symbol = "󰁾"
 
 [[battery.display]]
 threshold = 60
-style = "italic dimmed bright-green"
+style = "italic dimmed bright-purple"
 charging_symbol = "󰂄"
 discharging_symbol = "󰁿"
 
 [[battery.display]]
 threshold = 70
-style = "italic dimmed bright-green"
+style = "italic bright-blue"
 charging_symbol = "󰂄"
 discharging_symbol = "󰂀"
 
 [[battery.display]]
 threshold = 80
-style = "italic dimmed bright-green"
+style = "italic dimmed bright-blue"
 charging_symbol = "󰂄"
 discharging_symbol = "󰂁"
 
 [[battery.display]]
 threshold = 90
-style = "italic bold green"
+style = "italic bright-green"
 charging_symbol = "󰂄"
 discharging_symbol = "󰂂"
+
+[[battery.display]]
+threshold = 100
+style = "italic bold green"
+charging_symbol = "󰂄"
+discharging_symbol = "󰁹"
 
 [shell]
 bash_indicator = 'B'
