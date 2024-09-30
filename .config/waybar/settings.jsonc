@@ -1,0 +1,10 @@
+{
+  "layer": "top",
+
+  // "passthrough": true,
+  // "mode": "dock",
+  // "exclusive": true,
+  "fixed-center": true,
+  "output": ["DP-1", "eDP-1", "!HDMI-*"],
+  "reload_on_style_change": true,
+}

@@ -1,0 +1,315 @@
+{
+  "hyprland/window": {
+    "format": "{title}",
+    "rewrite": {
+      "(.*) — Mozilla Firefox": "󰈹  $1",
+      "nvim": "  Neovim",
+    },
+    "max-length": 500,
+    "seperate-outputs": true,
+  },
+
+  "upower": {
+    "icon-size": 20,
+    "format": "",
+    "format-alt": "{}<span color='orange'>[{time}]</span>",
+    "tooltip": true,
+    "tooltip-spacing": 20,
+    "on-click-right": "pkill waybar & hyprctl dispatch exec waybar",
+  },
+
+  "upower#headset": {
+    "format": "󰋋 {percentage}",
+    "native-path": "/org/freedesktop/UPower/devices/headset_dev_A6_98_9A_0D_D3_49",
+    "show-icon": false,
+    "tooltip": false,
+  },
+
+  "clock": {
+    "format": "<span foreground='#E69875'> </span><span> {:%I:%M %p %a}</span>",
+    "tooltip-format": "{calendar}",
+    "calendar": {
+      "mode": "month",
+      "mode-mon-col": 3,
+      "on-scroll": 1,
+      "on-click-right": "mode",
+      "format": {
+        "months": "<span color='#ffead3'><b>{}</b></span>",
+        "days": "<span color='#ecc6d9'><b>{}</b></span>",
+        "weeks": "<span color='#99ffdd'><b>{%W}</b></span>",
+        "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+        "today": "<span color='#ff6699'><b>{}</b></span>",
+      },
+    },
+    "actions": {
+      "on-click-middle": "mode",
+      "on-click-right": "shift_up",
+      "on-click": "shift_down",
+    },
+    /*"format-alt": "<span foreground='#89dceb'> </span><span>{:%H:%M}</span>"*/
+  },
+
+  "group/hardware": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 500,
+      "children-class": "hidden",
+      "transition-left-to-right": false,
+    },
+    "modules": ["cpu", "memory", "temperature"],
+  },
+
+  "group/audio": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 500,
+      "children-class": "hidden",
+      "transition-left-to-right": false,
+    },
+    "modules": ["pulseaudio", "mpris"],
+  },
+
+  "group/power": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 500,
+      "children-class": "hidden",
+      "transition-left-to-right": false,
+    },
+    "modules": [
+      "custom/power",
+      "idle_inhibitor",
+      "custom/exit",
+      "custom/lock",
+      "custom/reboot",
+    ],
+  },
+
+  "custom/power": {
+    "format": "<span foreground='#f7768e'>󰐥</span>",
+    "tooltip": false,
+    "on-click": "systemctl poweroff",
+  },
+
+  "custom/lock": {
+    "format": "<span foreground='#7aa2f7'>󰍁</span>",
+    "tooltip": false,
+    "on-click": "hyprlock",
+  },
+
+  "custom/reboot": {
+    "format": "<span foreground='#e0af68'>󰜉</span>",
+    "tooltip": false,
+    "on-click": "systemctl reboot",
+  },
+
+  "custom/exit": {
+    "format": "<span foreground='#bb9af7'>󰗼</span>",
+    "tooltip": false,
+    "on-click": "hyprctl dispatch exit",
+  },
+
+  "custom/pacman": {
+    "format": "{} <span foreground='#bb9af7'>󰆧</span>",
+    "interval": 600, // 3600 every hour
+    // "exec": "pacman -Qu | wc -l", // # of updates
+    "exec": "checkupdates | wc -l", // # of updates
+    "exec-if": "exit 0", // always run; consider advanced run conditions
+    // "on-click": "termite -e 'sudo pacman -Syu'; pkill -SIGRTMIN+8 waybar", // update system
+    "signal": 8,
+  },
+
+  // "cpu": {
+  //   "format": "<span foreground='#DBBC7F'>󰯳 </span> {usage}%",
+  // },
+
+  "cpu": {
+    "interval": 1,
+    "format": "{icon}",
+    "rotate": 270,
+    "format-icons": ["󰝦", "󰪞", "󰪟", "󰪠", "󰪡", "󰪢", "󰪣", "󰪤", "󰪥"],
+  },
+
+  "memory": {
+    "interval": 1,
+    "rotate": 270,
+    "format": "{icon}",
+    "format-icons": ["󰝦", "󰪞", "󰪟", "󰪠", "󰪡", "󰪢", "󰪣", "󰪤", "󰪥"],
+    "max-length": 10,
+  },
+
+  // "memory": {
+  //   "format": "<span foreground='#88C096'>󰍛 </span> {}%",
+  //   "interval": 1,
+  // },
+
+  "temperature": {
+    "critical-threshold": 80,
+    "format": "<span foreground='#D699B6'> </span> {temperatureC}°C",
+    "interval": 1,
+  },
+
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "<span foreground='#FFA066'>{icon}</span>  {percent}%",
+    "states": [0, 25, 50, 100],
+    "format-icons": ["󰃜", "󰃞", "󰃟", "󰃝", "󰃠", ""],
+    "tooltip-format": "{percent}%",
+    "tooltip": true,
+  },
+
+  "battery": {
+    "bat": "BAT0",
+    "interval": 60,
+    "states": {
+      "warning": 30,
+      "critical": 15,
+    },
+    "format": "<span foreground='#E6FFF5'>{icon}</span> {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+    "max-length": 25,
+  },
+
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "veritcal": "",
+      "1": "一",
+      "2": "二",
+      "3": "三",
+      "4": "四",
+      "5": "五",
+      "6": "六",
+      "7": "七",
+      "8": "八",
+      "9": "九",
+      "10": "十",
+      // "active": "",
+      // "default": "",
+    },
+    "ignore-workspaces": ["vertical"],
+    "active-only": false,
+    "sort-by-number": true,
+    "on-click": "activate",
+    "all-outputs": true,
+  },
+  "hyprland/language": {
+    "format": "{}",
+    "format-en": "English",
+    "format-zh": "中文",
+    "format-tr": "As bayrakları",
+    "keyboard-name": "at-translated-set-2-keyboard",
+  },
+  "network": {
+    "format": "󰤭 Off",
+    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+    "format-wifi": "<span foreground='#E6FFF5'>{icon} </span> {signalStrength}%",
+    // "format-wifi": "<span foreground='#E6FFF5'>{icon} </span> {essid}",
+    "format-ethernet": "<span foreground='#E6FFF5'>󰈀</span>",
+    "format-disconnected": "󰤭 ",
+    "tooltip-format": "{ifname} via {gwaddr} ",
+    "tooltip-format-wifi": "{essid}({signalStrength}%)  ",
+    "tooltip-format-ethernet": "󰕞 {signalStrength}", // 󰈀
+    "tooltip-format-disconnected": "󰌙",
+  },
+  "pulseaudio": {
+    // "format": "<span foreground='#A2C8C3'>{icon} </span> {volume}%  {format_source}",
+    "format": "<span foreground='#A2C8C3'>{icon} </span> {volume}%",
+    "format-bluetooth": "<span foreground='#DBBC7F'>{icon}</span> {volume}%  {format_source}",
+    "format-bluetooth-muted": "<span foreground='#D699B6'>󰖁</span>  {format_source}",
+    "format-muted": "<span foreground='#7A8478'>󰖁</span>  {format_source}",
+    "format-source": "<span foreground='#E67E80'></span> {volume}%",
+    "format-source-muted": "<span foreground='#F38BA8'></span>",
+    "format-icons": {
+      "headphone": "",
+      "phone": "",
+      "portable": "",
+      "default": ["", "", ""],
+    },
+    "on-click-left": "pavucontrol",
+    "input": true,
+  },
+  "custom/playerctl": {
+    "format": "{icon}  <span>{}</span>",
+    "return-type": "json",
+    "max-length": 333,
+    "exec": "playerctl -a metadata --format '{\"text\": \"{{artist}} ~ {{markup_escape(title)}}\", \"tooltip\": \"{{playerName}} : {{markup_escape(title)}}\", \"alt\": \"{{status}}\", \"class\": \"{{status}}\"}' -F",
+    "on-click-middle": "playerctl play-pause",
+    "on-click": "playerctl previous",
+    "on-click-right": "playerctl next",
+    "format-icons": {
+      "Playing": "<span foreground='#98BB6C'></span>",
+      "Paused": "<span foreground='#E46876'></span>",
+    },
+  },
+  "mpris": {
+    "format": "{player_icon} {dynamic}",
+    "format-paused": "{status_icon} {dynamic}",
+    "dynamic-separator": " | ",
+    "dynamic-order": ["title", "artist", "position", "length"],
+    "dynamic-importance-order": ["title", "artist", "position", "length"],
+    "dynamic-len": 50,
+    "title-len": 18,
+    "interval": 10,
+    "player-icons": {
+      "default": " ",
+      "mpv": "󰃽 ",
+      "spotify": " ",
+    },
+    "status-icons": {
+      "playing": " ",
+      "paused": " ",
+    },
+  },
+  "cava": {
+    //        "cava_config": "$XDG_CONFIG_HOME/cava/cava.conf",
+    "framerate": 30,
+    "autosens": 1,
+    "sensitivity": 100,
+    "bars": 14,
+    "lower_cutoff_freq": 50,
+    "higher_cutoff_freq": 10000,
+    "method": "pulse",
+    "source": "auto",
+    "stereo": true,
+    "reverse": false,
+    "bar_delimiter": 0,
+    "monstercat": false,
+    "waves": false,
+    "noise_reduction": 0.77,
+    "input_delay": 2,
+    "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
+    "actions": {
+      "on-click-right": "mode",
+    },
+  },
+  "tray": {
+    "format": "<span foreground='#D3C6AA'>{icon}</span>",
+    "icon-size": 24,
+    "spacing": 8,
+  },
+
+  "idle_inhibitor": {
+    "format": "<span foreground='#f2966b'>{icon}</span>",
+    "format-icons": {
+      "activated": "󰛊",
+      "deactivated": "󰾫",
+    },
+  },
+
+  "bluetooth": {
+    "on-click": "./scripts/bluetooth-control",
+    "on-click-right": "./scripts/rofi-bluetooth",
+    "on-click-middle": "./scripts/rofi-bluetooth",
+    "format": "{icon}",
+    "interval": 15,
+    "format-icons": {
+      "on": "<span foreground='#43242B'></span>",
+      "off": "<span foreground='#76946A'>󰂲</span>",
+      "disabled": "󰂲",
+      "connected": "",
+    },
+    "tooltip-format": "{device_alias} {status}",
+  },
+}
