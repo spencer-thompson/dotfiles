@@ -12,6 +12,7 @@
 
 @define-color foreground #a9b1d6;
 @define-color background #10111c;
+/* @define-color background #111111; */
 
 /* # Black */
 @define-color color0 #414868;
@@ -45,32 +46,33 @@
 @define-color color7  #c0caf5;
 @define-color color15 #c0caf5;
 
-/* @define-color border-color #242436; */
-/* @define-color border-color #272E32; */
-/* @define-color border-color #022496; */
-/* @define-color border-color #290296; */
-/* @define-color border-color #220080; */
 @define-color border-color #1e0070;
 @define-color border-color-hover #bb9af7;
 
 * {
-  /* min-height: 3px; */
-  margin: 3;
-  /* padding: 2; */
+  /* border: none; */
+  /* min-height: 0; */
+  /* margin: 4; */
   font-family: "Fira Code Nerd Font";
   /* font-family: "JetBrainsMono Nerd Font Mono"; */
   font-weight: bold;
-  font-size: 14pt;
-  border-radius: 40px;
-  letter-spacing: 0.8px;
+  font-size: 16px;
+  /* border-radius: 60px; */
+  /* letter-spacing: 0.8px; */
   /* padding-bottom: 0px; */
 }
 
+/* #window { */
+/*   border-radius: 60px; */
+/* } */
+
 label.module {
   background-color: @bg;
-  margin: 0 8px 0 8px;
-  padding: 0 24px 0 24px; /* top, right, bottom, left */
-  border: 2px solid @border-color;
+  /* margin: 0 8px 0 8px; */
+  padding: 4 16px 4 16px;
+  /* padding: 4; */
+  /* border-radius: 60px; */
+  border: 2px solid @bg;
 }
 
 label.module:hover {
@@ -79,9 +81,10 @@ label.module:hover {
 
 box.module {
   background-color: @bg;
-  margin: 0 8px 0 8px;
-  padding: 0 16px 0 16px; /* top, right, bottom, left */
-  border: 2px solid @border-color;
+  /* margin: 0 8px 0 8px; */
+  /* padding: 0 16px 0 16px; top, right, bottom, left */
+  padding: 4 16px 4 16px;
+  border: 2px solid @bg;
 }
 
 box.module:hover {
@@ -90,9 +93,9 @@ box.module:hover {
 
 #hardware {
   background-color: @bg;
-  margin: 0 8px 0 8px;
+  /* margin: 0 8px 0 8px; */
   padding: 0 8px 0 8px;
-  border: 2px solid @border-color;
+  border: 2px solid @bg;
 }
 
 #hardware:hover {
@@ -104,32 +107,21 @@ box.module:hover {
   /* margin: 0 0px 0 0px; */
   /* margin: 0 8px 0 8px; */
   padding: 0 8px 0 8px;
-  border: 0px solid @bg;
+  border: 2px solid @bg;
 }
 
 #power {
   background-color: @bg;
-  margin: 0 8px 0 8px;
-  padding: 0 8px 0 8px;
-  border: 2px solid @border-color;
-}
-
-#power:hover {
-  border: 2px solid @border-color-hover;
-}
-
-#power label.module {
-  background-color: @bg;
-  padding: 0 8px 0 6px;
-  border: 0px solid @bg;
+  /* margin: 0 4px 0 4px; */
+  border: 2px solid @bg;
 }
 
 #audio {
   background-color: @bg;
-  margin: 0 8px 0 8px;
+  /* margin: 0 8px 0 8px; */
   /* padding: 0 16px 0 16px; */
   padding: 0 8px 0 8px;
-  border: 2px solid @border-color;
+  border: 2px solid @bg;
 }
 
 #audio:hover {
@@ -153,34 +145,19 @@ box.module:hover {
 /*   padding: 0 16px 0 16px; */
 /* } */
 
-.modules-left {
-  margin-left: 24px;
-}
-
-.modules-right {
-  margin-right: 24px;
-}
+/* .modules-left { */
+/*   margin-left: 24px; */
+/* } */
+/**/
+/* .modules-right { */
+/*   margin-right: 24px; */
+/* } */
 
 tooltip {
   background: @bg;
-  border-radius: 0px;
-  border: 3px solid @border;
+  border-radius: 16px;
+  /* border: 3px solid @border; */
 }
-
-/* #window { */
-/* margin: 0px 8px 0px 8px; */
-/* padding-left: 10px; */
-/* padding-right: 10px; */
-/* border-radius: 7px; */
-/* border-bottom: 2px solid @background; */
-/* border-right: 2px solid @background; */
-/* background-color: @background; */
-/* background-color: @bg; */
-/* color: @color7; */
-/* color: black; */
-/* margin: 0 8px 0 8px; */
-/* padding: 0 24px 0 24px; */
-/* } */
 
 /* window#waybar.empty #window { */
 /*   background-color: transparent; */
@@ -194,10 +171,17 @@ window#waybar {
   /* padding: 8px; */
   /* margin: 8px; */
   /* border-bottom: 3px solid red; */
-  background-color: @transparent;
+  /* background-color: @transparent; */
+  background-color: #000000;
   /* background-color: @color3; */
   /* margin: 0 8px 0 8px; */
   /* padding: 0 16px 0 16px; */
+
+  /* animation-name: blink; */
+  /* animation-duration: 0.5s; */
+  /* animation-timing-function: steps(12); */
+  /* animation-iteration-count: infinite; */
+  /* animation-direction: alternate; */
 }
 
 /* Workspaces */
@@ -210,17 +194,40 @@ window#waybar {
   }
 }
 
+@keyframes blink {
+  to {
+    background-color: #ffffff;
+    color: black;
+  }
+}
+
+#battery.warning:not(.charging) {
+  background: #f53c3c;
+  color: white;
+  animation-name: blink;
+  animation-duration: 0.5s;
+  animation-timing-function: steps(12);
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+/* @keyframes elevator { */
+/*   0% { */
+/*     transform: translateY(0); */
+/*   } */
+/*   100% { */
+/*     transform: translateY(0); */
+/*   } */
+/*   50% { */
+/*     transform: translateY(-20px); */
+/*   } */
+/* } */
+
 #workspaces {
-  /* margin: 5px 5px 2px 5px; */
-  /* border-radius: 7px; */
-  /* padding: 0px; */
-  /* margin: 4 4px 4 4px; */
-  /* padding: 0 8px 0 8px; */
+  margin: 14;
   padding: 0 0px 0 0px;
-  background-color: @bg;
-  border: 0px solid @bg;
-  /* border: 2px solid @border-color; */
-  /* color: @color7; */
+  background-color: @background;
+  border: 0px solid @background;
 }
 
 /* #workspaces:hover { */
@@ -228,28 +235,14 @@ window#waybar {
 /* } */
 
 #workspaces button {
-  /* margin: 5px 2px 5px 2px; */
-  /* border-radius: 5px; */
-  /* padding-left: 1px; */
-  /* padding-right: 1px; */
-  /* margin: 4px 4px 4px 4px; */
-  /* padding: 2 0 0 0; */
-  /* margin: 0 4px 0 4px; */
-  /* english */
-  /* padding: 0 7px 0 7px; */
+  margin: 2 0 2 0;
   padding: 0 4px 0 4px;
   background-color: @background;
   background-color: @bg;
   border: 2px solid @bg;
-  /* border: 2px solid @color0; */
-  /* color: @color7; */
 }
 
 #workspaces button.active {
-  /* padding: 8px 8px 8px 8px; */
-  /* margin: 4px 4px 4px 4px; */
-  /* english */
-  /* padding: 0 7px 0 7px; */
   padding: 0 4px 0 4px;
   background-color: @color1;
   color: @background;
