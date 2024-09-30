@@ -52,6 +52,25 @@ function nushell_oneshot() {
 
 zle -N nushell_oneshot
 
+function venv() {
+    # Check if already activated
+    if [[ "$VIRTUAL_ENV" != "" ]]; then
+        echo -e "\n\e[1;33mDeactivating current virtual environment...\e[0m"
+        deactivate
+        return
+    fi
+
+    # Check if the venv directory exists
+    if [ -d "venv" ]; then
+        echo -e "\n\e[1;33mActivating virtual environment...\e[0m"
+        source .venv/bin/activate
+    else
+        echo -e "\n\e[1;33mCreating and activating virtual environment...\e[0m"
+        python3 -m venv .venv
+        source .venv/bin/activate
+    fi
+}
+
 # custom binds
 bindkey '^n' nushell_oneshot
 

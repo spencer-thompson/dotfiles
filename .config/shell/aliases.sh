@@ -2,7 +2,7 @@
 
 alias \
 	ordm="ollama run dolphin-mistral" \
-	ls="eza --icons --group-directories-first" \
+	ls="eza --icons=auto --group-directories-first" \
 	ll="eza --color=always -lah --git --no-filesize --icons=always --no-user --no-permissions --group-directories-first" \
 	tree="eza --tree" \
 	cat="bat" \
