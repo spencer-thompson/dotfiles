@@ -20,7 +20,7 @@ alias \
 	yta="yt -x -f bestaudio/best" \
 	ytt="yt --skip-download --write-thumbnail" \
 	ffmpeg="ffmpeg -hide_banner" \
-	update="sudo pacman -Syu --noconfirm && yay -Syu --noconfirm" \
+	update="sudo reflector -c US -f 6 -l 5 -n 6 --save /etc/pacman.d/mirrorlist && sudo pacman -Syu --noconfirm && yay -Syu --noconfirm" \
 	clean="sudo pacman -Sc --noconfirm; yay -Sc --noconfirm"
 	# update="sudo pacman -Syu && yay -Syu"
 
