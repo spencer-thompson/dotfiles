@@ -50,10 +50,7 @@
 @define-color border-color-hover #bb9af7;
 
 * {
-  /* border: none; */
-  /* min-height: 0; */
-  /* margin: 4; */
-  font-family: "Fira Code Nerd Font";
+  font-family: "Fira Code Nerd Font Mono";
   /* font-family: "JetBrainsMono Nerd Font Mono"; */
   font-weight: bold;
   font-size: 16px;
@@ -69,10 +66,16 @@
 label.module {
   background-color: @bg;
   /* margin: 0 8px 0 8px; */
-  /* padding: 4 16px 4 16px; */
+  padding: 4 16px 4 16px;
   /* padding: 4; */
   /* border-radius: 60px; */
   border: 2px solid @bg;
+}
+
+.right label {
+  font-size: 36px;
+  background-color: @bg;
+  padding: 0;
 }
 
 label.module:hover {
@@ -113,7 +116,17 @@ box.module:hover {
 #power {
   background-color: @bg;
   /* margin: 0 4px 0 4px; */
-  border: 2px solid @bg;
+  border: 0px solid @bg;
+  border-radius: 8;
+}
+
+#power label {
+  background-color: @bg;
+  margin: 0;
+  padding: 0 8;
+  border: 0px solid @bg;
+  font-size: 24;
+  border-radius: 8;
 }
 
 #audio {
@@ -167,17 +180,25 @@ tooltip {
 
 /* Main window */
 
-window#waybar.vertical {
+window#waybar.left {
   background-color: @transparent;
 }
 
+window#waybar.right {
+  background-color: @transparent;
+}
+
+window#waybar.top {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 window#waybar {
-  /* background-color: rgba(16, 17, 28, 0.5); */
   /* padding: 8px; */
   /* margin: 8px; */
   /* border-bottom: 3px solid red; */
   /* background-color: @transparent; */
   background-color: #000000;
+  border-radius: 8px;
   /* background-color: @color3; */
   /* margin: 0 8px 0 8px; */
   /* padding: 0 16px 0 16px; */
@@ -229,10 +250,15 @@ window#waybar {
 /* } */
 
 #workspaces {
-  margin: 14;
+  /* margin: 14; */
   padding: 0 0px 0 0px;
   background-color: @background;
   border: 0px solid @background;
+  border-radius: 6px;
+}
+
+#workspaces.vertical label {
+  font-size: 38px;
 }
 
 /* #workspaces:hover { */
@@ -245,21 +271,23 @@ window#waybar {
   background-color: @background;
   background-color: @bg;
   border: 2px solid @bg;
+  border-radius: 8px;
 }
 
 #workspaces button.active {
   padding: 0 4px 0 4px;
-  background-color: @color1;
+  background-color: @color4;
   color: @background;
-  border: 2px solid @color1;
+  border: 2px solid @color4;
 }
 
 #workspaces button.urgent {
-  color: #f38ba8;
+  color: @color1;
 }
 
 #workspaces button:hover {
   /* background-color: transparent; */
-  border: 2px solid @color6;
-  color: @color1;
+  border: 2px solid @color3;
+  color: @color3;
+  border-radius: 8px;
 }

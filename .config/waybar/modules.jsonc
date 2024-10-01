@@ -74,7 +74,7 @@
     "drawer": {
       "transition-duration": 500,
       "children-class": "hidden",
-      "transition-left-to-right": false,
+      // "transition-left-to-right": true,
     },
     "modules": [
       "custom/power",
@@ -126,13 +126,13 @@
   "cpu": {
     "interval": 1,
     "format": "{icon}",
-    "rotate": 270,
+    // "rotate": 270,
     "format-icons": ["󰝦", "󰪞", "󰪟", "󰪠", "󰪡", "󰪢", "󰪣", "󰪤", "󰪥"],
   },
 
   "memory": {
     "interval": 1,
-    "rotate": 270,
+    // "rotate": 270,
     "format": "{icon}",
     "format-icons": ["󰝦", "󰪞", "󰪟", "󰪠", "󰪡", "󰪢", "󰪣", "󰪤", "󰪥"],
     "max-length": 10,
@@ -189,7 +189,7 @@
       // "default": "",
     },
     "ignore-workspaces": ["vertical"],
-    "active-only": false,
+    "active-only": true,
     "sort-by-number": true,
     "on-click": "activate",
     "all-outputs": true,
@@ -286,8 +286,8 @@
   },
   "tray": {
     "format": "<span foreground='#D3C6AA'>{icon}</span>",
-    "icon-size": 24,
-    "spacing": 8,
+    "icon-size": 16,
+    "spacing": 12,
   },
 
   "idle_inhibitor": {
