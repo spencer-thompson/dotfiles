@@ -69,7 +69,7 @@
 label.module {
   background-color: @bg;
   /* margin: 0 8px 0 8px; */
-  padding: 4 16px 4 16px;
+  /* padding: 4 16px 4 16px; */
   /* padding: 4; */
   /* border-radius: 60px; */
   border: 2px solid @bg;
@@ -166,6 +166,11 @@ tooltip {
 /* } */
 
 /* Main window */
+
+window#waybar.vertical {
+  background-color: @transparent;
+}
+
 window#waybar {
   /* background-color: rgba(16, 17, 28, 0.5); */
   /* padding: 8px; */
@@ -258,36 +263,3 @@ window#waybar {
   border: 2px solid @color6;
   color: @color1;
 }
-
-/*
-#battery,
-#pulseaudio,
-#bluetooth,
-#backlight,
-#temperature,
-#memory,
-#network,
-#clock,
-#cpu {
-  color: @light-blue;
-  background-color: @bg;
-  margin: 0 8px 0 8px;
-  padding: 0 24px 0 24px;  top, right, bottom, left 
- box-shadow: @border 0px 0px 4px -3px; 
-}
-*/
-
-/* #tray { */
-/*   color: @color7; */
-/*   background-color: @bg; */
-/*   margin: 0 8px 0 8px; */
-/*   padding: 0 16px 0 16px; */
-/* } */
-
-/* #tray:last-child { */
-/* color: @color7; */
-/* visible:  */
-/* background-color: @bg; */
-/* margin: 0 8px 0 8px; */
-/* padding: 0 16px 0 16px;  top, right, bottom, left */
-/* } */
