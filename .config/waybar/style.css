@@ -7,49 +7,41 @@
 @define-color background #10111c;
 /* @define-color background #111111; */
 
-/* # Black */
-@define-color color0 #414868;
-@define-color color8 #414868;
-
-/* # Red */
-@define-color color1 #f7768e;
-@define-color color9 #f7768e;
-
-/* # Green */
-@define-color color2  #73daca;
-@define-color color10 #73daca;
-
-/* # Yellow */
-@define-color color3  #e0af68;
-@define-color color11 #e0af68;
-
-/* # Blue */
-@define-color color4  #7aa2f7;
-@define-color color12 #7aa2f7;
-
-/* # Magenta */
-@define-color color5  #bb9af7;
-@define-color color13 #bb9af7;
-
-/* # Cyan */
-@define-color color6  #7dcfff;
-@define-color color14 #7dcfff;
-
-/* # White */
-@define-color color7  #c0caf5;
-@define-color color15 #c0caf5;
-
 @define-color border-color #1e0070;
 @define-color border-color-hover #bb9af7;
 
+/* # normal */
+@define-color color0 #15161e;
+@define-color color1 #f7768e;
+@define-color color2 #9ece6a;
+@define-color color3 #e0af68;
+@define-color color4 #7aa2f7;
+@define-color color5 #bb9af7;
+@define-color color6 #7dcfff;
+@define-color color7 #a9b1d6;
+
+/* # bright */
+@define-color color8 #414868;
+@define-color color9 #f7768e;
+@define-color color10 #9ece6a;
+@define-color color11 #e0af68;
+@define-color color12 #7aa2f7;
+@define-color color13 #bb9af7;
+@define-color color14 #7dcfff;
+@define-color color15 #c0caf5;
+
+/* # extended colors */
+@define-color color16 #ff9e64;
+@define-color color17 #db4b4b;
+
 * {
-  font-family: "Fira Code Nerd Font Mono";
+  /* font-family: "Fira Code Nerd Font Mono"; */
   /* font-family: "Fira Code Nerd Font"; */
-  /* font-family: "JetBrainsMono Nerd Font Mono"; */
-  font-weight: bold;
+  font-family: "JetBrainsMono Nerd Font Mono";
+  font-weight: 700;
   font-size: 20px;
   /* border-radius: 60px; */
-  /* letter-spacing: 0.8px; */
+  letter-spacing: 0.8px;
   /* padding-bottom: 0px; */
 }
 
@@ -58,16 +50,17 @@
 /* } */
 
 label.module {
-  background-color: @bg;
+  background-color: @transprant;
+  border: 2px transparent;
   /* margin: 0 8px 0 8px; */
   /* padding: 4 16px 4 16px; */
   padding: 0 16;
   /* border-radius: 60px; */
-  border: 2px solid @bg;
 }
 
 label.module:hover {
   border: 2px solid @border-color-hover;
+  border-radius: 4;
 }
 
 .right label {
@@ -82,11 +75,11 @@ label.module:hover {
 }
 
 box.module {
-  background-color: @bg;
+  background-color: @transprant;
+  border: 2px transparent;
   /* margin: 0 8px 0 8px; */
   padding: 0 16px 0 16px;
   /* padding: 4 16px 4 16px; */
-  border: 2px solid @bg;
 }
 
 box.module:hover {
@@ -113,45 +106,131 @@ box.module:hover {
 }
 
 #power {
-  background-color: @bg;
+  /* background-color: @background; */
+  background-color: @transprant;
   /* margin: 0 4px 0 4px; */
-  border: 0px solid @bg;
-  border-radius: 8;
+  border: 2px transparent;
+  /* border-top: 2px red; */
+  border-top: 2px solid @color17;
+  /* border-radius: 8; */
 }
 
 #power:hover {
-  background-color: @bg;
+  /* background-color: @bg; */
+  background-color: @transprant;
   /* margin: 0 4px 0 4px; */
-  border: 2px solid @border-color-hover;
-  border-radius: 8;
+  border: 2px solid red;
+  border-radius: 4;
 }
 
 #power label {
-  background-color: @bg;
+  /* background-color: @bg; */
+  background-color: @transprant;
   margin: 0;
-  padding: 1 6;
-  border: 0px solid @bg;
-  font-size: 24;
-  border-radius: 8;
+  /* padding: 1 6; */
+  padding: 0 14;
+  border: 2px transparent;
+  font-size: 28;
+  border-radius: 4;
+}
+
+#pulseaudio {
+  background-color: @transprant;
+  border: 2px transparent;
+  border-top: 2px solid @color5;
+  /* margin: 0 8px 0 8px; */
+  /* padding: 0 16px 0 16px; */
+  font-size: 28;
+  /* padding: 0 8px 0 8px; */
 }
 
 #audio {
-  background-color: @bg;
+  background-color: @transprant;
+  border: 2px transparent;
+  border-top: 2px solid @color5;
   /* margin: 0 8px 0 8px; */
   /* padding: 0 16px 0 16px; */
   padding: 0 8px 0 8px;
-  border: 2px solid @bg;
 }
 
 #audio:hover {
   border: 2px solid @border-color-hover;
+  border-radius: 4;
 }
 
-#audio label.module {
-  background-color: @bg;
+#audio label {
+  background-color: @transprant;
+  border: 2px transparent;
   /* padding: 0 0px 0 0px; */
+  /* font-size: 28; */
   padding: 0 8px 0 8px;
-  border: 0px solid @bg;
+}
+
+/* #audio mpris lable { */
+/*   font-size: 18px; */
+/* } */
+
+#custom-pacman {
+  border-top: 2px solid @color5;
+  font-family: "JetBrainsMono Nerd Font";
+  font-weight: 500;
+}
+
+#pulseaudio-slider slider {
+  min-height: 0px;
+  min-width: 0px;
+  opacity: 0;
+  background-image: none;
+  background-color: transparent;
+  border: 2px transparent;
+  /* box-shadow: 1 10 1 rgba(0, 0, 0, 1.5); */
+  color: transparent;
+}
+#pulseaudio-slider trough {
+  min-height: 10px;
+  min-width: 160px;
+  border-radius: 5px;
+  background-color: black;
+  border: 2px transparent;
+  border: 2px solid @color0;
+}
+#pulseaudio-slider highlight {
+  min-width: 10px;
+  border-radius: 5px;
+  background-color: @color6;
+  border: 2px @color0;
+}
+
+#pulseaudio {
+  background-color: @transprant;
+  border: 2px transparent;
+}
+
+#clock {
+  background-color: @transprant;
+  border: 2px transparent;
+}
+
+#clock {
+  font-weight: 500;
+}
+
+#cpu {
+  background-color: @transprant;
+  border: 2px transparent;
+  /* padding: 0 0px 0 0px; */
+  color: @color14;
+  font-size: 30;
+  padding: 0 10px;
+}
+
+#memory {
+  background-color: @transprant;
+  border: 2px transparent;
+  /* padding: 0 0px 0 0px; */
+  color: @color10;
+  font-size: 30;
+  padding: 0 10px;
 }
 
 #backlight {
@@ -168,8 +247,9 @@ box.module:hover {
 
 #network {
   padding: 0 8;
-  font-size: 20;
-  font-family: "Fira Code Nerd Font";
+  font-size: 28;
+  /* font-family: "Fira Code Nerd Font"; */
+  border-top: 2px solid @color7;
 }
 
 /* label.power { */
@@ -192,7 +272,7 @@ box.module:hover {
 /* } */
 
 tooltip {
-  background: @bg;
+  background: @background;
   border-radius: 16px;
   /* border: 3px solid @border; */
 }
@@ -217,6 +297,10 @@ window#waybar.top {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
+window#waybar.bottom {
+  background-color: @transparent;
+}
+
 window#waybar {
   /* padding: 8px; */
   /* margin: 8px; */
@@ -233,6 +317,30 @@ window#waybar {
   /* animation-iteration-count: infinite; */
   /* animation-direction: alternate; */
 }
+
+#window {
+  background-color: @transparent;
+  border: 2px transparent;
+  border-top: 2px solid @color4;
+  /* color: @color7; */
+  /* font-weight: normal; */
+  font-weight: 400;
+}
+
+#window label {
+  font-weight: 500;
+}
+
+#window:hover {
+  border: 2px solid @color4;
+  border-top: 2px solid @color4;
+  border-radius: 4;
+}
+
+/* window#waybar.firefox { */
+/*   background-color: @transparent; */
+/*   color: yellow; */
+/* } */
 
 /* Workspaces */
 @keyframes button_activate {
@@ -282,7 +390,7 @@ window#waybar {
   padding: 0 0px 0 0px;
   background-color: @background;
   border: 0px solid @background;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 #workspaces.vertical label {
@@ -297,16 +405,15 @@ window#waybar {
   margin: 2 0 2 0;
   padding: 0 4px 0 4px;
   background-color: @background;
-  background-color: @bg;
-  border: 2px solid @bg;
+  border: 2px solid @background;
   border-radius: 8px;
 }
 
 #workspaces button.active {
   padding: 0 4px 0 4px;
   /* background-color: @color4; */
-  background-color: @bg;
-  color: @color4;
+  background-color: @background;
+  color: @color6;
   /* border: 2px solid @color4; */
 }
 
@@ -316,7 +423,11 @@ window#waybar {
 
 #workspaces button:hover {
   /* background-color: transparent; */
+  /* border: 2px solid @color3; */
   border: 2px solid @color3;
+  /* background-color: @background; */
+  /* color: @background; */
+  /* background-color: @color3; */
   color: @color3;
   border-radius: 8px;
 }

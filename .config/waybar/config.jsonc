@@ -9,15 +9,16 @@
     // "margin-right": 30,
     "position": "top",
 
-    "modules-left": ["clock"],
+    "modules-left": ["group/power", "clock", "custom/pacman"],
     "modules-center": ["hyprland/window"],
     "modules-right": [
-      // "mpris",
-      // "pulseaudio",
       "group/audio",
+      "pulseaudio/slider",
       // "idle_inhibitor",
-      "group/hardware",
+      // "group/hardware",
       // "bluetooth",
+      "cpu",
+      "memory",
       "network",
       "backlight",
     ],
@@ -38,26 +39,40 @@
 
     // "modules-left": ["group/power"],
     "modules-center": ["hyprland/workspaces"],
-    "modules-right": [
-      // "cpu",
-      // "temperature",
-      // "memory",
-      // "idle_inhibitor",
-      // "mpris",
-      // "pulseaudio",
-      "group/audio",
-      // "idle_inhibitor",
-      "group/hardware",
-      // "bluetooth",
-      "network",
-      "backlight",
-    ],
+    // "modules-right": [
+    // "cpu",
+    // "temperature",
+    // "memory",
+    // "idle_inhibitor",
+    // "mpris",
+    // "pulseaudio",
+    // "group/audio",
+    // "idle_inhibitor",
+    // "group/hardware",
+    // "bluetooth",
+    // "network",
+    // "backlight",
+    // ],
 
     "include": [
       "~/.config/waybar/modules.jsonc",
       "~/.config/waybar/settings.jsonc",
     ],
   },
+
+  // {
+  //   "name": "right",
+  //   "position": "right",
+  //   "margin-left": -64,
+  //   // "margin-bottom": 10,
+  //   "margin-right": 6,
+  //   // "margin-right": 30,
+  //   "modules-center": ["network", "battery", "cpu", "memory"],
+  //   "include": [
+  //     "~/.config/waybar/modules.jsonc",
+  //     "~/.config/waybar/settings.jsonc",
+  //   ],
+  // },
 
   {
     "name": "left",
@@ -68,7 +83,6 @@
     "margin-left": 6,
     // "margin-right": 30,
     "modules-center": ["hyprland/workspaces"],
-    "modules-left": ["group/power"],
     "include": [
       "~/.config/waybar/modules.jsonc",
       "~/.config/waybar/settings.jsonc",
@@ -97,18 +111,5 @@
       "on-click": "activate",
       "all-outputs": true,
     },
-  },
-  {
-    "name": "right",
-    "position": "right",
-    "margin-left": -64,
-    // "margin-bottom": 10,
-    "margin-right": 6,
-    // "margin-right": 30,
-    "modules-center": ["network", "battery", "cpu", "memory"],
-    "include": [
-      "~/.config/waybar/modules.jsonc",
-      "~/.config/waybar/settings.jsonc",
-    ],
   },
 ]
