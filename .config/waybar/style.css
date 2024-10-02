@@ -1,12 +1,5 @@
-@define-color bg-hover #272E32;
-@define-color lbg #2D363B;
 @define-color bg #111111;
-@define-color red #E67E80;
 @define-color fg #D3C6AA;
-@define-color green #B2C98F;
-@define-color active-green #B2C98F;
-@define-color dark-fg #9DA9A0;
-@define-color peach #f2966b;
 @define-color border #ec0101;
 /* @define-color tokyo-night-back #10111c; */
 
@@ -51,9 +44,10 @@
 
 * {
   font-family: "Fira Code Nerd Font Mono";
+  /* font-family: "Fira Code Nerd Font"; */
   /* font-family: "JetBrainsMono Nerd Font Mono"; */
   font-weight: bold;
-  font-size: 16px;
+  font-size: 20px;
   /* border-radius: 60px; */
   /* letter-spacing: 0.8px; */
   /* padding-bottom: 0px; */
@@ -66,27 +60,32 @@
 label.module {
   background-color: @bg;
   /* margin: 0 8px 0 8px; */
-  padding: 4 16px 4 16px;
-  /* padding: 4; */
+  /* padding: 4 16px 4 16px; */
+  padding: 0 16;
   /* border-radius: 60px; */
   border: 2px solid @bg;
-}
-
-.right label {
-  font-size: 36px;
-  background-color: @bg;
-  padding: 0;
 }
 
 label.module:hover {
   border: 2px solid @border-color-hover;
 }
 
+.right label {
+  font-size: 36px;
+  background-color: @transparent;
+  padding: 0;
+  border: 2px transparent;
+}
+
+.right label.module:hover {
+  border: 2px transparent;
+}
+
 box.module {
   background-color: @bg;
   /* margin: 0 8px 0 8px; */
-  /* padding: 0 16px 0 16px; top, right, bottom, left */
-  padding: 4 16px 4 16px;
+  padding: 0 16px 0 16px;
+  /* padding: 4 16px 4 16px; */
   border: 2px solid @bg;
 }
 
@@ -120,10 +119,17 @@ box.module:hover {
   border-radius: 8;
 }
 
+#power:hover {
+  background-color: @bg;
+  /* margin: 0 4px 0 4px; */
+  border: 2px solid @border-color-hover;
+  border-radius: 8;
+}
+
 #power label {
   background-color: @bg;
   margin: 0;
-  padding: 0 8;
+  padding: 1 6;
   border: 0px solid @bg;
   font-size: 24;
   border-radius: 8;
@@ -147,6 +153,25 @@ box.module:hover {
   padding: 0 8px 0 8px;
   border: 0px solid @bg;
 }
+
+#backlight {
+  padding: 0 8;
+  margin: 0;
+  font-size: 20;
+  color: @color3;
+  font-family: "Fira Code Nerd Font";
+}
+
+#backlight:hover {
+  border-bottom: 2px solid @color3;
+}
+
+#network {
+  padding: 0 8;
+  font-size: 20;
+  font-family: "Fira Code Nerd Font";
+}
+
 /* label.power { */
 /*   background-color: @bg; */
 /*   padding: 0 0px 0 0px; */
@@ -195,9 +220,8 @@ window#waybar.top {
 window#waybar {
   /* padding: 8px; */
   /* margin: 8px; */
-  /* border-bottom: 3px solid red; */
   /* background-color: @transparent; */
-  background-color: #000000;
+  background-color: rgba(0, 0, 0, 0.5);
   border-radius: 8px;
   /* background-color: @color3; */
   /* margin: 0 8px 0 8px; */
@@ -227,8 +251,12 @@ window#waybar {
   }
 }
 
-#battery.warning:not(.charging) {
-  background: #f53c3c;
+#battery {
+  font-size: 28;
+}
+
+#battery.critical:not(.charging) {
+  background: @color1;
   color: white;
   animation-name: blink;
   animation-duration: 0.5s;
@@ -258,7 +286,7 @@ window#waybar {
 }
 
 #workspaces.vertical label {
-  font-size: 38px;
+  font-size: 36px;
 }
 
 /* #workspaces:hover { */
@@ -276,9 +304,10 @@ window#waybar {
 
 #workspaces button.active {
   padding: 0 4px 0 4px;
-  background-color: @color4;
-  color: @background;
-  border: 2px solid @color4;
+  /* background-color: @color4; */
+  background-color: @bg;
+  color: @color4;
+  /* border: 2px solid @color4; */
 }
 
 #workspaces button.urgent {

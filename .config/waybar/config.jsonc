@@ -2,7 +2,7 @@
   {
     "name": "top",
     "margin-bottom": -64,
-    "margin-top": 6,
+    "margin-top": 0,
     // "margin-bottom": 16,
     "margin-left": 48,
     "margin-right": 48,
@@ -20,7 +20,6 @@
       // "bluetooth",
       "network",
       "backlight",
-      "battery",
     ],
 
     "include": [
@@ -31,7 +30,7 @@
   {
     "name": "bottom",
     "margin-top": -64,
-    "margin-bottom": 6,
+    "margin-bottom": 4,
     // "margin-left": 30,
     "margin-right": 48,
     "margin-left": 48,
@@ -52,7 +51,6 @@
       // "bluetooth",
       "network",
       "backlight",
-      "battery",
     ],
 
     "include": [
@@ -65,12 +63,16 @@
     "name": "left",
     "position": "left",
     "margin-right": -64,
-    // "margin-bottom": 10,
+    "margin-bottom": 6,
+    "margin-top": 6,
     "margin-left": 6,
     // "margin-right": 30,
     "modules-center": ["hyprland/workspaces"],
-    "modules-bottom": ["group/power"],
-    "include": ["~/.config/waybar/settings.jsonc"],
+    "modules-left": ["group/power"],
+    "include": [
+      "~/.config/waybar/modules.jsonc",
+      "~/.config/waybar/settings.jsonc",
+    ],
 
     "hyprland/workspaces": {
       "format": "{icon}",
@@ -103,34 +105,10 @@
     // "margin-bottom": 10,
     "margin-right": 6,
     // "margin-right": 30,
-    "modules-center": ["cpu"],
+    "modules-center": ["network", "battery", "cpu", "memory"],
     "include": [
       "~/.config/waybar/modules.jsonc",
       "~/.config/waybar/settings.jsonc",
     ],
-
-    "hyprland/workspaces": {
-      "format": "{icon}",
-      "format-icons": {
-        "veritcal": "󰰫",
-        "1": "󰲠",
-        "2": "󰲢",
-        "3": "󰲤",
-        "4": "󰲦",
-        "5": "󰲨",
-        "6": "󰲪",
-        "7": "󰲬",
-        "8": "󰲮",
-        "9": "󰲰",
-        "10": "󰿬",
-        // "active": "",
-        // "default": "",
-      },
-      "ignore-workspaces": ["vertical"],
-      "active-only": false,
-      "sort-by-number": true,
-      "on-click": "activate",
-      "all-outputs": true,
-    },
   },
 ]
