@@ -74,7 +74,7 @@
     "drawer": {
       "transition-duration": 300,
       "children-class": "hidden",
-      "transition-left-to-right": false,
+      "transition-left-to-right": true,
     },
     "modules": [
       "custom/power",
@@ -110,8 +110,8 @@
   },
 
   "custom/pacman": {
-    "format": "{} <span foreground='#bb9af7'>󰆧</span>",
-    "interval": 600, // 3600 every hour
+    "format": "{} <span foreground='#bb9af7'>󱑥</span>",
+    "interval": 60, // 3600 every hour
     // "exec": "pacman -Qu | wc -l", // # of updates
     "exec": "checkupdates | wc -l", // # of updates
     "exec-if": "exit 0", // always run; consider advanced run conditions
@@ -198,6 +198,7 @@
       "class<firefox> title<.*github.*>": "", // Windows whose class is "firefox" and title contains "github". Note that "class" always comes first.
       "class<kitty>": "", // Windows that contain "foot" in either class or title. For optimization reasons, it will only match against a title if at least one other window explicitly matches against a title.
       "class<kitty> title<nvim>": "", // Windows that contain "foot" in either class or title. For optimization reasons, it will only match against a title if at least one other window explicitly matches against a title.
+      "class<steam>": "󰓓",
       "code": "󰨞",
     },
     "ignore-workspaces": ["vertical"],
@@ -227,7 +228,7 @@
   },
   "pulseaudio": {
     // "format": "<span foreground='#A2C8C3'>{icon} </span> {volume}%  {format_source}",
-    "format": "<span foreground='#A2C8C3'>{icon} </span> {volume}%",
+    "format": "<span foreground='#A2C8C3'>{icon}</span>",
     "format-bluetooth": "<span foreground='#DBBC7F'>{icon}</span> {volume}%  {format_source}",
     "format-bluetooth-muted": "<span foreground='#D699B6'>󰖁</span>  {format_source}",
     "format-muted": "<span foreground='#7A8478'>󰖁</span>  {format_source}",
@@ -239,8 +240,14 @@
       "portable": "",
       "default": ["", "", ""],
     },
+    "tooltip-format": "{volume}% | {desc}",
     "on-click-left": "pavucontrol",
     "input": true,
+  },
+  "pulseaudio/slider": {
+    "min": 0,
+    "max": 100,
+    "orientation": "horizontal",
   },
   "custom/playerctl": {
     "format": "{icon}  <span>{}</span>",
