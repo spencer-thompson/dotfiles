@@ -1,11 +1,12 @@
 [
   {
     "name": "top",
-    "margin-bottom": -64,
+    "height": 32,
+    "margin-bottom": -16,
     "margin-top": 0,
     // "margin-bottom": 16,
-    "margin-left": 48,
-    "margin-right": 48,
+    "margin-left": 32,
+    "margin-right": 32,
     // "margin-right": 30,
     "position": "top",
 
@@ -30,8 +31,9 @@
   },
   {
     "name": "bottom",
-    "margin-top": -64,
-    "margin-bottom": 4,
+    "height": 32,
+    "margin-top": -16,
+    "margin-bottom": 8,
     // "margin-left": 30,
     "margin-right": 48,
     "margin-left": 48,
@@ -58,58 +60,5 @@
       "~/.config/waybar/modules.jsonc",
       "~/.config/waybar/settings.jsonc",
     ],
-  },
-
-  // {
-  //   "name": "right",
-  //   "position": "right",
-  //   "margin-left": -64,
-  //   // "margin-bottom": 10,
-  //   "margin-right": 6,
-  //   // "margin-right": 30,
-  //   "modules-center": ["network", "battery", "cpu", "memory"],
-  //   "include": [
-  //     "~/.config/waybar/modules.jsonc",
-  //     "~/.config/waybar/settings.jsonc",
-  //   ],
-  // },
-
-  {
-    "name": "left",
-    "position": "left",
-    "margin-right": -64,
-    "margin-bottom": 6,
-    "margin-top": 6,
-    "margin-left": 6,
-    // "margin-right": 30,
-    "modules-center": ["hyprland/workspaces"],
-    "include": [
-      "~/.config/waybar/modules.jsonc",
-      "~/.config/waybar/settings.jsonc",
-    ],
-
-    "hyprland/workspaces": {
-      "format": "{icon}",
-      "format-icons": {
-        "veritcal": "󰰫",
-        "1": "󰲠",
-        "2": "󰲢",
-        "3": "󰲤",
-        "4": "󰲦",
-        "5": "󰲨",
-        "6": "󰲪",
-        "7": "󰲬",
-        "8": "󰲮",
-        "9": "󰲰",
-        "10": "󰿬",
-        // "active": "",
-        // "default": "",
-      },
-      "ignore-workspaces": ["vertical"],
-      "active-only": false,
-      "sort-by-number": true,
-      "on-click": "activate",
-      "all-outputs": true,
-    },
   },
 ]

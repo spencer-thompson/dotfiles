@@ -119,7 +119,7 @@ box.module:hover {
   /* background-color: @bg; */
   background-color: @transprant;
   /* margin: 0 4px 0 4px; */
-  border: 2px solid red;
+  border: 2px solid @color17;
   border-radius: 4;
 }
 
@@ -130,7 +130,7 @@ box.module:hover {
   /* padding: 1 6; */
   padding: 0 14;
   border: 2px transparent;
-  font-size: 28;
+  font-size: 26;
   border-radius: 4;
 }
 
@@ -139,9 +139,10 @@ box.module:hover {
   border: 2px transparent;
   border-top: 2px solid @color5;
   /* margin: 0 8px 0 8px; */
-  /* padding: 0 16px 0 16px; */
-  font-size: 28;
+  padding: 0 8px 0 8px;
+  font-size: 20;
   /* padding: 0 8px 0 8px; */
+  font-family: "Fira Code Nerd Font";
 }
 
 #audio {
@@ -162,7 +163,6 @@ box.module:hover {
   background-color: @transprant;
   border: 2px transparent;
   /* padding: 0 0px 0 0px; */
-  /* font-size: 28; */
   padding: 0 8px 0 8px;
 }
 
@@ -174,6 +174,10 @@ box.module:hover {
   border-top: 2px solid @color5;
   font-family: "JetBrainsMono Nerd Font";
   font-weight: 500;
+}
+
+#pulseaudio-slider {
+  border-top: 2px solid @color5;
 }
 
 #pulseaudio-slider slider {
@@ -236,7 +240,7 @@ box.module:hover {
 #backlight {
   padding: 0 8;
   margin: 0;
-  font-size: 20;
+  font-size: 26;
   color: @color3;
   font-family: "Fira Code Nerd Font";
 }
@@ -247,7 +251,7 @@ box.module:hover {
 
 #network {
   padding: 0 8;
-  font-size: 28;
+  font-size: 26;
   /* font-family: "Fira Code Nerd Font"; */
   border-top: 2px solid @color7;
 }

@@ -5,8 +5,8 @@ alias \
 	ls="eza --icons=auto --group-directories-first" \
 	ll="eza --color=always -lah --git --no-filesize --icons=always --no-user --no-permissions --group-directories-first" \
 	tree="eza --tree" \
-	cat="bat" \
-    vim="nvim"
+	vim="nvim"
+	# cat="bat" \
 
 # Verbosity and settings that you pretty much just always are going to want.
 alias \
