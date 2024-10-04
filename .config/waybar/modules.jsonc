@@ -64,7 +64,7 @@
     "drawer": {
       "transition-duration": 500,
       "children-class": "hidden",
-      "transition-left-to-right": false,
+      "transition-left-to-right": true,
     },
     "modules": ["pulseaudio", "mpris"],
   },
@@ -87,25 +87,29 @@
 
   "custom/power": {
     "format": "<span foreground='#f7768e'>󰐥</span>",
-    "tooltip": false,
+    "tooltip": true,
+    "tooltip-format": "Power",
     "on-click": "systemctl poweroff",
   },
 
   "custom/lock": {
     "format": "<span foreground='#7aa2f7'>󰍁</span>",
-    "tooltip": false,
+    "tooltip": true,
+    "tooltip-format": "Lock",
     "on-click": "hyprlock",
   },
 
   "custom/reboot": {
     "format": "<span foreground='#e0af68'>󰜉</span>",
-    "tooltip": false,
+    "tooltip": true,
+    "tooltip-format": "Reboot",
     "on-click": "systemctl reboot",
   },
 
   "custom/exit": {
     "format": "<span foreground='#bb9af7'>󰗼</span>",
-    "tooltip": false,
+    "tooltip": true,
+    "tooltip-format": "Exit",
     "on-click": "hyprctl dispatch exit",
   },
 
@@ -113,7 +117,7 @@
     "format": "{} <span foreground='#bb9af7'>󱑥</span>",
     "interval": 60, // 3600 every hour
     // "exec": "pacman -Qu | wc -l", // # of updates
-    "exec": "checkupdates | wc -l", // # of updates
+    "exec": "checkupdates | wc -l | sed 's/^0$//'", // # of updates
     "exec-if": "exit 0", // always run; consider advanced run conditions
     // "on-click": "termite -e 'sudo pacman -Syu'; pkill -SIGRTMIN+8 waybar", // update system
     "signal": 8,
@@ -145,8 +149,9 @@
 
   "temperature": {
     "critical-threshold": 80,
-    "format": "<span foreground='#D699B6'> </span> {temperatureC}°C",
-    "format-icons": ":heat",
+    "format": "{icon}",
+    // "format": "{icon}{temperatureC}°C",
+    "format-icons": ["󰝦", "󰪞", "󰪟", "󰪠", "󰪡", "󰪢", "󰪣", "󰪤", "󰪥"],
     "interval": 1,
   },
 
@@ -159,11 +164,18 @@
     "tooltip": true,
   },
 
+  "backlight/slider": {
+    "min": 0,
+    "max": 100,
+    "orientation": "horizontal",
+    // "device": "amdgpu_bl2",
+  },
+
   "battery": {
     "bat": "BAT0",
     "interval": 60,
     "states": {
-      "warning": 30,
+      "warning": 35,
       "critical": 15,
     },
     "format": "{icon}",
@@ -315,6 +327,8 @@
       "activated": "󰛊",
       "deactivated": "󰾫",
     },
+    "tooltip-format-activated": "Idle Inhibitor | On",
+    "tooltip-format-deactivated": "Idle Inhibitor | Off",
   },
 
   "bluetooth": {
