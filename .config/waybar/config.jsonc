@@ -1,7 +1,7 @@
 [
   {
     "name": "top",
-    "height": 32,
+    "height": 48,
     "margin-bottom": -16,
     "margin-top": 0,
     // "margin-bottom": 16,
@@ -10,18 +10,25 @@
     // "margin-right": 30,
     "position": "top",
 
-    "modules-left": ["group/power", "clock", "custom/pacman"],
+    "modules-left": [
+      "group/power",
+      "clock",
+      "custom/pacman",
+      "pulseaudio/slider",
+      "group/audio",
+    ],
     "modules-center": ["hyprland/window"],
     "modules-right": [
-      "group/audio",
-      "pulseaudio/slider",
       // "idle_inhibitor",
       // "group/hardware",
       // "bluetooth",
+      "backlight",
+      "backlight/slider",
       "cpu",
+      // "temperature",
       "memory",
       "network",
-      "backlight",
+      "battery",
     ],
 
     "include": [
@@ -31,7 +38,7 @@
   },
   {
     "name": "bottom",
-    "height": 32,
+    "height": 48,
     "margin-top": -16,
     "margin-bottom": 8,
     // "margin-left": 30,

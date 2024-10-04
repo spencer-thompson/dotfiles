@@ -58,10 +58,10 @@ label.module {
   /* border-radius: 60px; */
 }
 
-label.module:hover {
-  border: 2px solid @border-color-hover;
-  border-radius: 4;
-}
+/* label.module:hover { */
+/*   border: 2px solid @border-color-hover; */
+/*   border-radius: 4; */
+/* } */
 
 .right label {
   font-size: 36px;
@@ -119,8 +119,8 @@ box.module:hover {
   /* background-color: @bg; */
   background-color: @transprant;
   /* margin: 0 4px 0 4px; */
-  border: 2px solid @color17;
-  border-radius: 4;
+  /* border: 2px solid @color17; */
+  /* border-radius: 4; */
 }
 
 #power label {
@@ -139,10 +139,11 @@ box.module:hover {
   border: 2px transparent;
   border-top: 2px solid @color5;
   /* margin: 0 8px 0 8px; */
-  padding: 0 8px 0 8px;
-  font-size: 20;
   /* padding: 0 8px 0 8px; */
-  font-family: "Fira Code Nerd Font";
+  padding: 0;
+  font-size: 32;
+  /* padding: 0 8px 0 8px; */
+  /* font-family: "Fira Code Nerd Font"; */
 }
 
 #audio {
@@ -151,13 +152,13 @@ box.module:hover {
   border-top: 2px solid @color5;
   /* margin: 0 8px 0 8px; */
   /* padding: 0 16px 0 16px; */
-  padding: 0 8px 0 8px;
+  padding: 0 4px 0 4px;
 }
 
-#audio:hover {
-  border: 2px solid @border-color-hover;
-  border-radius: 4;
-}
+/* #audio:hover { */
+/*   border: 2px solid @border-color-hover; */
+/*   border-radius: 4; */
+/* } */
 
 #audio label {
   background-color: @transprant;
@@ -174,6 +175,35 @@ box.module:hover {
   border-top: 2px solid @color5;
   font-family: "JetBrainsMono Nerd Font";
   font-weight: 500;
+}
+
+#backlight-slider {
+  border-top: 2px solid @color3;
+}
+
+#backlight-slider slider {
+  min-height: 0px;
+  min-width: 0px;
+  opacity: 0;
+  background-image: none;
+  background-color: transparent;
+  border: 2px transparent;
+  /* box-shadow: 1 10 1 rgba(0, 0, 0, 1.5); */
+  color: transparent;
+}
+#backlight-slider trough {
+  min-height: 10px;
+  min-width: 160px;
+  border-radius: 5px;
+  background-color: black;
+  border: 2px transparent;
+  border: 2px solid @color0;
+}
+#backlight-slider highlight {
+  min-width: 10px;
+  border-radius: 5px;
+  background-color: @color3;
+  border: 2px @color0;
 }
 
 #pulseaudio-slider {
@@ -201,14 +231,14 @@ box.module:hover {
 #pulseaudio-slider highlight {
   min-width: 10px;
   border-radius: 5px;
-  background-color: @color6;
+  background-color: @color5;
   border: 2px @color0;
 }
 
-#pulseaudio {
-  background-color: @transprant;
-  border: 2px transparent;
-}
+/* #pulseaudio { */
+/*   background-color: @transprant; */
+/*   border: 2px transparent; */
+/* } */
 
 #clock {
   background-color: @transprant;
@@ -224,8 +254,8 @@ box.module:hover {
   border: 2px transparent;
   /* padding: 0 0px 0 0px; */
   color: @color14;
-  font-size: 30;
-  padding: 0 10px;
+  font-size: 36;
+  padding: 0 12px;
 }
 
 #memory {
@@ -233,26 +263,36 @@ box.module:hover {
   border: 2px transparent;
   /* padding: 0 0px 0 0px; */
   color: @color10;
-  font-size: 30;
-  padding: 0 10px;
+  font-size: 36;
+  padding: 0 12px;
 }
 
 #backlight {
   padding: 0 8;
+  font-size: 32;
+  /* font-family: "Fira Code Nerd Font"; */
   margin: 0;
-  font-size: 26;
+  font-size: 32;
   color: @color3;
-  font-family: "Fira Code Nerd Font";
+  /* font-family: "Fira Code Nerd Font"; */
+  border-top: 2px solid @color3;
 }
 
 #backlight:hover {
-  border-bottom: 2px solid @color3;
+  border: 2px transparent;
+  border-top: 2px solid @color3;
 }
 
 #network {
-  padding: 0 8;
-  font-size: 26;
+  padding: 0 12px;
+  font-size: 32;
   /* font-family: "Fira Code Nerd Font"; */
+  border-top: 2px solid @color7;
+}
+
+#battery {
+  padding: 0 14;
+  font-size: 18;
   border-top: 2px solid @color7;
 }
 
@@ -336,9 +376,9 @@ window#waybar {
 }
 
 #window:hover {
-  border: 2px solid @color4;
+  /* border: 2px solid @color4; */
   border-top: 2px solid @color4;
-  border-radius: 4;
+  /* border-radius: 4; */
 }
 
 /* window#waybar.firefox { */
@@ -358,17 +398,25 @@ window#waybar {
 
 @keyframes blink {
   to {
-    background-color: #ffffff;
-    color: black;
+    /* background-color: #ffffff; */
+    color: @color17;
+    border-top: 2px solid @color17;
   }
 }
 
-#battery {
-  font-size: 28;
+#battery.warning:not(.charging) {
+  /* background: @color1; */
+  color: @color3;
+  border-top: 2px solid @color3;
+  /* animation-name: blink; */
+  /* animation-duration: 0.5s; */
+  /* animation-timing-function: steps(12); */
+  /* animation-iteration-count: infinite; */
+  /* animation-direction: alternate; */
 }
 
 #battery.critical:not(.charging) {
-  background: @color1;
+  /* background: @color1; */
   color: white;
   animation-name: blink;
   animation-duration: 0.5s;
