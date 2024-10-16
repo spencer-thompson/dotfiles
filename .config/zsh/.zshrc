@@ -105,24 +105,24 @@ function aiclip() {
 # plugins
 
 
-source /usr/share/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh
-ZVM_INIT_MODE=sourcing
-
-ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
-ZVM_VI_VISUAL_ESCAPE_BINDKEY=jk
-# zvm_after_init_commands+=('[ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh')
-
-function zvm_config() {
-    ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT
-    # ZVM_VI_INSERT_ESCAPE_BINDKEY=\;\;
-    ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
-    ZVM_VI_VISUAL_ESCAPE_BINDKEY=jk
-    ZVM_CURSOR_STYLE_ENABLED=false
-    ZVM_VI_EDITOR=nvim
-    # export KEYTIMEOUT=1
-}
-
-zvm_after_init_commands+=(eval "$(atuin init zsh)")
+# source /usr/share/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+# ZVM_INIT_MODE=sourcing
+#
+# ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
+# ZVM_VI_VISUAL_ESCAPE_BINDKEY=jk
+# # zvm_after_init_commands+=('[ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh')
+#
+# function zvm_config() {
+#     ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT
+#     # ZVM_VI_INSERT_ESCAPE_BINDKEY=\;\;
+#     ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
+#     ZVM_VI_VISUAL_ESCAPE_BINDKEY=jk
+#     ZVM_CURSOR_STYLE_ENABLED=false
+#     ZVM_VI_EDITOR=nvim
+#     # export KEYTIMEOUT=1
+# }
+#
+# zvm_after_init_commands+=(eval "$(atuin init zsh)")
 
 
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -147,4 +147,5 @@ eval "$(zoxide init zsh)"
 eval "$(atuin init zsh)"
 eval "$(direnv hook zsh)"
 
+toilet -f univers -F metal "spence" | sed '1,4 d; s/^/ /'
 fastfetch
