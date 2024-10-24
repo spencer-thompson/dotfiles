@@ -211,6 +211,7 @@
       "class<firefox> title<.*Gmail.*>": "󰊫",
       "class<kitty>": "", // Windows that contain "foot" in either class or title. For optimization reasons, it will only match against a title if at least one other window explicitly matches against a title.
       "class<kitty> title<nvim>": "", // Windows that contain "foot" in either class or title. For optimization reasons, it will only match against a title if at least one other window explicitly matches against a title.
+      "class<org.pwmt.zathura>": "󰰸",
       "class<steam>": "󰓓",
       "code": "󰨞",
     },
