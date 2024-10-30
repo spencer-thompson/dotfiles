@@ -99,6 +99,13 @@ function aiclip() {
     printf "Context: [%s]\n\nUsing the context, %s concisely and effectively\n" "$(wl-paste)" "$1" | ollama run llama3.1
 }
 
+function ai() {
+    # input="$([ ! -t 0 ] && cat | vipe --suffix md || vipe --suffix md)"
+    [ ! -t 0 ] && cat | vipe --suffix md | { read input; } || vipe --suffix md | { read input; }
+    pattern="$(fabric -l | fzf --preview 'bat --style=plain --language=markdown --color=always ~/.config/fabric/patterns/{}/system.md' --preview-window=right:70%)"
+    fabric -m gpt-4o -s --pattern=$pattern $input
+}
+
 # Aliases
 [ -f "${XDG_CONFIG_HOME}/shell/aliases.sh" ] && source "${XDG_CONFIG_HOME}/shell/aliases.sh"
 
