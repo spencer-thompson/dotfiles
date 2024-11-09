@@ -45,12 +45,6 @@ function yy() {
     rm -f -- "$tmp"
 }
 
-function nushell_oneshot() {
-    nu
-    # zle reset-prompt
-}
-
-zle -N nushell_oneshot
 
 function update() {
     echo -e "\e[1;35mUpdating Mirror List\e[0m"
@@ -83,8 +77,16 @@ function venv() {
     fi
 }
 
+function goto_dir_open_nvim() {
+    zi; nvim
+    zle reset-prompt
+}
+
+zle -N goto_dir_open_nvim
+
 # custom binds
-bindkey '^n' nushell_oneshot
+bindkey '^n' goto_dir_open_nvim
+# bindkey '^n' nushell_oneshot
 
 function ide() {
     neovide

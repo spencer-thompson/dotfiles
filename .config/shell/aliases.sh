@@ -36,6 +36,8 @@ alias killbg='kill ${${(v)jobstates##*:*:}%=*}'
 
 alias cd="z"
 
+alias q="qalc"
+
 # directories
 alias ..="cd .." \
       ...="cd ../.." \
