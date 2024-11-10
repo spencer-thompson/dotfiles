@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# global aliases
+alias -g NV=' |& nvim - +"setlocal buftype=nofile"'
+alias -g LL=' |& less'
+
 alias \
 	ordm="ollama run dolphin-mistral" \
 	ls="eza --icons=auto --group-directories-first" \

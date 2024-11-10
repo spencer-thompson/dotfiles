@@ -1,7 +1,7 @@
 # Zoomer shell
 
 # Enable colors and change prompt
-# autoload -U colors && colors	# Load colors
+autoload -U colors && colors	# Load colors
 # PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
 setopt autocd		# Automatically cd into typed directory.
 stty stop undef		# Disable ctrl-s to freeze terminal.
@@ -150,12 +150,12 @@ export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
 export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
-  --color=fg:#d0d0d0,fg+:#d0d0d0,bg:-1,bg+:-1
-  --color=hl:#5f87af,hl+:#5fd7ff,info:#afaf87,marker:#87ff00
-  --color=prompt:#d7005f,spinner:#af5fff,pointer:#af5fff,header:#87afaf
-  --color=border:#262626,label:#aeaeae,query:#d9d9d9
-  --preview-window="border-rounded" --prompt="-> " --marker="<>" --pointer="=>"
-  --separator="─" --scrollbar="│" --layout="reverse" --info="right"'
+--color=fg:#d0d0d0,fg+:#d0d0d0,bg:-1,bg+:-1
+--color=hl:#5f87af,hl+:#5fd7ff,info:#afaf87,marker:#87ff00
+--color=prompt:#d7005f,spinner:#af5fff,pointer:#af5fff,header:#87afaf
+--color=border:#262626,label:#aeaeae,query:#d9d9d9
+--preview-window="border-rounded" --prompt="-> " --marker="<>" --pointer="=>"
+--separator="─" --scrollbar="│" --layout="reverse" --info="right"'
 export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
 export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
 
@@ -163,27 +163,27 @@ export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
 # - The first argument to the function is the name of the command.
 # - You should make sure to pass the rest of the arguments to fzf.
 _fzf_comprun() {
-  local command=$1
-  shift
+    local command=$1
+    shift
 
-  case "$command" in
-    cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
-    export|unset) fzf --preview "eval 'echo $'{}"         "$@" ;;
-    ssh)          fzf --preview 'dig {}'                   "$@" ;;
-    *)            fzf --preview "bat -n --color=always --line-range :500 {}" "$@" ;;
-  esac
+    case "$command" in
+        cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
+        export|unset) fzf --preview "eval 'echo $'{}"         "$@" ;;
+        ssh)          fzf --preview 'dig {}'                   "$@" ;;
+        *)            fzf --preview "bat -n --color=always --line-range :500 {}" "$@" ;;
+    esac
 }
 
 # Use fd (https://github.com/sharkdp/fd) for listing path candidates.
 # - The first argument to the function ($1) is the base path to start traversal
 # - See the source code (completion.{bash,zsh}) for the details.
 _fzf_compgen_path() {
-  fd --hidden --exclude .git . "$1"
+    fd --hidden --exclude .git . "$1"
 }
 
 # Use fd to generate the list for directory completion
 _fzf_compgen_dir() {
-  fd --type=d --hidden --exclude .git . "$1"
+    fd --type=d --hidden --exclude .git . "$1"
 }
 
 source "$HOME/.env"
@@ -191,6 +191,8 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # Bat theme
 export BAT_THEME=tokyonight_night
+export MANPAGER="less -R --use-color -Dd+r -Du+b"
+export GROFF_NO_SGR=1
 
 eval "$(starship init zsh)"
 eval "$(fzf --zsh)"
