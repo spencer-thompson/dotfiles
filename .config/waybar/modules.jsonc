@@ -189,6 +189,7 @@
     "format": "  {icon} {windows} ",
     "format-icons": {
       "veritcal": "",
+      "steam": "汽",
       "1": "一",
       "2": "二",
       "3": "三",
