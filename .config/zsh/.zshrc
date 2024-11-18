@@ -77,15 +77,16 @@ function venv() {
     fi
 }
 
-function goto_dir_open_nvim() {
-    zi; nvim
+function dir_open_nvim() {
+    # zi; nvim
+    nvim
     zle reset-prompt
 }
 
-zle -N goto_dir_open_nvim
+zle -N dir_open_nvim
 
 # custom binds
-bindkey '^n' goto_dir_open_nvim
+bindkey '^n' dir_open_nvim
 # bindkey '^n' nushell_oneshot
 
 function ide() {
