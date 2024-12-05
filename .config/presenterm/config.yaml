@@ -1,3 +1,5 @@
 snippet:
   exec:
     enable: true
+  exec_replace:
+    enable: true
