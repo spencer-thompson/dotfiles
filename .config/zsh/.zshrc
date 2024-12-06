@@ -203,3 +203,4 @@ eval "$(direnv hook zsh)"
 
 toilet -f univers -F metal "spencer" | sed '1,4 d; s/^/ /'
 fastfetch
+curl "wttr.in/?0pQ"
