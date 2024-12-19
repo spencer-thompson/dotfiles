@@ -241,8 +241,9 @@ box.module:hover {
 /* } */
 
 #clock {
+  border-top: 2px solid @color17;
   background-color: @transprant;
-  border: 2px transparent;
+  /* border: 2px transparent; */
 }
 
 #clock {
@@ -251,20 +252,25 @@ box.module:hover {
 
 #cpu {
   background-color: @transprant;
+  /* border-top: 2px solid @color17; */
   border: 2px transparent;
   /* padding: 0 0px 0 0px; */
-  color: @color14;
-  font-size: 36;
+  color: @color17;
+  font-size: 24;
   padding: 0 12px;
+  font-weight: 300;
+  letter-spacing: -4px;
 }
 
 #memory {
   background-color: @transprant;
   border: 2px transparent;
   /* padding: 0 0px 0 0px; */
-  color: @color10;
-  font-size: 36;
+  color: @color17;
+  font-size: 24;
   padding: 0 12px;
+  font-weight: 300;
+  letter-spacing: -4px;
 }
 
 #backlight {
@@ -287,7 +293,7 @@ box.module:hover {
   padding: 0 12px;
   font-size: 32;
   /* font-family: "Fira Code Nerd Font"; */
-  border-top: 2px solid @color7;
+  /* border-top: 2px solid @color7; */
 }
 
 #battery {

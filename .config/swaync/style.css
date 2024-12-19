@@ -1,0 +1,291 @@
+@define-color foreground #a9b1d6;
+@define-color background #10111c;
+
+@define-color bg #111111;
+@define-color fg #D3C6AA;
+
+/* # normal */
+@define-color color0 #15161e;
+@define-color color1 #f7768e;
+@define-color color2 #9ece6a;
+@define-color color3 #e0af68;
+@define-color color4 #7aa2f7;
+@define-color color5 #bb9af7;
+@define-color color6 #7dcfff;
+@define-color color7 #a9b1d6;
+
+/* # bright */
+@define-color color8 #414868;
+@define-color color9 #f7768e;
+@define-color color10 #9ece6a;
+@define-color color11 #e0af68;
+@define-color color12 #7aa2f7;
+@define-color color13 #bb9af7;
+@define-color color14 #7dcfff;
+@define-color color15 #c0caf5;
+
+/* # extended colors */
+@define-color color16 #ff9e64;
+@define-color color17 #db4b4b;
+
+/* * { */
+/*   all: unset; */
+/* } */
+
+* {
+  /* font-size: 20px; */
+  font-family: "JetBrainsMono Nerd Font Mono";
+  transition: 100ms;
+  /* padding: 4px; */
+  box-shadow: unset;
+}
+
+.control-center {
+  /* background: alpha(@bg, 0.9); */
+
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 24px;
+  border: 0px solid @foreground;
+  margin: 2px;
+  padding: 1rem;
+}
+
+.notification box {
+  border: unset;
+}
+
+.notification-row {
+  padding: 4px;
+  outline: none;
+}
+
+.notification-row:focus,
+.notification-row:hover {
+  background: alpha(@color7, 0.5); /* @noti-bg-focus */
+}
+
+.notification-row
+  .notification-background
+  .notification
+  .notification-action:hover,
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action:hover {
+  background: alpha(@color8, 0.5);
+  border: 2px solid @color1;
+}
+
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content
+  .image {
+  /* Notification Primary Image */
+  border-radius: 100px;
+  /* Size in px */
+  margin: 4px;
+  padding: 8px;
+}
+
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content
+  .text-box
+  .summary {
+  /* Notification summary/title */
+  font-size: 16px;
+  font-weight: bold;
+  background: transparent;
+  color: alpha(@color7, 1);
+  text-shadow: none;
+  padding: 4px;
+}
+
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content
+  .text-box
+  .time {
+  /* Notification time-ago */
+  font-size: 16px;
+  font-weight: bold;
+  background: transparent;
+  color: alpha(@color7, 1); /* @text-color */
+  text-shadow: none;
+  margin-right: 30px;
+  padding: 4px;
+}
+
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content
+  .text-box
+  .body {
+  /* Notification body */
+  /* font-size: 15px; */
+  font-weight: normal;
+  background: transparent;
+  color: alpha(@color15, 1);
+  text-shadow: none;
+  padding: 4px;
+}
+
+.notification {
+  background-color: alpha(@color0, 0.6);
+  border-radius: 20px;
+  border: 2px solid transparent;
+  /* border-style: solid; */
+  /* border-width: 1px; */
+  font-size: 12px;
+  /* padding: 8px; */
+}
+
+/* .notification { */
+/*   background-color: alpha(@color0, 0.6); */
+/*   border-radius: 20px; */
+/*   border: 2px solid @color17; */
+/*   font-size: 12px; */
+/*   padding: 8px; */
+/* } */
+
+/* Title widget */
+.widget-title {
+  margin: 8px;
+  font-size: 2rem;
+  font-weight: 700;
+  background: alpha(@color0, 0);
+}
+.widget-title > button {
+  font-size: 1.5rem;
+  color: @color7;
+  text-shadow: none;
+  background: alpha(@background, 0);
+  border: 2px solid alpha(@color7, 0.5);
+  box-shadow: none;
+  border-radius: 12px;
+}
+.widget-title > button:hover {
+  background: @color1;
+}
+
+.widget-label {
+  background: @color0;
+  font-size: 2rem;
+  padding: 20px;
+  padding-bottom: 50px;
+  border-radius: 20px;
+}
+
+/* DND widget */
+.widget-dnd {
+  background-color: transparent;
+}
+.widget-dnd > switch {
+  font-size: initial;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid @color0;
+  box-shadow: none;
+}
+.widget-dnd > switch:checked {
+  background: @color3;
+}
+.widget-dnd > switch slider {
+  background: @color1;
+  border-radius: 12px;
+}
+
+/* Volume widget */
+trough {
+  border-radius: 20px;
+  /* background: @background; */
+  /* background: alpha(@color0, 0.8); */
+  background: alpha(@color8, 0.3);
+  border: 1px solid @background;
+}
+
+trough highlight {
+  /* ´trough´ is the background of the slider, ´highlight´ is the actual slider */
+  padding-top: 1px;
+  background: @color1;
+  border: 1px solid @color1;
+  border-radius: 20px;
+}
+
+trough slider {
+  padding: 1px;
+  background: @color1;
+  border: 1px solid @color1;
+}
+
+trough slider:hover {
+  padding: 1px;
+  background: @color3;
+}
+
+.widget-volume {
+  background-color: alpha(@color0, 0.6);
+  border-radius: 20px;
+  font-size: 2rem;
+  margin-left: 16px;
+  margin-right: 16px;
+  /* padding-bottom: 5px; */
+  padding: 1rem;
+  border: 0px solid transparent;
+}
+
+/* Buttons widget */
+.widget-buttons-grid {
+  /* font-size: 50px; */
+  font-size: 20px;
+  background: alpha(@color0, 0.6);
+  font-family: "JetBrainsMono Nerd Font Mono";
+  border-radius: 20px;
+  padding: 8px;
+  /* margin: 4px; */
+  /* margin-left: 10px; */
+  /* margin-right: 10px; */
+  border: 0px solid transparent;
+  /* padding-left: 5px; */
+  /* margin-left: 10px; */
+  /* margin-right: 10px; */
+  /* border-radius: 20px; */
+  /* padding-top: 10px; */
+  /* padding-bottom: 10px; */
+  /* padding: 1rem; */
+  /* background-color: alpha(@background, 0.9); */
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button {
+  /* font-size: 30px; */
+  /* padding: 10px; */
+  /* background: @color8; */
+  background: alpha(@color8, 0.3);
+  color: @color1;
+  border-radius: 20px;
+  margin: 2px;
+  padding: 4px;
+  border: 0px solid #04030a;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button:hover {
+  background: @color6;
+  color: @color0;
+  transition: all 0.1s ease-in-out;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button label {
+  font-family: "JetBrainsMono Nerd Font Mono";
+  font-size: 2.4rem;
+  /* padding: 0.4rem; */
+  /* margin: 2px; */
+  /* color: #e4e1e6; */
+}

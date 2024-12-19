@@ -1,0 +1,73 @@
+{
+  "$schema": "$XDG_CONFIG_HOME/swaync/configSchema.json",
+
+  "positionX": "right",
+  "positionY": "top",
+  "layer": "overlay",
+  "cssPriority": "application",
+  "notification-icon-size": 64,
+  "notification-window-width": 400,
+  "control-center-margin-top": 32,
+  "control-center-margin-bottom": 32,
+  "control-center-margin-right": 32,
+  "control-center-margin-left": 32,
+
+  "widgets": [
+    "title",
+    "dnd",
+    "volume",
+    "mpris",
+    "backlight",
+    "buttons-grid",
+    "notifications"
+  ],
+
+  "widget-config": {
+    "title": {
+      "text": "Notifications",
+      "clear-all-button": true,
+      "button-text": "Clear"
+    },
+    "dnd": {
+      "text": " "
+    },
+    "label": {
+      "max-lines": 2,
+      "text": "Notification"
+    },
+    "mpris": {
+      "image-size": 50,
+      "image-radius": 10
+    },
+    "volume": {
+      "label": "󰕿 "
+    },
+    "backlight": {
+      "label": "󰃟"
+    },
+    "buttons-grid": {
+      "actions": [
+        {
+          "label": "󰤥",
+          "command": "hyprctl dispatch exec -- '[float; center; size 768 768]' kitty -e nmtui"
+        },
+        {
+          "label": "󰖁",
+          "command": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+        },
+        {
+          "label": "󰐥",
+          "command": "systemctl poweroff"
+        },
+        {
+          "label": "󰍁",
+          "command": "hyprlock"
+        },
+        {
+          "label": "󰜉",
+          "command": "systemctl reboot"
+        }
+      ]
+    }
+  }
+}
