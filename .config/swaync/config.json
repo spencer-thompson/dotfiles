@@ -9,7 +9,7 @@
   "notification-window-width": 400,
   "control-center-margin-top": 32,
   "control-center-margin-bottom": 32,
-  "control-center-margin-right": 32,
+  "control-center-margin-right": 64,
   "control-center-margin-left": 32,
 
   "widgets": [
@@ -29,7 +29,7 @@
       "button-text": "Clear"
     },
     "dnd": {
-      "text": " "
+      "text": "Do Not Disturb"
     },
     "label": {
       "max-lines": 2,
