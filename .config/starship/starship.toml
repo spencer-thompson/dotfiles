@@ -1,25 +1,32 @@
 # Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
 
-add_newline = false
-continuation_prompt = "[▎ ](dimmed white)"
-format = """$battery$shell$directory$character"""
+add_newline = true
+# continuation_prompt = "[▎│ ](dimmed white)"
+continuation_prompt = "[∙ ](dimmed white)"
+format = """[┌ ](green)$battery$shell$all\
+[└ ](green)$directory$character"""
 
-right_format = """$all"""
+# right_format = """$all"""
 
 [fill]
 symbol = ' '
 
+# [character]
+# success_symbol = "[│](bold green)"
+# # success_symbol = "[║](bold green)"
+# # success_symbol = "[󰅂󱋱](bold green)"
+# # error_symbol = "[󰇝](bold red)"
+# error_symbol = "[┊](bold red)"
+# # error_symbol = "[┋](bold red)"
+# vimcmd_symbol = "[](bold green)"
+# # vimcmd_symbol = "[├](bold bright-green)"
+# # vimcmd_symbol = "[󰅁󰇝](bold green)"
+
 [character]
-success_symbol = "[│](bold green)"
-# success_symbol = "[║](bold green)"
-# success_symbol = "[󰅂󱋱](bold green)"
-# error_symbol = "[󰇝](bold red)"
-error_symbol = "[┊](bold red)"
-# error_symbol = "[┋](bold red)"
-vimcmd_symbol = "[](bold green)"
-# vimcmd_symbol = "[├](bold bright-green)"
-# vimcmd_symbol = "[󰅁󰇝](bold green)"
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
+vimcmd_symbol = "[❮](purple)"
 
 # [package]
 # disabled = true
