@@ -16,11 +16,11 @@
       // "pulseaudio/slider",
       // "group/audio",
       // "custom/pacman",
+      // "battery",
       "cpu",
-      "battery",
     ],
     // "modules-center": ["hyprland/window"],
-    "modules-center": ["clock"],
+    "modules-center": ["battery", "network", "clock"],
     "modules-right": [
       // "idle_inhibitor",
       // "group/hardware",
@@ -30,8 +30,8 @@
       // "cpu",
       // "temperature",
       // "battery",
+      // "network",
       "memory",
-      "network",
     ],
 
     "include": [

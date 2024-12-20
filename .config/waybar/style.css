@@ -263,6 +263,7 @@ box.module:hover {
 }
 
 #memory {
+  /* white-space: pre; */
   background-color: @transprant;
   border: 2px transparent;
   /* padding: 0 0px 0 0px; */
@@ -292,6 +293,7 @@ box.module:hover {
 #network {
   padding: 0 12px;
   font-size: 32;
+  border-top: 2px solid @color17;
   /* font-family: "Fira Code Nerd Font"; */
   /* border-top: 2px solid @color7; */
 }
@@ -299,7 +301,7 @@ box.module:hover {
 #battery {
   padding: 0 14;
   font-size: 18;
-  border-top: 2px solid @color7;
+  border-top: 2px solid @color17;
 }
 
 /* label.power { */
