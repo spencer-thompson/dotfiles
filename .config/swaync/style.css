@@ -277,8 +277,8 @@ trough slider:hover {
 }
 
 .widget-buttons-grid > flowbox > flowboxchild > button:hover {
-  background: @color6;
   color: @color0;
+  background: @color6;
   transition: all 0.1s ease-in-out;
 }
 
