@@ -48,24 +48,36 @@
     "buttons-grid": {
       "actions": [
         {
-          "label": "󰤥",
+          "label": " 󰤥 ",
           "command": "hyprctl dispatch exec -- '[float; center; size 768 768]' kitty -e nmtui"
         },
         {
-          "label": "󰖁",
+          "label": " 󰖁 ",
           "command": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
         },
         {
-          "label": "󰐥",
+          "label": " 󰖀 ",
+          "command": "hyprctl dispatch exec pavucontrol"
+        },
+        {
+          "label": " 󰺷 ",
+          "command": "gamemode"
+        },
+        {
+          "label": " 󰐥 ",
           "command": "systemctl poweroff"
         },
         {
-          "label": "󰍁",
+          "label": " 󰍁 ",
           "command": "hyprlock"
         },
         {
-          "label": "󰜉",
+          "label": " 󰜉 ",
           "command": "systemctl reboot"
+        },
+        {
+          "label": " 󰖚 ",
+          "command": "hyprsunset -t 4000"
         }
       ]
     }
