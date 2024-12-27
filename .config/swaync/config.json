@@ -6,18 +6,19 @@
   "layer": "overlay",
   "cssPriority": "application",
   "notification-icon-size": 64,
-  "notification-window-width": 400,
-  "control-center-margin-top": 32,
-  "control-center-margin-bottom": 32,
+  "notification-window-width": 500,
+  "control-center-margin-top": 64,
+  "control-center-margin-bottom": 64,
   "control-center-margin-right": 64,
-  "control-center-margin-left": 32,
+  "control-center-margin-left": 64,
+  "control-center-width": 600,
 
   "widgets": [
     "title",
     "dnd",
+    "backlight",
     "volume",
     "mpris",
-    "backlight",
     "buttons-grid",
     "notifications"
   ],
@@ -40,10 +41,44 @@
       "image-radius": 10
     },
     "volume": {
-      "label": "󰕿 "
+      "label": "󰖀 "
     },
     "backlight": {
-      "label": "󰃟"
+      "label": "󰃟 ",
+      "device": "amdgpu_bl1"
+    },
+    "menubar": {
+      "menu#power": {
+        "label": "Power",
+        "position": "right",
+        "actions": [
+          {
+            "label": "Shut down",
+            "command": "systemctl poweroff"
+          },
+          {
+            "label": " 󰜉 ",
+            "command": "systemctl reboot"
+          }
+        ]
+      },
+      "buttons#power": {
+        "position": "left",
+        "actions": [
+          {
+            "label": "Screenshot",
+            "command": "grim"
+          },
+          {
+            "label": " 󰐥 ",
+            "command": "systemctl poweroff"
+          },
+          {
+            "label": " 󰜉 ",
+            "command": "systemctl reboot"
+          }
+        ]
+      }
     },
     "buttons-grid": {
       "actions": [
@@ -58,6 +93,10 @@
         {
           "label": " 󰖀 ",
           "command": "hyprctl dispatch exec pavucontrol"
+        },
+        {
+          "label": " 󰂯 ",
+          "command": "blueman-manager"
         },
         {
           "label": " 󰺷 ",
