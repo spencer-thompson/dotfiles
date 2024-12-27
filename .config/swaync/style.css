@@ -242,10 +242,41 @@ trough slider:hover {
   border: 0px solid transparent;
 }
 
+.widget-backlight {
+  background-color: alpha(@color0, 0.6);
+  border-radius: 20px;
+  font-size: 2rem;
+  margin-left: 16px;
+  margin-right: 16px;
+  /* padding-bottom: 5px; */
+  padding: 1rem 2rem;
+  border: 0px solid transparent;
+}
+
+/* doesnt work rip */
+.widget-menubar {
+  font-size: 1rem;
+  background: alpha(@color0, 0.6);
+  font-family: "JetBrainsMono Nerd Font Mono";
+  border-radius: 20px;
+  padding: 8px;
+  border: 0px solid transparent;
+}
+
+.widget-menubar > box > .menu-button-bar #power {
+  font-size: 4rem;
+  background: alpha(@color0, 0.6);
+  font-family: "JetBrainsMono Nerd Font Mono";
+  border-radius: 20px;
+  padding: 8px;
+  border: 0px solid transparent;
+}
+/* doesnt work rip */
+
 /* Buttons widget */
 .widget-buttons-grid {
   /* font-size: 50px; */
-  font-size: 20px;
+  font-size: 1rem;
   background: alpha(@color0, 0.6);
   font-family: "JetBrainsMono Nerd Font Mono";
   border-radius: 20px;
