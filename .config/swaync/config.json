@@ -11,7 +11,7 @@
   "control-center-margin-bottom": 64,
   "control-center-margin-right": 64,
   "control-center-margin-left": 64,
-  "control-center-width": 600,
+  "control-center-width": 520,
 
   "widgets": [
     "title",
@@ -95,12 +95,8 @@
           "command": "hyprctl dispatch exec pavucontrol"
         },
         {
-          "label": " 󰂯 ",
+          "label": " 󰂱 ",
           "command": "blueman-manager"
-        },
-        {
-          "label": " 󰺷 ",
-          "command": "gamemode"
         },
         {
           "label": " 󰐥 ",
