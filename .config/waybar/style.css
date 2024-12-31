@@ -462,10 +462,10 @@ window#waybar {
 /* } */
 
 #workspaces button {
-  margin: 2 0 2 0;
+  /* margin: 2 0 2 0; */
   padding: 0 4px 0 4px;
   background-color: @background;
-  border: 2px solid @background;
+  border: 2px solid transparent;
   border-radius: 8px;
 }
 
@@ -473,12 +473,12 @@ window#waybar {
   padding: 0 4px 0 4px;
   /* background-color: @color4; */
   background-color: @background;
-  color: @color6;
+  color: @color17;
   /* border: 2px solid @color4; */
 }
 
 #workspaces button.urgent {
-  color: @color1;
+  color: @color3;
 }
 
 #workspaces button:hover {
