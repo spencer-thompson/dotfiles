@@ -3,7 +3,8 @@
 
 [manager]
 # NOTE: can combined with tmTheme (sublime colorshceme file) for preview code highlight
-highlight = "./tokyonight.tmTheme"
+# highlight = "./tokyonight.tmTheme"
+highlight = ""
 
 cwd = { fg = "#a9b1d6", italic = true }
 
