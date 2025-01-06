@@ -201,6 +201,11 @@ eval "$(zoxide init zsh)"
 eval "$(atuin init zsh)"
 eval "$(direnv hook zsh)"
 
+# pyenv stuff
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - zsh)"
+
 toilet -f univers -F metal "spencer" | sed '1,4 d; s/^/ /'
 fastfetch
 # curl "wttr.in/?0pQ"
