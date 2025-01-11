@@ -1,0 +1,7 @@
+[manager]
+show_hidden = true
+sort_by = "mtime"
+sort_reverse = true
+sort_dir_first = true
+scrolloff = 10
+title_format = "[{cwd}]"
