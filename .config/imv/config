@@ -1,0 +1,6 @@
+[binds]
+J = zoom 10
+K = zoom -10
+L = next
+L = prev
+
