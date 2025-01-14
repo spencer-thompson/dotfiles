@@ -1,6 +1,6 @@
 [binds]
-J = zoom 10
-K = zoom -10
-L = next
-L = prev
+<Shift+K> = zoom 5
+<Shift+J> = zoom -5
+<Shift+L> = next
+<Shift+H> = prev
 
