@@ -256,7 +256,7 @@ box.module:hover {
   border: 2px transparent;
   /* padding: 0 0px 0 0px; */
   color: @color17;
-  font-size: 24;
+  font-size: 26;
   padding: 0 12px;
   font-weight: 300;
   letter-spacing: -4px;
@@ -268,7 +268,7 @@ box.module:hover {
   border: 2px transparent;
   /* padding: 0 0px 0 0px; */
   color: @color17;
-  font-size: 24;
+  font-size: 26;
   padding: 0 12px;
   font-weight: 300;
   letter-spacing: -4px;

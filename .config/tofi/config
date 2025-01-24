@@ -1,7 +1,7 @@
-prompt-text = "-> "
+prompt-text = "|> "
 
-text-color = #cdd6f4
-prompt-color = #585b70
+text-color = #c0caf5
+prompt-color = #db4b4b
 selection-color = #f7768e
 background-color = #10111c40
 
@@ -13,5 +13,5 @@ padding-left = 25%
 padding-top = 20%
 result-spacing = 10
 num-results = 18
-font = "Fira Code Nerd Font"
+font = "JetBrainsMono Nerd Font Mono"
 font-size = 20
