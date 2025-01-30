@@ -408,7 +408,7 @@
       // "default": "",
     },
     "format-window-separator": "",
-    "window-rewrite-default": "",
+    "window-rewrite-default": "∙", // 
     "window-rewrite": {
       "title<.*youtube.*>": "", // Windows whose titles contain "youtube"
       "class<firefox>": "", // Windows whose classes are "firefox"
