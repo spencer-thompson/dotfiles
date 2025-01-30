@@ -448,8 +448,8 @@ window#waybar {
 #workspaces {
   /* margin: 14; */
   padding: 0 0px 0 0px;
-  background-color: @background;
-  border: 0px solid @background;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 0px solid rgba(0, 0, 0, 0.7);
   border-radius: 8px;
 }
 
@@ -463,17 +463,19 @@ window#waybar {
 
 #workspaces button {
   /* margin: 2 0 2 0; */
-  padding: 0 4px 0 4px;
-  background-color: @background;
+  /* padding: 0 4px 0 4px; */
+  /* background-color: rgba(0, 0, 0, 0.5); */
   border: 2px solid transparent;
   border-radius: 8px;
 }
 
 #workspaces button.active {
-  padding: 0 4px 0 4px;
+  /* padding: 0 4px 0 4px; */
   /* background-color: @color4; */
-  background-color: @background;
+  background-color: rgba(50, 10, 20, 0.3);
   color: @color1;
+  /* border: 2px solid rgba(0, 0, 0, 0.2); */
+  border: 2px solid transparent;
   /* border: 2px solid @color4; */
 }
 
@@ -488,6 +490,7 @@ window#waybar {
   /* background-color: @background; */
   /* color: @background; */
   /* background-color: @color3; */
+  background-color: rgba(10, 40, 40, 0.5);
   color: @color3;
   border-radius: 8px;
 }
