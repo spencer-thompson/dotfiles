@@ -448,8 +448,8 @@ window#waybar {
 #workspaces {
   /* margin: 14; */
   padding: 0 0px 0 0px;
-  background-color: rgba(0, 0, 0, 0.7);
-  border: 0px solid rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 0px solid rgba(0, 0, 0, 0.8);
   border-radius: 8px;
 }
 
@@ -472,7 +472,7 @@ window#waybar {
 #workspaces button.active {
   /* padding: 0 4px 0 4px; */
   /* background-color: @color4; */
-  background-color: rgba(50, 10, 20, 0.3);
+  /* background-color: rgba(50, 10, 20, 0.3); */
   color: @color1;
   /* border: 2px solid rgba(0, 0, 0, 0.2); */
   border: 2px solid transparent;
