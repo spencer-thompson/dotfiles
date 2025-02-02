@@ -1,10 +1,10 @@
 # Zoomer shell
 
 # Enable colors and change prompt
-autoload -U colors && colors	# Load colors
+autoload -U colors && colors # Load colors
 # PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
-setopt autocd		# Automatically cd into typed directory.
-stty stop undef		# Disable ctrl-s to freeze terminal.
+setopt autocd   # Automatically cd into typed directory.
+stty stop undef # Disable ctrl-s to freeze terminal.
 setopt interactive_comments
 
 # History in cache directory:
@@ -12,13 +12,12 @@ HISTSIZE=10000000
 SAVEHIST=10000000
 HISTFILE="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/history"
 
-
 # Basic auto/tab complete:
 autoload -U compinit
 zstyle ':completion:*' menu select
 zmodload zsh/complist
 compinit
-_comp_options+=(globdots)		# Include hidden files.
+_comp_options+=(globdots) # Include hidden files.
 
 # environment
 # export HOSTNAME=$(hostname)
@@ -45,7 +44,6 @@ function y() {
     fi
     rm -f -- "$tmp"
 }
-
 
 function update() {
     echo -e "\e[1;35mUpdating Mirror List\e[0m"
@@ -115,7 +113,6 @@ function ai() {
 
 # plugins
 
-
 # source /usr/share/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 # ZVM_INIT_MODE=sourcing
 #
@@ -135,14 +132,12 @@ function ai() {
 #
 # zvm_after_init_commands+=(eval "$(atuin init zsh)")
 
-
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Bind Ctrl + Y to accept autocomplete suggestion
 bindkey '^Y' autosuggest-accept
-
 
 # source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 # bindkey '^[[A' history-substring-search-up
@@ -172,10 +167,10 @@ _fzf_comprun() {
     shift
 
     case "$command" in
-        cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
-        export|unset) fzf --preview "eval 'echo $'{}"         "$@" ;;
-        ssh)          fzf --preview 'dig {}'                   "$@" ;;
-        *)            fzf --preview "bat -n --color=always --line-range :500 {}" "$@" ;;
+    cd) fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
+    export | unset) fzf --preview "eval 'echo $'{}" "$@" ;;
+    ssh) fzf --preview 'dig {}' "$@" ;;
+    *) fzf --preview "bat -n --color=always --line-range :500 {}" "$@" ;;
     esac
 }
 
@@ -197,6 +192,8 @@ export PATH="$HOME/.local/bin:$PATH"
 export BAT_THEME=tokyonight_night
 export MANPAGER="less -R --use-color -Dd+r -Du+b"
 export GROFF_NO_SGR=1
+
+source <(tailscale completion zsh)
 
 eval "$(starship init zsh)"
 eval "$(fzf --zsh)"

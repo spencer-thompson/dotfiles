@@ -42,7 +42,7 @@
   {
     "name": "bottom",
     "height": 48,
-    "margin-top": -16,
+    "margin-top": -24,
     "margin-bottom": 8,
     // "margin-left": 30,
     "margin-right": 48,
