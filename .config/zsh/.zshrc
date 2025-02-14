@@ -194,6 +194,9 @@ export MANPAGER="less -R --use-color -Dd+r -Du+b"
 export GROFF_NO_SGR=1
 
 source <(tailscale completion zsh)
+source <(spotify_player generate zsh)
+alias sp=spotify_player
+alias spotify=spotify_player
 
 eval "$(starship init zsh)"
 eval "$(fzf --zsh)"
