@@ -1,0 +1,23 @@
+[[keymaps]]
+command = "PreviousTrack"
+key_sequence = "H"
+
+[[keymaps]]
+command = "NextTrack"
+key_sequence = "L"
+
+[[keymaps]]
+command = "ChooseSelected"
+key_sequence = "l"
+
+[[keymaps]]
+command = "PreviousPage"
+key_sequence = "h"
+
+[[keymaps]]
+command = "PageSelectNextOrScrollDown"
+key_sequence = "C-d"
+
+[[keymaps]]
+command = "PageSelectPreviousOrScrollUp"
+key_sequence = "C-u"

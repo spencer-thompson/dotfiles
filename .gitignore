@@ -1,4 +1,5 @@
 .env
+client_id.env
 
 */tmux/plugins/*
 */hypr/modules/device.conf
