@@ -212,3 +212,4 @@ eval "$(pyenv init - zsh)"
 toilet -f univers -F metal -t "arch btw" | sed '1,1 d; s/^/ /'
 fastfetch
 # curl "wttr.in/?0pQ"
+export PATH=~/.npm-global/bin:$PATH
