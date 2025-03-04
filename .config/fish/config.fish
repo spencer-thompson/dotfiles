@@ -1,7 +1,9 @@
 # GREETING
 function fish_greeting
     clear
-    toilet -f univers -F metal -t "arch btw" | sed '1,1 d; s/^/ /'
+    # toilet -f univers -F metal -t "arch btw" | sed '1,1 d; s/^/ /' | boxes -d ansi-rounded -p a2
+    # fortune
+    printf "\n"
     fastfetch
 end
 
