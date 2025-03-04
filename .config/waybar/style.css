@@ -173,7 +173,7 @@ box.module:hover {
 
 #custom-pacman {
   border-top: 2px solid @color5;
-  font-family: "JetBrainsMono Nerd Font";
+  font-family: "Berkeley Mono";
   font-weight: 500;
 }
 
@@ -241,16 +241,18 @@ box.module:hover {
 /* } */
 
 #clock {
+  font-family: "Berkeley Mono";
   border-top: 2px solid @color17;
   background-color: @transprant;
   /* border: 2px transparent; */
 }
 
 #clock {
-  font-weight: 500;
+  font-weight: 700;
 }
 
 #cpu {
+  font-family: "JetBrainsMono Nerd Font Mono";
   background-color: @transprant;
   /* border-top: 2px solid @color17; */
   border: 2px transparent;
@@ -264,6 +266,7 @@ box.module:hover {
 
 #memory {
   /* white-space: pre; */
+  font-family: "JetBrainsMono Nerd Font Mono";
   background-color: @transprant;
   border: 2px transparent;
   /* padding: 0 0px 0 0px; */
@@ -291,6 +294,7 @@ box.module:hover {
 }
 
 #network {
+  font-family: "JetBrainsMono Nerd Font Mono";
   padding: 0 12px;
   font-size: 32;
   border-top: 2px solid @color17;
@@ -299,6 +303,7 @@ box.module:hover {
 }
 
 #battery {
+  font-family: "JetBrainsMono Nerd Font Mono";
   padding: 0 14;
   font-size: 18;
   border-top: 2px solid @color17;
@@ -446,6 +451,7 @@ window#waybar {
 /* } */
 
 #workspaces {
+  font-family: "JetBrainsMono Nerd Font Mono";
   /* margin: 14; */
   /* padding: 0 12px; */
   padding: 0;
@@ -464,6 +470,7 @@ window#waybar {
 
 #workspaces button {
   /* margin: 2 0 2 0; */
+  font-family: "JetBrainsMono Nerd Font Mono";
   padding: 0 24px;
   /* background-color: rgba(0, 0, 0, 0.5); */
   border: 2px solid transparent;
@@ -474,6 +481,7 @@ window#waybar {
   /* padding: 0 4px 0 4px; */
   /* background-color: @color4; */
   /* background-color: rgba(50, 10, 20, 0.3); */
+  font-family: "JetBrainsMono Nerd Font Mono";
   color: @color1;
   /* border: 2px solid rgba(0, 0, 0, 0.2); */
   border: 2px solid transparent;
@@ -482,11 +490,13 @@ window#waybar {
 
 #workspaces button.urgent {
   color: @color3;
+  font-family: "JetBrainsMono Nerd Font Mono";
 }
 
 #workspaces button:hover {
   /* background-color: transparent; */
   /* border: 2px solid @color3; */
+  font-family: "JetBrainsMono Nerd Font Mono";
   border: 2px solid @color3;
   /* background-color: @background; */
   /* color: @background; */
