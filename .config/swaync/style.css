@@ -34,7 +34,7 @@
 
 * {
   /* font-size: 20px; */
-  font-family: "JetBrainsMono Nerd Font Mono";
+  font-family: "Berkeley Mono";
   transition: 100ms;
   /* padding: 4px; */
   box-shadow: unset;
@@ -257,7 +257,7 @@ trough slider:hover {
 .widget-menubar {
   font-size: 1rem;
   background: alpha(@color0, 0.6);
-  font-family: "JetBrainsMono Nerd Font Mono";
+  font-family: "Berkeley Mono";
   border-radius: 20px;
   padding: 8px;
   border: 0px solid transparent;
@@ -266,7 +266,7 @@ trough slider:hover {
 .widget-menubar > box > .menu-button-bar #power {
   font-size: 4rem;
   background: alpha(@color0, 0.6);
-  font-family: "JetBrainsMono Nerd Font Mono";
+  font-family: "Berkeley Mono";
   border-radius: 20px;
   padding: 8px;
   border: 0px solid transparent;
@@ -276,9 +276,10 @@ trough slider:hover {
 /* Buttons widget */
 .widget-buttons-grid {
   /* font-size: 50px; */
+  font-family: "JetBrainsMono Nerd Font Mono";
   font-size: 1rem;
   background: alpha(@color0, 0.6);
-  font-family: "JetBrainsMono Nerd Font Mono";
+  font-family: "Berkeley Mono";
   border-radius: 20px;
   padding: 8px;
   /* margin: 4px; */
@@ -314,7 +315,7 @@ trough slider:hover {
 }
 
 .widget-buttons-grid > flowbox > flowboxchild > button label {
-  font-family: "JetBrainsMono Nerd Font Mono";
+  font-family: "Berkeley Mono";
   font-size: 2.4rem;
   /* padding: 0.4rem; */
   /* margin: 2px; */

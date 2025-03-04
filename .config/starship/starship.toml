@@ -149,7 +149,7 @@ discharging_symbol = "󰁹"
 
 [shell]
 bash_indicator = 'B'
-fish_indicator = 'F'
+fish_indicator = '󰈺'
 zsh_indicator = ''
 nu_indicator = 'N'
 unknown_indicator = '?'
