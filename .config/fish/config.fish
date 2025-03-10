@@ -10,16 +10,21 @@ end
 # VIM BINDS
 set -g fish_key_bindings fish_vi_key_bindings
 bind --mode insert \cy forward-char
+bind --mode insert up ctrl-r
 
-fzf --fish         | source
-starship init fish | source
-direnv hook fish   | source
-atuin init fish    | source
-zoxide init fish   | source
+fzf --fish                         | source
+starship init fish                 | source
+direnv hook fish                   | source
+atuin init fish                    | source
+atuin gen-completions --shell fish | source
+zoxide init fish                   | source
+
+bind -M insert up _atuin_search
 
 abbr --add cd z
 abbr --add ci zi
 abbr --add ll eza --color=always -lah --git --no-filesize --icons=always --no-user --no-permissions --group-directories-first
+abbr --add off systemctl poweroff
 abbr --add ... cd ../..
 abbr --add .... cd ../../..
 abbr --add ..... cd ../../../..

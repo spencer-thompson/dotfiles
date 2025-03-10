@@ -205,6 +205,7 @@
 
 /* Volume widget */
 trough {
+  font-family: "JetBrainsMono Nerd Font Mono";
   border-radius: 20px;
   /* background: @background; */
   /* background: alpha(@color0, 0.8); */
@@ -214,6 +215,7 @@ trough {
 
 trough highlight {
   /* ´trough´ is the background of the slider, ´highlight´ is the actual slider */
+  font-family: "JetBrainsMono Nerd Font Mono";
   padding-top: 1px;
   background: @color1;
   border: 1px solid @color1;
@@ -221,6 +223,7 @@ trough highlight {
 }
 
 trough slider {
+  font-family: "JetBrainsMono Nerd Font Mono";
   padding: 1px;
   background: @color1;
   border: 1px solid @color1;
@@ -232,6 +235,7 @@ trough slider:hover {
 }
 
 .widget-volume {
+  font-family: "JetBrainsMono Nerd Font Mono";
   background-color: alpha(@color0, 0.6);
   border-radius: 20px;
   font-size: 2rem;
@@ -243,6 +247,7 @@ trough slider:hover {
 }
 
 .widget-backlight {
+  font-family: "JetBrainsMono Nerd Font Mono";
   background-color: alpha(@color0, 0.6);
   border-radius: 20px;
   font-size: 2rem;
@@ -257,7 +262,7 @@ trough slider:hover {
 .widget-menubar {
   font-size: 1rem;
   background: alpha(@color0, 0.6);
-  font-family: "Berkeley Mono";
+  /* font-family: "Berkeley Mono"; */
   border-radius: 20px;
   padding: 8px;
   border: 0px solid transparent;
@@ -279,7 +284,7 @@ trough slider:hover {
   font-family: "JetBrainsMono Nerd Font Mono";
   font-size: 1rem;
   background: alpha(@color0, 0.6);
-  font-family: "Berkeley Mono";
+  /* font-family: "Berkeley Mono"; */
   border-radius: 20px;
   padding: 8px;
   /* margin: 4px; */
@@ -315,7 +320,8 @@ trough slider:hover {
 }
 
 .widget-buttons-grid > flowbox > flowboxchild > button label {
-  font-family: "Berkeley Mono";
+  /* font-family: "Berkeley Mono"; */
+  font-family: "JetBrainsMono Nerd Font Mono";
   font-size: 2.4rem;
   /* padding: 0.4rem; */
   /* margin: 2px; */
