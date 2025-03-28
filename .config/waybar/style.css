@@ -261,7 +261,7 @@ box.module:hover {
   font-size: 26;
   padding: 0 12px;
   font-weight: 300;
-  letter-spacing: -4px;
+  /* letter-spacing: -4px; */
 }
 
 #memory {
@@ -274,7 +274,7 @@ box.module:hover {
   font-size: 26;
   padding: 0 12px;
   font-weight: 300;
-  letter-spacing: -4px;
+  /* letter-spacing: -4px; */
 }
 
 #backlight {
