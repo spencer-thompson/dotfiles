@@ -211,7 +211,7 @@ eval "$(pyenv init - zsh)"
 
 export PATH=~/.npm-global/bin:$PATH
 
-fish
+exec fish
 
 # toilet -f univers -F metal -t "arch btw" | sed '1,1 d; s/^/ /'
 # fastfetch
