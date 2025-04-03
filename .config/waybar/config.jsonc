@@ -33,6 +33,7 @@
       // "network",
       "memory",
     ],
+    "reload_style_on_change": true,
 
     "include": [
       "~/.config/waybar/modules.jsonc",
@@ -42,8 +43,8 @@
   {
     "name": "bottom",
     "height": 48,
-    "margin-top": -24,
-    "margin-bottom": 8,
+    "margin-top": -20,
+    "margin-bottom": 4,
     // "margin-left": 30,
     "margin-right": 48,
     "margin-left": 48,
@@ -65,6 +66,7 @@
     // "network",
     // "backlight",
     // ],
+    "reload_style_on_change": true,
 
     "include": [
       "~/.config/waybar/modules.jsonc",
