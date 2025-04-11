@@ -1,0 +1,8 @@
+# see https://github.com/sigoden/aichat/blob/main/config.example.yaml
+#
+keybindings: vi
+editor: nvim
+
+model: openai:gpt-4o
+clients:
+  - type: openai
