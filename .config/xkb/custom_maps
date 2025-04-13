@@ -1,5 +1,0 @@
-partial modifier_keys
-xkb_symbols "super_esc" {
-    key <CAPS> { [ Escape ] };
-    modifier_map Mod4 { <CAPS> };
-};

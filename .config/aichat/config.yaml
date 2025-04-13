@@ -3,6 +3,20 @@
 keybindings: vi
 editor: nvim
 
+# Define document loaders to control how RAG and `.file`/`--file` load files of specific formats.
+document_loaders:
+  # You can add custom loaders using the following syntax:
+  #   <file-extension>: <command-to-load-the-file>
+  # Note: Use `$1` for input file and `$2` for output file. If `$2` is omitted, use stdout as output.
+  pdf: "pdftotext $1 -" # Load .pdf file, see https://poppler.freedesktop.org to set up pdftotext
+  docx: "pandoc --to plain $1" # Load .docx file, see https://pandoc.org to set up pandoc
+  # jina: 'curl -fsSL https://r.jina.ai/$1 -H "Authorization: Bearer <jina_api_key>"'
+  # Load a git repo with https://github.com/bodo-run/yek
+  git: >
+    sh -c "yek $1 --json | jq '[.[] | { path: .filename, contents: .content }]'"
+
 model: openai:gpt-4o
 clients:
   - type: openai
+  - type: gemini
+  - type: claude
