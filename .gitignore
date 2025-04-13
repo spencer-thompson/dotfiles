@@ -1,6 +1,8 @@
 .env
 client_id.env
 
+.config/aichat/rags/*
+
 */tmux/plugins/*
 */hypr/modules/device.conf
 .ipython/profile_default/history.sqlite

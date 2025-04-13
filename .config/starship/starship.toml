@@ -5,7 +5,7 @@ add_newline = true
 # continuation_prompt = "[▎│ ](dimmed white)"
 continuation_prompt = "[∙ ](dimmed white)"
 format = """[┌ ](green)$battery$shell$all\
-[└ ](green)$directory$character"""
+[└ ](green)$jobs$directory$character"""
 
 # right_format = """$all"""
 
@@ -179,6 +179,12 @@ disabled = true
 version_format = '${raw}'
 symbol = "󰟓 "
 style = 'bold fg:cyan'
+
+[jobs]
+format = '[$symbol$number]($style) '
+
+# [line_break]
+# disabled = true
 
 # [lua]
 # version_format = '${raw}'

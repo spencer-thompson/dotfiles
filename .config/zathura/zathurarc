@@ -14,7 +14,7 @@ set guioptions ""
 include tokyonight.conf
 
 set statusbar-bg "#10111c" #01
-set recolor-lightcolor "#10111c" #01
+set recolor-lightcolor "#000000" #01
 
 
 set database "sqlite"

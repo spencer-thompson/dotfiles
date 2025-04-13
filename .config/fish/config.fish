@@ -21,6 +21,7 @@ zoxide init fish                   | source
 
 bind -M insert up _atuin_search
 
+# ABBREVIATIONS
 abbr --add cd z
 abbr --add ci zi
 abbr --add ll eza --color=always -lah --git --no-filesize --icons=always --no-user --no-permissions --group-directories-first
@@ -29,6 +30,7 @@ abbr --add ... cd ../..
 abbr --add .... cd ../../..
 abbr --add ..... cd ../../../..
 abbr --add ...... cd ../../../../..
+abbr --add ai aichat
 
 # YAZI
 function y
@@ -40,35 +42,13 @@ function y
 	rm -f -- "$tmp"
 end
 
-# UPDATE
-function update
-    echo -e "\e[1;35mUpdating Mirror List\e[0m"
-    sudo reflector --age 2 --connection-timeout 1 --download-timeout 1 --country US \
-        --fastest 12 --latest 10 --number 12 --save /etc/pacman.d/mirrorlist
-
-    echo -e "\e[1;35mUpdating Pacman Packages\e[0m"
-    sudo pacman -Syu --noconfirm
-
-    echo -e "\e[1;35mUpdating AUR Packages\e[0m"
-    yay -Syu --noconfirm
-end
-
-# PYTHON VIRTUAL ENVIRONMENT
-function venv
-    # Check if already activated
-    if test -n "$VIRTUAL_ENV"
-        echo -e "\e[1;34mDeactivating current virtual environment...\e[0m"
-        deactivate
-        return
-    end
-
-    # Check if the venv directory exists
-    if test -d ".venv"
-        echo -e "\e[1;32mActivating virtual environment...\e[0m"
-        source .venv/bin/activate.fish
-    else
-        echo -e "\e[1;33mCreating and activating virtual environment...\e[0m"
-        python3 -m venv .venv
-        source .venv/bin/activate.fish
+# AI HELP
+function _aichat_fish
+    set -l _old (commandline)
+    if test -n $_old
+        echo -n "⌛"
+        commandline -f repaint
+        commandline (aichat -e $_old)
     end
 end
+bind --mode insert ctrl-h _aichat_fish
