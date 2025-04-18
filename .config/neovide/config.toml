@@ -12,13 +12,13 @@ vsync = true
 wsl = false
 
 [font]
-normal = ["JetBrainsMono Nerd Font Mono"]
+normal = ["Berkeley Mono"]
 # normal = ["RecMonoDuotone Nerd Font Mono"]
 # normal = "FiraCode Nerd Font Mono"
 edging = "subpixelantialias"
-hinting = "none"
+hinting = "slight"
 # edging = "alias"
-size = 14
+size = 12
 
 
 [box-drawing]
