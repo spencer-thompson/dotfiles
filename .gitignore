@@ -1,4 +1,5 @@
 .env
+env.fish
 client_id.env
 
 .config/aichat/rags/*

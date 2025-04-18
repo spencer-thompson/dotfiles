@@ -5,7 +5,7 @@
 [general]
 
 # Smoothing mode. Can be 'normal', 'scientific' or 'waves'. DEPRECATED as of 0.6.0
-mode = scientific
+; mode = normal
 
 # Accepts only non-negative values.
 framerate = 100
@@ -13,17 +13,17 @@ framerate = 100
 # 'autosens' will attempt to decrease sensitivity if the bars peak. 1 = on, 0 = off
 # new as of 0.6.0 autosens of low values (dynamic range)
 # 'overshoot' allows bars to overshoot (in % of terminal height) without initiating autosens. DEPRECATED as of 0.6.0
-; autosens = 1
+autosens = 0
 ; overshoot = 20
 
 # Manual sensitivity in %. If autosens is enabled, this will only be the initial value.
 # 200 means double height. Accepts only non-negative values.
-; sensitivity = 100
+sensitivity = 100
 
 # The number of bars (0-512). 0 sets it to auto (fill up console).
 # Bars' width and space between bars in number of characters.
 ; bars = 0
-; bar_width = 2
+bar_width = 1
 ; bar_spacing = 1
 # bar_height is only used for output in "noritake" format
 ; bar_height = 32
@@ -82,8 +82,8 @@ framerate = 100
 ; method = pulse
 ; source = auto
 
-; method = pipewire
-; source = auto
+method = pipewire
+source = auto
 
 ; method = alsa
 ; source = hw:Loopback,1
@@ -214,19 +214,22 @@ framerate = 100
 ; foreground = default
 
 # SDL and sdl_glsl only support hex code colors, these are the default:
-; background = '#111111'
-; foreground = '#33ffff'
+; background = '#000000'
+foreground = '#db4b4b'
 
 
 # Gradient mode, only hex defined colors are supported,
 # background must also be defined in hex or remain commented out. 1 = on, 0 = off.
 # You can define as many as 8 different colors. They range from bottom to top of screen
 gradient = 1
-gradient_count = 4
-gradient_color_1 = '#9efffa'
-gradient_color_2 = '#fff957'
-gradient_color_3 = '#ff9124'
-gradient_color_4 = '#ff0d29'
+gradient_count = 3
+gradient_color_1 = '#ff0d29'
+gradient_color_2 = '#db4b4b'
+gradient_color_3 = '#000000'
+; gradient_color_1 = '#9efffa'
+; gradient_color_2 = '#fff957'
+; gradient_color_3 = '#ff9124'
+; gradient_color_4 = '#ff0d29'
 ; gradient_color_3 = '#a6cc33'
 ; gradient_color_4 = '#cccc33'
 ; gradient_color_5 = '#cca633'
@@ -260,7 +263,7 @@ gradient_color_4 = '#ff0d29'
 # Noise reduction, int 0 - 100. default 77
 # the raw visualization is very noisy, this factor adjusts the integral and gravity filters to keep the signal smooth
 # 100 will be very slow and smooth, 0 will be fast but noisy.
-noise_reduction = 85
+noise_reduction = 50
 
 
 [eq]

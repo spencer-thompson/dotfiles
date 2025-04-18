@@ -11,6 +11,7 @@ end
 set -g fish_key_bindings fish_vi_key_bindings
 bind --mode insert \cy forward-char
 bind --mode insert up ctrl-r
+bind --mode command k history-pager
 
 fzf --fish                         | source
 starship init fish                 | source
@@ -20,6 +21,25 @@ atuin gen-completions --shell fish | source
 zoxide init fish                   | source
 
 bind -M insert up _atuin_search
+
+set -gx STARSHIP_CONFIG ~/.config/starship/starship.toml
+set -gx EDITOR nvim
+set -gx BROWSER firefox
+set -gx ZDOTDIR "$HOME/.config/zsh"
+
+
+set -gx XDG_CONFIG_HOME "$HOME/.config"
+set -gx XDG_DATA_HOME "$HOME/.local/share"
+set -gx XDG_CACHE_HOME "$HOME/.cache"
+set -gx STARSHIP_CONFIG "$XDG_CONFIG_HOME/starship/starship.toml"
+set -gx STARSHIP_CACHE "$XDG_CACHE_HOME/starship/cache"
+set -gx R_HOME_USER "$XDG_CONFIG_HOME/R"
+set -gx R_PROFILE_USER "$XDG_CONFIG_HOME/R/profile"
+set -gx MOZ_ENABLE_WAYLAND 1
+set -gx HOSTNAME $(hostname)
+set -gx SHELL fish
+
+source env.fish
 
 # ABBREVIATIONS
 abbr --add cd z
