@@ -15,8 +15,8 @@ wsl = false
 normal = ["Berkeley Mono"]
 # normal = ["RecMonoDuotone Nerd Font Mono"]
 # normal = "FiraCode Nerd Font Mono"
-edging = "subpixelantialias"
-hinting = "slight"
+# edging = "subpixelantialias"
+# hinting = "slight"
 # edging = "alias"
 size = 12
 

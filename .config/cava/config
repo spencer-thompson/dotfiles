@@ -221,11 +221,16 @@ foreground = '#db4b4b'
 # Gradient mode, only hex defined colors are supported,
 # background must also be defined in hex or remain commented out. 1 = on, 0 = off.
 # You can define as many as 8 different colors. They range from bottom to top of screen
+
+# @define-color color16 #ff9e64;
+# @define-color color17 #db4b4b;
+
 gradient = 1
-gradient_count = 3
-gradient_color_1 = '#ff0d29'
+gradient_count = 4
+gradient_color_1 = '#ec0101'
 gradient_color_2 = '#db4b4b'
-gradient_color_3 = '#000000'
+gradient_color_3 = '#ff9e64'
+gradient_color_4 = '#000000'
 ; gradient_color_1 = '#9efffa'
 ; gradient_color_2 = '#fff957'
 ; gradient_color_3 = '#ff9124'

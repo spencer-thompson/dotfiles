@@ -39,6 +39,9 @@ set -gx MOZ_ENABLE_WAYLAND 1
 set -gx HOSTNAME $(hostname)
 set -gx SHELL fish
 
+set -gx FZF_DEFAULT_COMMAND 'fd --hidden --strip-cwd-prefix --exclude .git'
+set -gx FZF_DEFAULT_OPTS '--prompt="-> "'
+
 source env.fish
 
 # ABBREVIATIONS

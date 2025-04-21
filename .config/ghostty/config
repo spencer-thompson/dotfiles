@@ -1,0 +1,25 @@
+# vim set ft=conf
+
+theme = Slate
+
+font-family = "Berkeley Mono"
+
+theme = tokyonight 
+
+shell-integration = fish
+
+window-theme = ghostty
+gtk-adwaita = false
+
+# Use a simple titlebar:
+gtk-titlebar = false
+
+background = #000000
+background-opacity = 0.5
+background-blur = true
+
+# font-thicken = true # only on mac
+
+
+adjust-cell-width = -5%
+adjust-cell-height = 20%
