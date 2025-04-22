@@ -42,7 +42,7 @@ set -gx SHELL fish
 set -gx FZF_DEFAULT_COMMAND 'fd --hidden --strip-cwd-prefix --exclude .git'
 set -gx FZF_DEFAULT_OPTS '--prompt="-> "'
 
-source env.fish
+source ~/.env
 
 # ABBREVIATIONS
 abbr --add cd z

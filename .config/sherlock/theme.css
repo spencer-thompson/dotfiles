@@ -1,0 +1,26 @@
+:root {
+  /* backgrounds */
+  --background: 48, 84%, 0%;
+  --background-soft: 42, 73%, 20%;
+  --border: 180, 6%, 30%;
+  --border-soft: 15, 3%, 40%;
+  --text: 30, 13%, 80%;
+  --text-active: 30, 13%, 90%;
+  --tag-background: 39, 28%, 20%;
+
+  /* foreground */
+  --foreground: 210, 60%, 25%;
+  --foreground-soft: 210, 40%, 10%;
+
+  /* accent colors */
+  --error: 4, 66%, 40%;
+  --success: 58, 72%, 40%;
+  --warning: 39, 75%, 54%;
+}
+
+* {
+  font-weight: 700;
+  font-family: "Berkeley Mono", monospace;
+  font-feature-settings: "kern" off;
+  font-kerning: None;
+}
