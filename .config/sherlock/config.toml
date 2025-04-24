@@ -40,6 +40,6 @@ modifier = "control"
 
 [files]
 fallback = "~/.config/sherlock/fallback.json"
-css = "~/.config/sherlock/theme.css"
+# css = "~/.config/sherlock/theme.css"
 alias = "~/.config/sherlock/sherlock_alias.json"
 ignore = "~/.config/sherlock/sherlockignore"
