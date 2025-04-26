@@ -2,6 +2,8 @@
 env.fish
 client_id.env
 
+.venv
+
 .config/aichat/rags/*
 
 */tmux/plugins/*
