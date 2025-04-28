@@ -55,6 +55,16 @@ abbr --add ..... cd ../../../..
 abbr --add ...... cd ../../../../..
 abbr --add ai aichat
 
+## git
+abbr --add gs git status --short
+abbr --add gd git diff
+abbr --add gp git pull
+abbr --add gP git push
+abbr --add gc git commit
+abbr --add ga git add
+# abbr --add gl git log --all --graph --pretty=format:'%C(magenta)%h %C(white)| %an | %ar%C(auto)  %D%n%s%n'
+alias gl="git log --all --graph --pretty=format:'%C(magenta)%h %C(white)| %an | %ar%C(auto)  %D%n%s%n'"
+
 # YAZI
 function y
 	set tmp (mktemp -t "yazi-cwd.XXXXXX")
