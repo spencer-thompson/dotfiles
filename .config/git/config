@@ -1,19 +1,58 @@
 [user]
     email = sthompson.dev@outlook.com
     name = Spencer
+
 [credential]
     helper = cache
+
 [core]
     editor = nvim
+
 [init]
     defaultBranch = main
 
 [core]
     pager = delta
+
 [interactive]
     diffFilter = delta --color-only
+    singlekey = true
+
 [delta]
     navigate = true
     side-by-side = true
+
 [merge]
     conflictstyle = diff3
+
+[status]
+    branch = true
+    showStash = true
+    showUntrackedFiles = all
+
+[pull]
+    default = current
+    rebase = true
+
+[log]
+    abbrevCommit = true
+    graphColors = blue,yellow,cyan,magenta,green,red
+
+[color "decorate"]
+    HEAD = red
+    branch = blue
+    tag = yellow
+    remoteBranch = magenta
+
+[color "branch"]
+    current = magenta
+    local = default
+    remote = yellow
+    upstream = green
+    plain = blue
+
+[branch]
+    sort = -committerdate
+
+[tag]
+    sort = -taggerdate
