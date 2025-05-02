@@ -455,12 +455,15 @@ window#waybar {
   /* margin: 14; */
   /* padding: 0 12px; */
   padding: 0;
+  margin: 0;
   background-color: rgba(0, 0, 0, 0.8);
   border: 0px solid rgba(0, 0, 0, 0.8);
   border-radius: 8px;
 }
 
 #workspaces label {
+  padding: 0;
+  margin: 0;
   font-size: 18px;
   font-weight: 900;
 }
@@ -474,6 +477,7 @@ window#waybar {
 /* } */
 
 #workspaces button {
+  padding: 0;
   /* margin: 2 0 2 0; */
   font-family: "JetBrainsMono Nerd Font Mono";
   padding: 0 36px;
