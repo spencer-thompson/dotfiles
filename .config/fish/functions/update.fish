@@ -8,7 +8,7 @@ function update
     sudo pacman -Syu --noconfirm
 
     echo -e "\e[1;35mUpdating AUR Packages\e[0m"
-    yay -Syu --noconfirm
+    paru -Syu --noconfirm
 
     echo -e "\e[1;35mUpdating Completions\e[0m"
     fish_update_completions
