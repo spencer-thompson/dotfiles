@@ -1,0 +1,29 @@
+matches:
+  - trigger: :today
+    replace: "{{mytime}}"
+    vars:
+      - name: mytime
+        type: date
+        params:
+          format: "%x"
+
+  - trigger: :me
+    replace: Spencer Thompson
+
+  - trigger: :sig
+    replace: |
+      Thanks,
+      - Spencer
+
+  - trigger: :sig
+    replace: |
+      Thanks again,
+      - Spencer
+
+  - trigger: :now
+    replace: It's {{mytime}}
+    vars:
+      - name: mytime
+        type: date
+        params:
+          format: "%H:%M"
