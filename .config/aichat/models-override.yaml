@@ -232,7 +232,7 @@ list:
     max_output_tokens: 65536
     supports_vision: true
     supports_function_calling: true
-  - name: gemini-2.5-pro-exp-03-25
+  - name: gemini-2.5-pro-preview-05-06
     type: chat
     max_input_tokens: 1048576
     input_price: 0.0
@@ -361,13 +361,19 @@ list:
   models:
   - name: mistral-large-latest
     type: chat
-    max_input_tokens: 128000
+    max_input_tokens: 131072
     input_price: 2.0
     output_price: 6.0
     supports_function_calling: true
+  - name: mistral-medium-latest
+    type: chat
+    max_input_tokens: 131072
+    input_price: 0.4
+    output_price: 2.0
+    supports_function_calling: true
   - name: mistral-small-latest
     type: chat
-    max_input_tokens: 32000
+    max_input_tokens: 32768
     input_price: 0.1
     output_price: 0.3
     supports_function_calling: true
@@ -379,25 +385,25 @@ list:
     supports_function_calling: true
   - name: ministral-8b-latest
     type: chat
-    max_input_tokens: 128000
+    max_input_tokens: 131072
     input_price: 0.1
     output_price: 0.1
     supports_function_calling: true
   - name: open-mistral-nemo
     type: chat
-    max_input_tokens: 128000
+    max_input_tokens: 131072
     input_price: 0.15
     output_price: 0.15
     supports_function_calling: true
   - name: pixtral-large-latest
     type: chat
-    max_input_tokens: 128000
+    max_input_tokens: 131072
     input_price: 2.0
     output_price: 6.0
     supports_vision: true
   - name: pixtral-12b-latest
     type: chat
-    max_input_tokens: 128000
+    max_input_tokens: 131072
     input_price: 0.15
     output_price: 0.15
     supports_vision: true
@@ -606,7 +612,7 @@ list:
     max_output_tokens: 65536
     supports_vision: true
     supports_function_calling: true
-  - name: gemini-2.5-pro-preview-03-25
+  - name: gemini-2.5-pro-preview-05-06
     type: chat
     max_input_tokens: 1048576
     input_price: 1.25
@@ -824,6 +830,24 @@ list:
     require_max_tokens: true
     supports_vision: true
     supports_function_calling: true
+  - name: us.meta.llama4-maverick-17b-instruct-v1:0
+    type: chat
+    max_input_tokens: 131072
+    input_price: 0.24
+    output_price: 0.97
+    max_output_tokens: 8192
+    require_max_tokens: true
+    supports_vision: true
+    supports_function_calling: true
+  - name: us.meta.llama4-scout-17b-instruct-v1:0
+    type: chat
+    max_input_tokens: 131072
+    input_price: 0.17
+    output_price: 0.66
+    max_output_tokens: 8192
+    require_max_tokens: true
+    supports_vision: true
+    supports_function_calling: true
   - name: us.meta.llama3-3-70b-instruct-v1:0
     type: chat
     max_input_tokens: 131072
@@ -856,24 +880,12 @@ list:
     max_output_tokens: 8192
     require_max_tokens: true
     supports_function_calling: true
-  - name: us.meta.llama3-2-90b-instruct-v1:0
+  - name: us.amazon.nova-premier-v1:0
     type: chat
-    max_input_tokens: 131072
-    input_price: 0.72
-    output_price: 0.72
-    max_output_tokens: 8192
-    require_max_tokens: true
-    supports_vision: true
-    supports_function_calling: true
-  - name: us.meta.llama3-2-11b-instruct-v1:0
-    type: chat
-    max_input_tokens: 131072
-    input_price: 0.16
-    output_price: 0.16
-    max_output_tokens: 8192
-    require_max_tokens: true
-    supports_vision: true
-    supports_function_calling: true
+    max_input_tokens: 300000
+    input_price: 2.5
+    output_price: 12.5
+    max_output_tokens: 5120
   - name: us.amazon.nova-pro-v1:0
     type: chat
     max_input_tokens: 300000
@@ -900,6 +912,12 @@ list:
     input_price: 2.0
     output_price: 6.0
     supports_function_calling: true
+  - name: us.mistral.pixtral-large-2502-v1:0
+    type: chat
+    max_input_tokens: 128000
+    input_price: 2.0
+    output_price: 6.0
+    supports_vision: true
   - name: cohere.command-r-plus-v1:0
     type: chat
     max_input_tokens: 128000
@@ -964,13 +982,6 @@ list:
     output_price: 0.0
     max_output_tokens: 2048
     require_max_tokens: true
-  - name: '@cf/meta/llama-3.1-8b-instruct'
-    type: chat
-    max_input_tokens: 131072
-    input_price: 0.0
-    output_price: 0.0
-    max_output_tokens: 2048
-    require_max_tokens: true
   - name: '@cf/qwen/qwq-32b'
     type: chat
     max_input_tokens: 131072
@@ -1007,46 +1018,23 @@ list:
     max_batch_size: 100
 - provider: ernie
   models:
-  - name: ernie-4.5-8k-preview
+  - name: ernie-4.5-turbo-128k
     type: chat
-    max_input_tokens: 8192
-    input_price: 0.56
-    output_price: 2.24
+    max_input_tokens: 131072
+    input_price: 0.112
+    output_price: 0.448
     supports_function_calling: true
-  - name: ernie-x1-32k-preview
+  - name: ernie-4.5-turbo-vl-32k
     type: chat
     max_input_tokens: 32768
-    input_price: 0.28
-    output_price: 1.12
-  - name: ernie-4.0-turbo-8k-latest
-    type: chat
-    max_input_tokens: 8192
     input_price: 0.42
     output_price: 1.26
-    supports_function_calling: true
-  - name: ernie-4.0-turbo-128k
+    supports_vision: true
+  - name: ernie-x1-turbo-32k
     type: chat
-    max_input_tokens: 128000
-    input_price: 0.42
-    output_price: 1.26
-    supports_function_calling: true
-  - name: ernie-4.0-8k-latest
-    type: chat
-    max_input_tokens: 8192
-    input_price: 0.56
-    output_price: 2.24
-    supports_function_calling: true
-  - name: ernie-3.5-128k
-    type: chat
-    max_input_tokens: 128000
-    input_price: 0.112
-    output_price: 0.28
-    supports_function_calling: true
-  - name: ernie-speed-pro-128k
-    type: chat
-    max_input_tokens: 128000
-    input_price: 0.042
-    output_price: 0.084
+    max_input_tokens: 32768
+    input_price: 0.14
+    output_price: 0.56
   - name: deepseek-v3
     type: chat
     max_input_tokens: 131072
@@ -1057,6 +1045,16 @@ list:
     max_input_tokens: 131072
     input_price: 0.28
     output_price: 1.12
+  - name: qwen3-235b-a22b
+    type: chat
+    max_input_tokens: 131072
+    input_price: 0.56
+    output_price: 1.68
+  - name: qwen3-30b-a3b
+    type: chat
+    max_input_tokens: 131072
+    input_price: 0.21
+    output_price: 0.84
   - name: qwq-32b
     type: chat
     max_input_tokens: 131072
@@ -1114,10 +1112,8 @@ list:
   - name: qwq-plus-latest
     type: chat
     max_input_tokens: 131072
-    max_output_tokens: 8192
-  - name: qwq-32b
-    type: chat
-    max_input_tokens: 131072
+    input_price: 0.224
+    output_price: 0.56
     max_output_tokens: 8192
   - name: qwen-vl-max-latest
     type: chat
@@ -1133,6 +1129,30 @@ list:
     output_price: 0.63
     max_output_tokens: 2048
     supports_vision: true
+  - name: qwen3-235b-a22b
+    type: chat
+    max_input_tokens: 131072
+    input_price: 0.56
+    output_price: 1.68
+    max_output_tokens: 8192
+  - name: qwen3-30b-a3b
+    type: chat
+    max_input_tokens: 131072
+    input_price: 0.21
+    output_price: 0.84
+    max_output_tokens: 8192
+  - name: qwen3-32b
+    type: chat
+    max_input_tokens: 131072
+    input_price: 0.28
+    output_price: 1.12
+    max_output_tokens: 8192
+  - name: qwq-32b
+    type: chat
+    max_input_tokens: 131072
+    input_price: 0.28
+    output_price: 0.84
+    max_output_tokens: 8192
   - name: qwen2.5-72b-instruct
     type: chat
     max_input_tokens: 129024
@@ -1191,26 +1211,12 @@ list:
     input_price: 0.14
     output_price: 0.56
     max_output_tokens: 64000
-  - name: hunyuan-turbo-latest
-    type: chat
-    max_input_tokens: 28000
-    input_price: 0.336
-    output_price: 1.344
-    max_output_tokens: 4096
-    supports_function_calling: true
   - name: hunyuan-large
     type: chat
     max_input_tokens: 28000
     input_price: 0.56
     output_price: 1.68
     max_output_tokens: 4096
-    supports_function_calling: true
-  - name: hunyuan-large-longcontext
-    type: chat
-    max_input_tokens: 128000
-    input_price: 0.84
-    output_price: 2.52
-    max_output_tokens: 6144
     supports_function_calling: true
   - name: hunyuan-standard
     type: chat
@@ -1233,11 +1239,11 @@ list:
     output_price: 0.0
     max_output_tokens: 6144
     supports_function_calling: true
-  - name: hunyuan-turbo-vision
+  - name: hunyuan-turbos-vision
     type: chat
     max_input_tokens: 6144
-    input_price: 11.2
-    output_price: 11.2
+    input_price: 0.42
+    output_price: 0.84
     max_output_tokens: 2048
     supports_vision: true
   - name: hunyuan-vision
@@ -1257,8 +1263,17 @@ list:
   models:
   - name: kimi-latest
     type: chat
+    max_input_tokens: 131072
+    input_price: 1.4
+    output_price: 4.2
     supports_vision: true
     supports_function_calling: true
+  - name: kimi-thinking-preview
+    type: chat
+    max_input_tokens: 131072
+    input_price: 28.0
+    output_price: 28.0
+    supports_vision: true
   - name: moonshot-v1-8k
     type: chat
     max_input_tokens: 8192
@@ -1314,17 +1329,15 @@ list:
   models:
   - name: glm-4-plus
     type: chat
-    max_input_tokens: 128000
-    input_price: 7.0
-    output_price: 7.0
-    max_output_tokens: 4096
+    max_input_tokens: 131072
+    input_price: 0.7
+    output_price: 0.7
     supports_function_calling: true
-  - name: glm-4-alltools
+  - name: glm-4-air
     type: chat
-    max_input_tokens: 128000
-    input_price: 14.0
-    output_price: 14.0
-    max_output_tokens: 4096
+    max_input_tokens: 131072
+    input_price: 0.07
+    output_price: 0.07
     supports_function_calling: true
   - name: glm-4-long
     type: chat
@@ -1333,14 +1346,13 @@ list:
     output_price: 0.14
     max_output_tokens: 4096
     supports_function_calling: true
-  - name: glm-4-flash
+  - name: glm-4-flash-250414
     type: chat
-    max_input_tokens: 128000
+    max_input_tokens: 131072
     input_price: 0.0
     output_price: 0.0
-    max_output_tokens: 4096
     supports_function_calling: true
-  - name: glm-4v-plus
+  - name: glm-4v-plus-0111
     type: chat
     max_input_tokens: 8192
     input_price: 0.56
@@ -1352,11 +1364,16 @@ list:
     input_price: 0.0
     output_price: 0.0
     supports_vision: true
-  - name: glm-zero-preview
+  - name: glm-z1-air
     type: chat
-    max_input_tokens: 16384
-    input_price: 1.4
-    output_price: 1.4
+    max_input_tokens: 131072
+    input_price: 0.7
+    output_price: 0.7
+  - name: glm-z1-flash
+    type: chat
+    max_input_tokens: 131072
+    input_price: 0.0
+    output_price: 0.0
   - name: embedding-3
     type: embedding
     max_input_tokens: 8192
@@ -1607,7 +1624,7 @@ list:
     input_price: 0.15
     output_price: 0.6
     supports_vision: true
-  - name: google/gemini-2.5-pro-preview-03-25
+  - name: google/gemini-2.5-pro-preview
     type: chat
     max_input_tokens: 1048576
     input_price: 1.25
@@ -1741,23 +1758,17 @@ list:
     max_input_tokens: 131072
     input_price: 0.02
     output_price: 0.05
-  - name: meta-llama/llama-3.2-90b-vision-instruct
-    type: chat
-    max_input_tokens: 131072
-    input_price: 0.9
-    output_price: 0.9
-    supports_vision: true
-  - name: meta-llama/llama-3.2-11b-vision-instruct
-    type: chat
-    max_input_tokens: 131072
-    input_price: 0.055
-    output_price: 0.055
-    supports_vision: true
   - name: mistralai/mistral-large-2411
     type: chat
-    max_input_tokens: 128000
+    max_input_tokens: 131072
     input_price: 2.0
     output_price: 6.0
+    supports_function_calling: true
+  - name: mistralai/mistral-medium-3
+    type: chat
+    max_input_tokens: 131072
+    input_price: 0.4
+    output_price: 2.0
     supports_function_calling: true
   - name: mistralai/mistral-small-3.1-24b-instruct
     type: chat
@@ -1871,6 +1882,21 @@ list:
     input_price: 0.21
     output_price: 0.63
     supports_vision: true
+  - name: qwen/qwen3-235b-a22b
+    type: chat
+    max_input_tokens: 40960
+    input_price: 0.15
+    output_price: 0.6
+  - name: qwen/qwen3-30b-a3b
+    type: chat
+    max_input_tokens: 40960
+    input_price: 0.1
+    output_price: 0.3
+  - name: qwen/qwen3-32b
+    type: chat
+    max_input_tokens: 40960
+    input_price: 0.1
+    output_price: 0.3
   - name: qwen/qwq-32b
     type: chat
     max_input_tokens: 128000
@@ -1984,6 +2010,21 @@ list:
     max_input_tokens: 1000192
     input_price: 0.2
     output_price: 1.1
+  - name: thudm/glm-4-32b
+    type: chat
+    max_input_tokens: 32000
+    input_price: 0.24
+    output_price: 0.24
+  - name: thudm/glm-z1-32b
+    type: chat
+    max_input_tokens: 32000
+    input_price: 0.24
+    output_price: 0.24
+  - name: microsoft/phi-4-reasoning-plus
+    type: chat
+    max_input_tokens: 32768
+    input_price: 0.07
+    output_price: 0.35
 - provider: github
   models:
   - name: gpt-4.1
@@ -2124,21 +2165,17 @@ list:
   - name: meta-llama-3.1-8b-instruct
     type: chat
     max_input_tokens: 131072
-  - name: llama-3.2-90b-vision-instruct
-    type: chat
-    max_input_tokens: 131072
-    supports_vision: true
-  - name: llama-3.2-11b-vision-instruct
-    type: chat
-    max_input_tokens: 131072
-    supports_vision: true
   - name: mistral-large-2411
     type: chat
-    max_input_tokens: 128000
+    max_input_tokens: 131072
+    supports_function_calling: true
+  - name: mistral-medium-2505
+    type: chat
+    max_input_tokens: 131072
     supports_function_calling: true
   - name: mistral-small-2503
     type: chat
-    max_input_tokens: 128000
+    max_input_tokens: 131072
     supports_function_calling: true
   - name: codestral-2501
     type: chat
@@ -2146,7 +2183,7 @@ list:
     supports_function_calling: true
   - name: mistral-nemo
     type: chat
-    max_input_tokens: 128000
+    max_input_tokens: 131072
     supports_function_calling: true
   - name: cohere-command-r-plus-08-2024
     type: chat
@@ -2188,7 +2225,13 @@ list:
     max_input_tokens: 16384
   - name: phi-4-mini-instruct
     type: chat
-    max_input_tokens: 128000
+    max_input_tokens: 131072
+  - name: phi-4-reasoning
+    type: chat
+    max_input_tokens: 33792
+  - name: phi-4-mini-reasoning
+    type: chat
+    max_input_tokens: 131072
 - provider: deepinfra
   models:
   - name: meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8
@@ -2226,27 +2269,32 @@ list:
     input_price: 0.03
     output_price: 0.05
     supports_function_calling: true
-  - name: meta-llama/Llama-3.2-90B-Vision-Instruct
+  - name: Qwen/Qwen3-235B-A22B
+    type: chat
+    max_input_tokens: 40960
+    input_price: 0.15
+    output_price: 0.6
+  - name: Qwen/Qwen3-30B-A3B
+    type: chat
+    max_input_tokens: 40960
+    input_price: 0.1
+    output_price: 0.3
+  - name: Qwen/Qwen3-32B
+    type: chat
+    max_input_tokens: 40960
+    input_price: 0.1
+    output_price: 0.3
+  - name: Qwen/QwQ-32B
     type: chat
     max_input_tokens: 131072
-    input_price: 0.35
-    output_price: 0.4
-  - name: meta-llama/Llama-3.2-11B-Vision-Instruct
-    type: chat
-    max_input_tokens: 131072
-    input_price: 0.055
-    output_price: 0.055
+    input_price: 0.12
+    output_price: 0.18
   - name: Qwen/Qwen2.5-72B-Instruct
     type: chat
     max_input_tokens: 32768
     input_price: 0.23
     output_price: 0.4
     supports_function_calling: true
-  - name: Qwen/QwQ-32B
-    type: chat
-    max_input_tokens: 131072
-    input_price: 0.12
-    output_price: 0.18
   - name: Qwen/Qwen2.5-Coder-32B-Instruct
     type: chat
     max_input_tokens: 32768
@@ -2277,6 +2325,11 @@ list:
     max_input_tokens: 131072
     input_price: 0.035
     output_price: 0.08
+  - name: microsoft/phi-4-reasoning-plus
+    type: chat
+    max_input_tokens: 32768
+    input_price: 0.07
+    output_price: 0.35
   - name: BAAI/bge-large-en-v1.5
     type: embedding
     input_price: 0.01
@@ -2315,12 +2368,6 @@ list:
     max_tokens_per_chunk: 8192
     default_chunk_size: 2000
     max_batch_size: 100
-  - name: jina-colbert-v2
-    type: embedding
-    input_price: 0.0
-    max_tokens_per_chunk: 8192
-    default_chunk_size: 1500
-    max_batch_size: 100
   - name: jina-clip-v2
     type: embedding
     input_price: 0.0
@@ -2328,10 +2375,16 @@ list:
     default_chunk_size: 1500
     max_batch_size: 100
   - name: jina-colbert-v2
+    type: embedding
+    input_price: 0.0
+    max_tokens_per_chunk: 8192
+    default_chunk_size: 1500
+    max_batch_size: 100
+  - name: jina-reranker-v2-base-multilingual
     type: reranker
     max_input_tokens: 8192
     input_price: 0.0
-  - name: jina-reranker-v2-base-multilingual
+  - name: jina-colbert-v2
     type: reranker
     max_input_tokens: 8192
     input_price: 0.0
