@@ -20,8 +20,9 @@ mapping_tools: # Alias for a tool or toolset
   fs: "fs_cat,fs_ls,fs_mkdir,fs_rm,fs_write"
 # use_tools: "execute_py_code" # Which tools to use by default
 
-model: openai:gpt-4.1
+model: claude:claude-sonnet-4-20250514
 clients:
   - type: openai
   - type: gemini
   - type: claude
+    api_base: https://api.anthropic.com/v1
