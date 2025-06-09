@@ -224,7 +224,7 @@ list:
     max_output_tokens: 8192
     supports_vision: true
     supports_function_calling: true
-  - name: gemini-2.5-flash-preview-04-17
+  - name: gemini-2.5-flash-preview-05-20
     type: chat
     max_input_tokens: 1048576
     input_price: 0.0
@@ -278,6 +278,58 @@ list:
     max_batch_size: 100
 - provider: claude
   models:
+  - name: claude-opus-4-20250514
+    type: chat
+    max_input_tokens: 200000
+    input_price: 15.0
+    output_price: 75.0
+    max_output_tokens: 8192
+    require_max_tokens: true
+    supports_vision: true
+    supports_function_calling: true
+  - name: claude-opus-4-20250514:thinking
+    type: chat
+    real_name: claude-opus-4-20250514
+    max_input_tokens: 200000
+    input_price: 15.0
+    output_price: 75.0
+    patch:
+      body:
+        temperature: null
+        top_p: null
+        thinking:
+          type: enabled
+          budget_tokens: 16000
+    max_output_tokens: 24000
+    require_max_tokens: true
+    supports_vision: true
+    supports_function_calling: true
+  - name: claude-sonnet-4-20250514
+    type: chat
+    max_input_tokens: 200000
+    input_price: 3.0
+    output_price: 15.0
+    max_output_tokens: 8192
+    require_max_tokens: true
+    supports_vision: true
+    supports_function_calling: true
+  - name: claude-sonnet-4-20250514:thinking
+    type: chat
+    real_name: claude-sonnet-4-20250514
+    max_input_tokens: 200000
+    input_price: 3.0
+    output_price: 15.0
+    patch:
+      body:
+        temperature: null
+        top_p: null
+        thinking:
+          type: enabled
+          budget_tokens: 16000
+    max_output_tokens: 24000
+    require_max_tokens: true
+    supports_vision: true
+    supports_function_calling: true
   - name: claude-3-7-sonnet-20250219
     type: chat
     max_input_tokens: 200000
@@ -374,6 +426,12 @@ list:
   - name: mistral-small-latest
     type: chat
     max_input_tokens: 32768
+    input_price: 0.1
+    output_price: 0.3
+    supports_function_calling: true
+  - name: devstral-small-latest
+    type: chat
+    max_input_tokens: 256000
     input_price: 0.1
     output_price: 0.3
     supports_function_calling: true
@@ -604,7 +662,7 @@ list:
     max_output_tokens: 8192
     supports_vision: true
     supports_function_calling: true
-  - name: gemini-2.5-flash-preview-04-17
+  - name: gemini-2.5-flash-preview-05-20
     type: chat
     max_input_tokens: 1048576
     input_price: 0.15
@@ -636,6 +694,56 @@ list:
     max_output_tokens: 8192
     supports_vision: true
     supports_function_calling: true
+  - name: claude-opus-4@20250514
+    type: chat
+    max_input_tokens: 200000
+    input_price: 15.0
+    output_price: 75.0
+    max_output_tokens: 8192
+    require_max_tokens: true
+    supports_vision: true
+    supports_function_calling: true
+  - name: claude-opus-4@20250514:thinking
+    type: chat
+    real_name: claude-opus-4@20250514
+    max_input_tokens: 200000
+    input_price: 15.0
+    output_price: 75.0
+    patch:
+      body:
+        temperature: null
+        top_p: null
+        thinking:
+          type: enabled
+          budget_tokens: 16000
+    max_output_tokens: 24000
+    require_max_tokens: true
+    supports_vision: true
+  - name: claude-sonnet-4@20250514
+    type: chat
+    max_input_tokens: 200000
+    input_price: 3.0
+    output_price: 15.0
+    max_output_tokens: 8192
+    require_max_tokens: true
+    supports_vision: true
+    supports_function_calling: true
+  - name: claude-sonnet-4@20250514:thinking
+    type: chat
+    real_name: claude-sonnet-4@20250514
+    max_input_tokens: 200000
+    input_price: 3.0
+    output_price: 15.0
+    patch:
+      body:
+        temperature: null
+        top_p: null
+        thinking:
+          type: enabled
+          budget_tokens: 16000
+    max_output_tokens: 24000
+    require_max_tokens: true
+    supports_vision: true
   - name: claude-3-7-sonnet@20250219
     type: chat
     max_input_tokens: 200000
@@ -749,6 +857,60 @@ list:
     max_batch_size: 5
 - provider: bedrock
   models:
+  - name: us.anthropic.claude-opus-4-20250514-v1:0
+    type: chat
+    max_input_tokens: 200000
+    input_price: 15.0
+    output_price: 75.0
+    max_output_tokens: 8192
+    require_max_tokens: true
+    supports_vision: true
+    supports_function_calling: true
+  - name: us.anthropic.claude-opus-4-20250514-v1:0:thinking
+    type: chat
+    real_name: us.anthropic.claude-opus-4-20250514-v1:0
+    max_input_tokens: 200000
+    input_price: 15.0
+    output_price: 75.0
+    patch:
+      body:
+        inferenceConfig:
+          temperature: null
+          topP: null
+        additionalModelRequestFields:
+          thinking:
+            type: enabled
+            budget_tokens: 16000
+    max_output_tokens: 24000
+    require_max_tokens: true
+    supports_vision: true
+  - name: us.anthropic.claude-sonnet-4-20250514-v1:0
+    type: chat
+    max_input_tokens: 200000
+    input_price: 3.0
+    output_price: 15.0
+    max_output_tokens: 8192
+    require_max_tokens: true
+    supports_vision: true
+    supports_function_calling: true
+  - name: us.anthropic.claude-sonnet-4-20250514-v1:0:thinking
+    type: chat
+    real_name: us.anthropic.claude-sonnet-4-20250514-v1:0
+    max_input_tokens: 200000
+    input_price: 3.0
+    output_price: 15.0
+    patch:
+      body:
+        inferenceConfig:
+          temperature: null
+          topP: null
+        additionalModelRequestFields:
+          thinking:
+            type: enabled
+            budget_tokens: 16000
+    max_output_tokens: 24000
+    require_max_tokens: true
+    supports_vision: true
   - name: us.anthropic.claude-3-7-sonnet-20250219-v1:0
     type: chat
     max_input_tokens: 200000
@@ -1200,58 +1362,54 @@ list:
   models:
   - name: hunyuan-turbos-latest
     type: chat
-    max_input_tokens: 24000
+    max_input_tokens: 28000
     input_price: 0.112
     output_price: 0.28
-    max_output_tokens: 8192
     supports_function_calling: true
   - name: hunyuan-t1-latest
     type: chat
     max_input_tokens: 28000
     input_price: 0.14
     output_price: 0.56
-    max_output_tokens: 64000
   - name: hunyuan-large
     type: chat
     max_input_tokens: 28000
     input_price: 0.56
     output_price: 1.68
-    max_output_tokens: 4096
     supports_function_calling: true
   - name: hunyuan-standard
     type: chat
     max_input_tokens: 30000
     input_price: 0.112
     output_price: 0.28
-    max_output_tokens: 2048
     supports_function_calling: true
   - name: hunyuan-standard-256K
     type: chat
     max_input_tokens: 250000
     input_price: 0.07
     output_price: 0.28
-    max_output_tokens: 6144
     supports_function_calling: true
   - name: hunyuan-lite
     type: chat
     max_input_tokens: 250000
     input_price: 0.0
     output_price: 0.0
-    max_output_tokens: 6144
     supports_function_calling: true
   - name: hunyuan-turbos-vision
     type: chat
     max_input_tokens: 6144
     input_price: 0.42
     output_price: 0.84
-    max_output_tokens: 2048
+    supports_vision: true
+  - name: hunyuan-t1-vision
+    type: chat
+    max_input_tokens: 24000
     supports_vision: true
   - name: hunyuan-vision
     type: chat
-    max_input_tokens: 6144
+    max_input_tokens: 16000
     input_price: 2.52
     output_price: 2.52
-    max_output_tokens: 2048
     supports_vision: true
   - name: hunyuan-embedding
     type: embedding
@@ -1657,6 +1815,24 @@ list:
     output_price: 0.15
     supports_vision: true
     supports_function_calling: true
+  - name: anthropic/claude-opus-4
+    type: chat
+    max_input_tokens: 200000
+    input_price: 15.0
+    output_price: 75.0
+    max_output_tokens: 8192
+    require_max_tokens: true
+    supports_vision: true
+    supports_function_calling: true
+  - name: anthropic/claude-sonnet-4
+    type: chat
+    max_input_tokens: 200000
+    input_price: 3.0
+    output_price: 15.0
+    max_output_tokens: 8192
+    require_max_tokens: true
+    supports_vision: true
+    supports_function_calling: true
   - name: anthropic/claude-3.7-sonnet
     type: chat
     max_input_tokens: 200000
@@ -1775,6 +1951,12 @@ list:
     max_input_tokens: 131072
     input_price: 0.1
     output_price: 0.3
+  - name: mistralai/devstral-small
+    type: chat
+    max_input_tokens: 131072
+    input_price: 0.07
+    output_price: 0.1
+    supports_function_calling: true
   - name: mistralai/codestral-2501
     type: chat
     max_input_tokens: 256000
@@ -2230,6 +2412,12 @@ list:
     type: chat
     max_input_tokens: 33792
   - name: phi-4-mini-reasoning
+    type: chat
+    max_input_tokens: 131072
+  - name: grok-3
+    type: chat
+    max_input_tokens: 131072
+  - name: grok-3-mini
     type: chat
     max_input_tokens: 131072
 - provider: deepinfra

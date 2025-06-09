@@ -31,6 +31,8 @@ set -gx ZDOTDIR "$HOME/.config/zsh"
 set -gx XDG_CONFIG_HOME "$HOME/.config"
 set -gx XDG_DATA_HOME "$HOME/.local/share"
 set -gx XDG_CACHE_HOME "$HOME/.cache"
+set -gx AICHAT_ENV_FILE "$XDG_CONFIG_HOME/.config/aichat/.env"
+set -gx AICHAT_SHELL fish
 set -gx STARSHIP_CONFIG "$XDG_CONFIG_HOME/starship/starship.toml"
 set -gx STARSHIP_CACHE "$XDG_CACHE_HOME/starship/cache"
 set -gx R_HOME_USER "$XDG_CONFIG_HOME/R"
@@ -47,7 +49,7 @@ source ~/.env
 # ABBREVIATIONS
 abbr --add cd z
 abbr --add ci zi
-abbr --add ll eza --color=always -lah --git --no-filesize --icons=always --no-user --no-permissions --group-directories-first
+abbr --add ll eza --color=always -lah --git --icons=always --no-user --no-permissions --group-directories-first
 abbr --add off systemctl poweroff
 abbr --add ... cd ../..
 abbr --add .... cd ../../..
