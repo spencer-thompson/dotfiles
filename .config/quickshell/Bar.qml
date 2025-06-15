@@ -46,7 +46,7 @@ Scope {
                             anchors.right: parent.right
                             // anchors.verticalCenter: parent.verticalCenter
                             anchors.bottom: parent.verticalCenter
-                            anchors.bottomMargin: 2
+                            anchors.bottomMargin: 6
                             color: "white"
                             radius: 5
 
@@ -65,11 +65,34 @@ Scope {
                         Rectangle {
                             // id: cpuBar
                             height: 3
-                            width: parent.width * Load.percent
+                            width: parent.width * GPU.percent
+                            anchors.right: parent.right
+                            // anchors.verticalCenter: parent.verticalCenter
+                            anchors.verticalCenter: parent.verticalCenter
+                            // anchors.topMargin: 0
+                            color: "white"
+                            radius: 5
+
+                            Behavior on width {
+                                NumberAnimation {
+                                    duration: 800
+                                    easing {
+                                        type: Easing.InOutQuad
+                                        amplitude: 1.0
+                                        period: 0.5
+                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            // id: cpuBar
+                            height: 3
+                            width: parent.width * Memory.percent
                             anchors.right: parent.right
                             // anchors.verticalCenter: parent.verticalCenter
                             anchors.top: parent.verticalCenter
-                            anchors.topMargin: 2
+                            anchors.topMargin: 5
                             color: "white"
                             radius: 5
 
@@ -111,8 +134,20 @@ Scope {
                         //     implicitSize: 20
                         //     source: Quickshell.iconPath("audio-volume-high-symbolic")
                         // }
+                        //
+                        // Text {
+                        //     anchors.right: timeCenter.left
+                        //     anchors.rightMargin: 3
+                        //     anchors.leftMargin: 3
+                        //     text: "󰤨"
+                        //     color: "white"
+                        //     font.family: "Berkeley Mono"
+                        //     font.pointSize: 17
+                        //     font.weight: 700
+                        // }
 
                         Text {
+                            id: timeCenter
                             anchors.centerIn: parent
                             text: cma.containsMouse ? Time.tlong : Time.tshort
                             // color: cma.containsMouse ? "white" : "crimson"
@@ -137,14 +172,14 @@ Scope {
                         Rectangle {
                             id: memBar
                             height: 3
-                            width: parent.width * Memory.percent
+                            width: parent.width * CPU.percent
                             anchors.left: parent.left
-                            anchors.top: parent.verticalCenter
-                            anchors.topMargin: 2
+                            anchors.bottom: parent.verticalCenter
+                            anchors.bottomMargin: 6
                             color: "white"
                             radius: 5
                             border.color: "transparent"
-                            border.width: 2
+                            // border.width: 2
 
                             Behavior on width {
                                 NumberAnimation {
@@ -163,8 +198,30 @@ Scope {
                             height: 3
                             width: parent.width * GPU.percent
                             anchors.left: parent.left
-                            anchors.bottom: parent.verticalCenter
-                            anchors.bottomMargin: 2
+                            anchors.verticalCenter: parent.verticalCenter
+                            // anchors.bottomMargin: 2
+                            color: "white"
+                            radius: 5
+
+                            Behavior on width {
+                                NumberAnimation {
+                                    duration: 800
+                                    easing {
+                                        type: Easing.InOutQuad
+                                        amplitude: 1.0
+                                        period: 0.5
+                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            // id: memBar
+                            height: 3
+                            width: parent.width * Memory.percent
+                            anchors.left: parent.left
+                            anchors.top: parent.verticalCenter
+                            anchors.topMargin: 5
                             color: "white"
                             radius: 5
 
