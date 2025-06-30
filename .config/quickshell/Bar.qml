@@ -15,7 +15,7 @@ Scope {
             property var modelData
             screen: modelData
 
-            implicitHeight: 30
+            implicitHeight: 40
             anchors {
                 top: true
                 left: true
@@ -25,13 +25,33 @@ Scope {
             color: "transparent"
 
             WrapperMouseArea {
+                // id: topMouseArea
                 anchors.fill: parent
                 // onClicked: console.log(`${Quickshell.screens.find(s => s.name === "DP-1")}`)
                 onClicked: console.log(`${Hyprland.workspaces}`)
 
+                // Rectangle {
+                //     anchors.centerIn: parent
+                //     // anchors.top: parent.top
+                //     color: "white"
+                //     height: 3
+                //     width: parent.width * Battery.percent
+                // }
+
                 RowLayout {
+                    id: topRow
                     anchors.fill: parent
-                    spacing: 12
+                    anchors.bottomMargin: 8
+                    spacing: 8
+                    height: 32
+
+                    // Rectangle {
+                    //     // anchors.centerIn: parent
+                    //     anchors.top: parent.top
+                    //     color: "white"
+                    //     height: 3
+                    //     width: parent.width * Battery.percent
+                    // }
 
                     Rectangle {
                         // id: topLeft
@@ -112,10 +132,10 @@ Scope {
                     Rectangle {
                         // anchors.fill: parent
                         id: centerSection
-                        bottomLeftRadius: 24
-                        bottomRightRadius: 24
+                        bottomLeftRadius: 8
+                        bottomRightRadius: 8
 
-                        color: cma.containsMouse ? "crimson" : "black"
+                        color: cma.containsMouse ? "crimson" : "white"
                         implicitWidth: cma.containsMouse ? 350 : 150
                         // Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -151,7 +171,7 @@ Scope {
                             anchors.centerIn: parent
                             text: cma.containsMouse ? Time.tlong : Time.tshort
                             // color: cma.containsMouse ? "white" : "crimson"
-                            color: "white"
+                            color: "black"
                             font.family: "Berkeley Mono"
                             font.pointSize: 20
                             font.weight: 700
@@ -162,6 +182,13 @@ Scope {
                             anchors.fill: parent
                             hoverEnabled: true
                         }
+
+                        // Rectangle {
+                        //     anchors.top: topRow.top
+                        //     anchors.horizontalCenter: topRow.horizontalCenter
+                        //     height: 3
+                        //     width: Battery.percent * topRow.width
+                        // }
                     }
 
                     Rectangle {
@@ -238,6 +265,24 @@ Scope {
                         }
                     }
                 }
+                // Rectangle {
+                //     // anchors.top: parent.bottom
+                //     color: "white"
+                //     height: 3
+                //     width: 10
+                // }
+            }
+
+            Rectangle {
+                // anchors.top: centerSection.top
+                // anchors.topMargin: 30
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 37
+                color: "white"
+                radius: 5
+                height: 3
+                width: Battery.percent * centerSection.width
             }
         }
     }
