@@ -14,6 +14,23 @@
 [core]
     pager = delta
 
+
+[difftool "difftastic"]
+    # See `man git-difftool` for a description of MERGED, LOCAL and REMOTE.
+    cmd = difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"
+
+[difftool]
+    # Run the difftool immediately, don't ask 'are you sure' each time.
+    prompt = false
+
+[pager]
+    # Use a pager if the difftool output is larger than one screenful,
+    # consistent with the behaviour of `git diff`.
+    difftool = true
+
+[diff]
+    tool = difftastic
+
 [interactive]
     diffFilter = delta --color-only
     singlekey = true
