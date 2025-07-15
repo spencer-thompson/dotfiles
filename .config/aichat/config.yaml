@@ -25,4 +25,5 @@ clients:
   - type: openai
   - type: gemini
   - type: claude
-    api_base: https://api.anthropic.com/v1
+    api_key: ***REMOVED***
+    # api_base: https://api.anthropic.com/v1

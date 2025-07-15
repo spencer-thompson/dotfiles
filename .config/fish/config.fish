@@ -33,7 +33,7 @@ set -gx ZDOTDIR "$HOME/.config/zsh"
 set -gx XDG_CONFIG_HOME "$HOME/.config"
 set -gx XDG_DATA_HOME "$HOME/.local/share"
 set -gx XDG_CACHE_HOME "$HOME/.cache"
-set -gx AICHAT_ENV_FILE "$XDG_CONFIG_HOME/.config/aichat/.env"
+set -gx AICHAT_ENV_FILE "$XDG_CONFIG_HOME/aichat/.env"
 set -gx AICHAT_SHELL fish
 set -gx STARSHIP_CONFIG "$XDG_CONFIG_HOME/starship/starship.toml"
 set -gx STARSHIP_CACHE "$XDG_CACHE_HOME/starship/cache"
@@ -58,6 +58,7 @@ abbr --add .... cd ../../..
 abbr --add ..... cd ../../../..
 abbr --add ...... cd ../../../../..
 abbr --add ai aichat
+abbr --add oc opencode
 
 ## git
 abbr --add gs git status --short
