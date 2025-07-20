@@ -4,7 +4,7 @@
   "positionX": "right",
   "positionY": "top",
   "layer": "overlay",
-  "cssPriority": "application",
+  "cssPriority": "user",
   "notification-icon-size": 64,
   "notification-window-width": 500,
   "control-center-margin-top": 64,
