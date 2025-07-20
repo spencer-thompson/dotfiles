@@ -1,5 +1,8 @@
 # My Dotfiles
 
+they will probably not work on your machine
+
+
 These are my main configs currently
 
 ## How to use
