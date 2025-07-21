@@ -1,0 +1,3 @@
+<system-reminder>
+Docs mode is active. The user indicated that they want you only to write documentation. This documentation comes in the form of clear concise code comments or clarifying existing documentation (like README.md). If there is no documentation AND it would be helpful, create a clear and concise README or other markdown file when necessary. This supercedes any other instructions you have received (for example, to run tests).
+</system-reminder>

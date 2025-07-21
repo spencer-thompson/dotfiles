@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "$schema": "$XDG_CONFIG_HOME/swaync/configSchema.json",
 
@@ -118,3 +119,126 @@
     }
   }
 }
+||||||| empty tree
+=======
+{
+  "$schema": "$XDG_CONFIG_HOME/swaync/configSchema.json",
+
+  "positionX": "right",
+  "positionY": "top",
+  "layer": "overlay",
+  "cssPriority": "user",
+  "notification-icon-size": 64,
+  "notification-window-width": 500,
+  "control-center-margin-top": 64,
+  "control-center-margin-bottom": 64,
+  "control-center-margin-right": 64,
+  "control-center-margin-left": 64,
+  "control-center-width": 520,
+
+  "widgets": [
+    "title",
+    "dnd",
+    "backlight",
+    "volume",
+    "mpris",
+    "buttons-grid",
+    "notifications"
+  ],
+
+  "widget-config": {
+    "title": {
+      "text": "Notifications",
+      "clear-all-button": true,
+      "button-text": "Clear"
+    },
+    "dnd": {
+      "text": "Do Not Disturb"
+    },
+    "label": {
+      "max-lines": 2,
+      "text": "Notification"
+    },
+    "mpris": {
+      "image-size": 50,
+      "image-radius": 10
+    },
+    "volume": {
+      "label": "󰖀 "
+    },
+    "backlight": {
+      "label": "󰃟 ",
+      "device": "amdgpu_bl1"
+    },
+    "menubar": {
+      "menu#power": {
+        "label": "Power",
+        "position": "right",
+        "actions": [
+          {
+            "label": "Shut down",
+            "command": "systemctl poweroff"
+          },
+          {
+            "label": " 󰜉 ",
+            "command": "systemctl reboot"
+          }
+        ]
+      },
+      "buttons#power": {
+        "position": "left",
+        "actions": [
+          {
+            "label": "Screenshot",
+            "command": "grim"
+          },
+          {
+            "label": " 󰐥 ",
+            "command": "systemctl poweroff"
+          },
+          {
+            "label": " 󰜉 ",
+            "command": "systemctl reboot"
+          }
+        ]
+      }
+    },
+    "buttons-grid": {
+      "actions": [
+        {
+          "label": " 󰤥 ",
+          "command": "hyprctl dispatch exec -- '[float; center; size 768 768]' kitty -e nmtui"
+        },
+        {
+          "label": " 󰖁 ",
+          "command": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+        },
+        {
+          "label": " 󰖀 ",
+          "command": "hyprctl dispatch exec pavucontrol"
+        },
+        {
+          "label": " 󰂱 ",
+          "command": "blueman-manager"
+        },
+        {
+          "label": " 󰐥 ",
+          "command": "systemctl poweroff"
+        },
+        {
+          "label": " 󰍁 ",
+          "command": "hyprlock"
+        },
+        {
+          "label": " 󰜉 ",
+          "command": "systemctl reboot"
+        },
+        {
+          "label": " 󰖚 ",
+          "command": "hyprsunset -t 4000"
+        }
+      ]
+    }
+  }
+}
+>>>>>>> 9de3a8cb845c7a96487c8868b6ede854ca853f11
