@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # see https://github.com/sigoden/aichat/blob/main/config.example.yaml
 #
 keybindings: vi
@@ -26,35 +25,3 @@ clients:
   - type: openai
   - type: gemini
   - type: claude
-    api_base: https://api.anthropic.com/v1
-||||||| empty tree
-=======
-# see https://github.com/sigoden/aichat/blob/main/config.example.yaml
-#
-keybindings: vi
-editor: nvim
-
-# Define document loaders to control how RAG and `.file`/`--file` load files of specific formats.
-document_loaders:
-  # You can add custom loaders using the following syntax:
-  #   <file-extension>: <command-to-load-the-file>
-  # Note: Use `$1` for input file and `$2` for output file. If `$2` is omitted, use stdout as output.
-  pdf: "pdftotext $1 -" # Load .pdf file, see https://poppler.freedesktop.org to set up pdftotext
-  docx: "pandoc --to plain $1" # Load .docx file, see https://pandoc.org to set up pandoc
-  # jina: 'curl -fsSL https://r.jina.ai/$1 -H "Authorization: Bearer <jina_api_key>"'
-  # Load a git repo with https://github.com/bodo-run/yek
-  git: >
-    sh -c "yek $1 --json | jq '[.[] | { path: .filename, contents: .content }]'"
-
-function_calling: true # Enables or disables function calling (Globally).
-mapping_tools: # Alias for a tool or toolset
-  fs: "fs_cat,fs_ls,fs_mkdir,fs_rm,fs_write"
-# use_tools: "execute_py_code" # Which tools to use by default
-
-model: openai:gpt-4.1
-clients:
-  - type: openai
-  - type: gemini
-  - type: claude
-    # api_base: https://api.anthropic.com/v1
->>>>>>> 9de3a8cb845c7a96487c8868b6ede854ca853f11
