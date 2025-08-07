@@ -92,3 +92,6 @@ function _aichat_fish
     end
 end
 bind --mode insert ctrl-h _aichat_fish
+
+# uv
+fish_add_path "/home/sthom/.local/share/../bin"
