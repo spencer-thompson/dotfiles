@@ -13,14 +13,14 @@ bind --mode insert \cy forward-char
 bind --mode insert up ctrl-r
 bind --mode command k history-pager
 
-fzf --fish                         | source
-starship init fish                 | source
-direnv hook fish                   | source
-atuin init fish                    | source
+fzf --fish | source
+starship init fish | source
+direnv hook fish | source
+atuin init fish | source
 atuin gen-completions --shell fish | source
-zoxide init fish                   | source
-hcloud completion fish             | source
-jj util completion fish            | source
+zoxide init fish | source
+hcloud completion fish | source
+jj util completion fish | source
 
 bind -M insert up _atuin_search
 
@@ -28,7 +28,6 @@ set -gx STARSHIP_CONFIG ~/.config/starship/starship.toml
 set -gx EDITOR nvim
 set -gx BROWSER firefox
 set -gx ZDOTDIR "$HOME/.config/zsh"
-
 
 set -gx XDG_CONFIG_HOME "$HOME/.config"
 set -gx XDG_DATA_HOME "$HOME/.local/share"
@@ -74,12 +73,12 @@ fish_add_path /home/sthom/.cargo/bin/
 
 # YAZI
 function y
-	set tmp (mktemp -t "yazi-cwd.XXXXXX")
-	yazi $argv --cwd-file="$tmp"
-	if set cwd (command cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
-		builtin cd -- "$cwd"
-	end
-	rm -f -- "$tmp"
+    set tmp (mktemp -t "yazi-cwd.XXXXXX")
+    yazi $argv --cwd-file="$tmp"
+    if set cwd (command cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
+        builtin cd -- "$cwd"
+    end
+    rm -f -- "$tmp"
 end
 
 # AI HELP
