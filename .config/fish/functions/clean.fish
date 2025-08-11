@@ -11,6 +11,9 @@ function clean
     echo -e "\e[1;35mCleaning go cache\e[0m"
     go clean -cache -modcache
 
+    echo -e "\e[1;35mCleaning removing orphan packages\e[0m"
+    paru -R $(paru -Qtdq)
+
     echo -e "\e[1;35mCleaning pacman and aur cache\e[0m"
     paru -Scc
 end

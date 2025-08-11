@@ -45,6 +45,10 @@ set -gx SHELL fish
 set -gx FZF_DEFAULT_COMMAND 'fd --hidden --strip-cwd-prefix --exclude .git'
 set -gx FZF_DEFAULT_OPTS '--prompt="-> "'
 
+# colored man pages
+set -gx MANPAGER 'less -R --use-color -Dd+r -Du+b'
+set -gx GROFF_NO_SGR 1
+
 source ~/.env
 
 # ABBREVIATIONS
