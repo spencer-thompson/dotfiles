@@ -29,6 +29,7 @@
     difftool = true
 
 [diff]
+    ; external = difft
     tool = difftastic
 
 [interactive]
@@ -40,7 +41,7 @@
     side-by-side = true
 
 [merge]
-    conflictstyle = diff3
+    conflictstyle = zdiff3
 
 [status]
     branch = true

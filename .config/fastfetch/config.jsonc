@@ -1,139 +1,144 @@
 {
-  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
-  "logo": {
-    "type": "small",
-    "padding": {
-      "top": 2,
-      "left": 5,
-      "right": 5,
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "type": "small",
+        "padding": {
+            "top": 2,
+            "left": 5,
+            "right": 5,
+        },
+        // "width": 4,
+        // "height": 4,
+        // "source": "~/dotfiles/.config/fastfetch/archlinux-logo.png",
+        // "chafa": {
+        //   // "fgOnly": true,
+        //   "symbols": "geometric",
+        //   "canvasMode": "TRUECOLOR",
+        //   "ditherMode": "DIFFUSION",
+        // },
     },
-    // "width": 4,
-    // "height": 4,
-    // "source": "~/dotfiles/.config/fastfetch/archlinux-logo.png",
-    // "chafa": {
-    //   // "fgOnly": true,
-    //   "symbols": "geometric",
-    //   "canvasMode": "TRUECOLOR",
-    //   "ditherMode": "DIFFUSION",
-    // },
-  },
-  "display": {
-    "key": {
-      "width": 8,
+    "display": {
+        "key": {
+            "width": 8,
+        },
+        "bar": {
+            "char": {
+                "elapsed": "=",
+                "total": "-"
+            },
+            "width": 13
+        },
+        "separator": " │ ",
+        "constants": [
+            "",
+            ""
+        ],
     },
-    "bar": {
-      "charElapsed": "=",
-      "charTotal": "-",
-      "width": 13,
-    },
-    "separator": " │ ",
-    "constants": ["", ""],
-  },
-  "modules": [
-    // {
-    //   "type": "command",
-    //   "key": " ",
-    //   "command": "fortune",
-    // },
-    {
-      "type": "title",
-      // "key": "┌─ ",
-      "key": " ",
-      "format": "         {1}@{#blue}{2}",
-      "keyColor": "red",
-    },
-    {
-      "type": "title",
-      "key": " ",
-      "format": "     ┌─────────────────────",
-      // "paddingLeft": 17,
-    },
-    {
-      "type": "os",
-      // "key": "├─󰣇 ", // Just get your distro's logo off nerdfonts.com
-      "key": "  OS",
-      "format": "{$1} {pretty-name}",
-      "keyColor": "red",
-    },
-    {
-      "type": "cpu",
-      // "key": "├─󰻠 ",
-      "key": " CPU",
-      "format": "{$1} {1} [{#green}{7}{#0}]",
-      "keyColor": "blue",
-    },
-    // {
-    //   "type": "cpuusage",
-    //   // "key": "├─󰻠 ",
-    //   "key": "  - ",
-    //   "format": "  - {1} [{4} / {2}]",
-    //   "keyColor": "blue",
-    // },
-    {
-      "type": "gpu",
-      // "key": "├─󰍛 ",
-      "key": " GPU",
-      "format": "{$1} {1} {2} [{4}]",
-      "keyColor": "blue",
-      "temp": true,
-    },
-    {
-      "type": "memory",
-      // "key": "├─ ",
-      "key": " RAM",
-      "format": "{$1} {1} / {2} [{3}]",
-      "keyColor": "blue",
-    },
-    {
-      "type": "disk",
-      // "key": "├─ ",
-      "key": "DISK",
-      "format": "{$1} {1} / {2} [{3}]",
-      "keyColor": "blue",
-    },
-    {
-      "type": "wifi",
-      // "key": "├─ ",
-      // "key": "󰤨",
-      "key": "WIFI",
-      "format": "{$1} {4} [{7}]", // ssid
-      "keyColor": "blue",
-    },
-    {
-      "type": "media",
-      // "key": "├─󰝚 ",
-      "key": "MUSC",
-      "format": "{$1} [{6} | {5}] {1} - {3}",
-      "keyColor": "red",
-    },
-    {
-      "type": "sound",
-      // "key": "└─ ",
-      "key": "SOUN",
-      // "format": "│ [{3}] {2}",
-      "format": "{$1} {2} [{3}]",
-      "keyColor": "red",
-    },
-    {
-      "type": "battery",
-      // "key": "├─ ",
-      // "key": "󰁹",
-      "key": " BAT",
-      "format": "{$1} {5} [{4}]",
-      "keyColor": "red",
-      "temp": true,
-    },
-    {
-      "type": "title",
-      "key": " ",
-      "format": "     └─────────────────────",
-      // "paddingLeft": 17,
-    },
-    {
-      "type": "colors",
-      "paddingLeft": 9,
-      "symbol": "square",
-      // "block": [1, 2],
-    },
-  ],
+    "modules": [
+        // {
+        //   "type": "command",
+        //   "key": " ",
+        //   "command": "fortune",
+        // },
+        {
+            "type": "title",
+            // "key": "┌─ ",
+            "key": " ",
+            "format": "         {1}@{#blue}{2}",
+            "keyColor": "red",
+        },
+        {
+            "type": "title",
+            "key": " ",
+            "format": "     ┌─────────────────────",
+            // "paddingLeft": 17,
+        },
+        {
+            "type": "os",
+            // "key": "├─󰣇 ", // Just get your distro's logo off nerdfonts.com
+            "key": "  OS",
+            "format": "{$1} {pretty-name}",
+            "keyColor": "red",
+        },
+        {
+            "type": "cpu",
+            // "key": "├─󰻠 ",
+            "key": " CPU",
+            "format": "{$1} {1} [{#green}{7}{#0}]",
+            "keyColor": "blue",
+        },
+        // {
+        //   "type": "cpuusage",
+        //   // "key": "├─󰻠 ",
+        //   "key": "  - ",
+        //   "format": "  - {1} [{4} / {2}]",
+        //   "keyColor": "blue",
+        // },
+        {
+            "type": "gpu",
+            // "key": "├─󰍛 ",
+            "key": " GPU",
+            "format": "{$1} {1} {2} [{4}]",
+            "keyColor": "blue",
+            "temp": true,
+        },
+        {
+            "type": "memory",
+            // "key": "├─ ",
+            "key": " RAM",
+            "format": "{$1} {1} / {2} [{3}]",
+            "keyColor": "blue",
+        },
+        {
+            "type": "disk",
+            // "key": "├─ ",
+            "key": "DISK",
+            "format": "{$1} {1} / {2} [{3}]",
+            "keyColor": "blue",
+        },
+        {
+            "type": "wifi",
+            // "key": "├─ ",
+            // "key": "󰤨",
+            "key": "WIFI",
+            "format": "{$1} {4} [{7}]", // ssid
+            "keyColor": "blue",
+        },
+        {
+            "type": "media",
+            // "key": "├─󰝚 ",
+            "key": "MUSC",
+            "format": "{$1} [{6} | {5}] {1} - {3}",
+            "keyColor": "red",
+        },
+        {
+            "type": "sound",
+            // "key": "└─ ",
+            "key": "SOUN",
+            // "format": "│ [{3}] {2}",
+            "format": "{$1} {2} [{3}]",
+            "keyColor": "red",
+        },
+        {
+            "type": "battery",
+            // "key": "├─ ",
+            // "key": "󰁹",
+            "key": " BAT",
+            "format": "{$1} {5} [{4}]",
+            "keyColor": "red",
+            "temp": true,
+        },
+        {
+            "type": "title",
+            "key": " ",
+            "format": "     └─────────────────────",
+            // "paddingLeft": 17,
+        },
+        {
+            "type": "colors",
+            "paddingLeft": 9,
+            "symbol": "square",
+            // "block": [1, 2],
+        },
+    ],
 }
