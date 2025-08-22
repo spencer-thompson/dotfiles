@@ -20,7 +20,7 @@ atuin init fish | source
 atuin gen-completions --shell fish | source
 zoxide init fish | source
 hcloud completion fish | source
-jj util completion fish | source
+# jj util completion fish | source
 
 bind -M insert up _atuin_search
 
