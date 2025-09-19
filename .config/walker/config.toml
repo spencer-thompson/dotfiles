@@ -1,0 +1,11 @@
+close_when_open = true
+theme = "dark"
+theme_base = []
+theme_location = ["~/.config/walker/themes/"]
+hotreload_theme = true
+force_keyboard_focus = true
+timeout = 60
+
+[builtins.applications.actions]
+enabled = false
+hide_category = true
