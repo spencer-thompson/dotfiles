@@ -11,6 +11,12 @@ function clean
     echo -e "\e[1;35mCleaning go cache\e[0m"
     go clean -cache -modcache
 
+    echo -e "\e[1;35mCleaning docker images\e[0m"
+    docker system prune
+
+    echo -e "\e[1;35mCleaning docker volumes\e[0m"
+    docker volume prune
+
     echo -e "\e[1;35mCleaning removing orphan packages\e[0m"
     paru -R $(paru -Qtdq)
 
