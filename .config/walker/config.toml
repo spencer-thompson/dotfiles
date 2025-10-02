@@ -6,6 +6,56 @@ hotreload_theme = true
 force_keyboard_focus = true
 timeout = 60
 
+[keybinds]
+close = "Escape"
+next = "ctrl j"
+previous = "ctrl k"
+toggle_exact = "ctrl e"
+resume_last_query = "ctrl r"
+quick_activate = ["ctrl 1", "ctrl 2", "ctrl 3", "ctrl 4"]
+
+[[providers.prefixes]]
+prefix = ";"
+provider = "providerlist"
+
+[[providers.prefixes]]
+prefix = "/"
+provider = "files"
+
+[[providers.prefixes]]
+prefix = "."
+provider = "symbols"
+
+[[providers.prefixes]]
+prefix = "!"
+provider = "todo"
+
+[[providers.prefixes]]
+prefix = "="
+provider = "calc"
+
+[[providers.prefixes]]
+prefix = "@"
+provider = "websearch"
+
+[[providers.prefixes]]
+prefix = ":"
+provider = "clipboard"
+
+[list]
+max_entries = 200
+cycle = true
+
+[search]
+placeholder = " Search..."
+
 [builtins.applications.actions]
 enabled = false
 hide_category = true
+
+
+[builtins.calc]
+name = "Calculator"
+icon = ""
+min_chars = 3
+prefix = "="
