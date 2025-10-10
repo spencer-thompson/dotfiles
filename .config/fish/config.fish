@@ -63,6 +63,7 @@ abbr --add ..... cd ../../../..
 abbr --add ...... cd ../../../../..
 abbr --add ai aichat
 abbr --add oc opencode
+abbr --add ultradark hyprsunset --temperature 3000 --gamma 40
 
 ## git
 abbr --add gs git status --short
