@@ -13,6 +13,9 @@ bind --mode insert \cy forward-char
 bind --mode insert up ctrl-r
 bind --mode command k history-pager
 
+set -gx fish_cursor_replace_one underscore
+set fish_emoji_width 2
+
 fzf --fish | source
 starship init fish | source
 direnv hook fish | source
@@ -27,6 +30,8 @@ bind -M insert up _atuin_search
 
 set -gx STARSHIP_CONFIG ~/.config/starship/starship.toml
 set -gx EDITOR nvim
+set -gx VISUAL $EDITOR
+set -gx SUDO_EDITOR $EDITOR
 set -gx BROWSER firefox
 set -gx ZDOTDIR "$HOME/.config/zsh"
 
