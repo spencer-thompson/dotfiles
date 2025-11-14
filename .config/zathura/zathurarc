@@ -8,6 +8,7 @@ set scroll-step 100
 
 # set statusbar-fg "#a9b1d6" #04
 
+set font "Berkeley Mono"
 # statusbar hidden
 set guioptions ""
 
@@ -21,7 +22,8 @@ set database "sqlite"
 # set sandbox none
 set statusbar-h-padding 0
 set statusbar-v-padding 0
-set page-padding 1
+set page-v-padding 2
+set page-h-padding 2
 set selection-clipboard clipboard
 map u scroll half-up
 map d scroll half-down
