@@ -1,0 +1,60 @@
+outputs = { Targets = ["DP-1", "eDP-1"] }
+
+position = "Top"
+
+
+[modules]
+left = ["Tray", "SystemInfo", "Updates"]
+center = ["Clock"]
+right = ["MediaPlayer", "Privacy", "Settings"]
+
+
+[clock]
+# format = "%a %d %b %R"
+format = "%l:%M %P %a %d %b "
+
+[updates]
+check_cmd = "checkupdates; paru -Qua"
+update_cmd = 'kitty -e fish -c "paru; echo Done - Press enter to exit; read" &'
+
+
+[settings]
+lock_cmd = "hyprlock &"
+audio_sinks_more_cmd = "pavucontrol -t 3"
+audio_sources_more_cmd = "pavucontrol -t 4"
+wifi_more_cmd = "nm-connection-editor"
+vpn_more_cmd = "nm-connection-editor"
+bluetooth_more_cmd = "blueman-manager"
+remove_airplane_btn = true
+remove_idle_btn = true
+
+
+[appearance]
+scale_factor = 1.5
+font_name = "Berkeley Mono"
+
+opacity = 0.8
+
+
+[appearance.menu]
+opacity = 0.9
+# backdrop = 0.3
+
+
+primary_color = "#7aa2f7"
+success_color = "#9ece6a"
+text_color = "#a9b1d6"
+
+workspace_colors = ["#7aa2f7", "#9ece6a"]
+
+[appearance.danger_color]
+base = "#f7768e"
+weak = "#e0af68"
+
+[appearance.background_color]
+base = "#1a1b26"
+weak = "#24273a"
+strong = "#414868"
+
+[appearance.secondary_color]
+base = "#0c0d14"
