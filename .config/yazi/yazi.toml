@@ -9,7 +9,7 @@ sort_reverse = true
 sort_dir_first = true
 scrolloff = 10
 title_format = "[{cwd}]"
-linemode = "mtime"
+linemode = "size_and_mtime"
 mouse_events = ["click", "scroll"]
 
 
