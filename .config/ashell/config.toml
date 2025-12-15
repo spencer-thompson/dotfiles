@@ -1,3 +1,5 @@
+# INFO: Documentation: https://malpenzibo.github.io/ashell/docs/configuration
+
 outputs = { Targets = ["DP-1", "eDP-1"] }
 
 position = "Top"

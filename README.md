@@ -1,37 +1,33 @@
-# My Dotfiles
+# Dotfiles
 
-These are my main configs currently
+These are the config files for my Arch Linux machines.
+
+They probably will not work on your computer, but are good reference regardless 😄
 
 ## How to use
 
-```
+```bash
 git clone --recurse-submodules
 ```
 
-Personal note: `git push --recurse-submodules`
+## Most Used Applications
 
----
+My most used, _and most recommended_, applications are:
 
-Useful commands:
+- **Neovim**: `.config/nvim/`
+- **Fish**: `.config/fish/`
+- **Yazi**: `.config/yazi/`
+- **Starship**: `.config/starship/`
+- **Atuin**: `.config/atuin/`
+- **AIchat**: `.config/aichat/`
+- **Keyd**: `.config/keyd/`
+  - Requires some setup
 
-List Unused
-```
-pacman -Qtdq
-```
+## Desktop UI
 
-Remove Unused
-```
-sudo pacman -R $(pacman -Qtdq)
-```
-
-Update Default Directories
-```
-xdg-user-dirs-update --set DOWNLOAD ~/dl
-```
-*and others*
-
-See all TOIlet fonts:
-
-```zsh
-for font in $(ls -1 /usr/share/figlet/ | sed -r '/_/d; s/\..*//'); do echo $font; toilet -f "$font" -F rainbow "Spencer"; done
-```
+- **Hyprland**: `.config/hypr/`
+- **Waybar**: `.config/waybar/`
+- **Swaync**: `.config/swaync/`
+- **FastFetch**: `.config/fastfetch/`
+- **Kitty**: `.config/kitty/`
+- **Tofi**: `.config/tofi/`
