@@ -31,3 +31,20 @@ My most used, _and most recommended_, applications are:
 - **FastFetch**: `.config/fastfetch/`
 - **Kitty**: `.config/kitty/`
 - **Tofi**: `.config/tofi/`
+
+## Gaming
+
+Steam launch options for: 
+
+**The Finals**:
+
+```
+PROTON_ENABLE_FSYNC=1 PROTON_USE_EAC_LINUX=1 PROTON_ENABLE_NVAPI=1 PROTON_USE_NTSYNC=1 PROTON_ENABLE_WAYLAND=1 gamemoderun %command% -useallavailablecores
+```
+
+**Arc Raiders**:
+
+```
+PROTON_ENABLE_FSYNC=1 PROTON_ENABLE_NVAPI=1 PROTON_USE_NTSYNC=1 PROTON_USE_EAC_LINUX=1 PROTON_ENABLE_WAYLAND=1 gamemoderun %command% -useallavailablecores
+```
+
