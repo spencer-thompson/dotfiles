@@ -1,22 +1,23 @@
+/* ---- Color palette ---- */
 @define-color foreground #a9b1d6;
 @define-color background #10111c;
 
 @define-color bg #111111;
 @define-color fg #D3C6AA;
 
-/* # normal */
-@define-color color0 #15161e;
-@define-color color1 #f7768e;
-@define-color color2 #9ece6a;
-@define-color color3 #e0af68;
-@define-color color4 #7aa2f7;
-@define-color color5 #bb9af7;
-@define-color color6 #7dcfff;
-@define-color color7 #a9b1d6;
+/* normal */
+@define-color color0  #15161e;
+@define-color color1  #f7768e;
+@define-color color2  #9ece6a;
+@define-color color3  #e0af68;
+@define-color color4  #7aa2f7;
+@define-color color5  #bb9af7;
+@define-color color6  #7dcfff;
+@define-color color7  #a9b1d6;
 
-/* # bright */
-@define-color color8 #414868;
-@define-color color9 #f7768e;
+/* bright */
+@define-color color8  #414868;
+@define-color color9  #f7768e;
 @define-color color10 #9ece6a;
 @define-color color11 #e0af68;
 @define-color color12 #7aa2f7;
@@ -24,69 +25,212 @@
 @define-color color14 #7dcfff;
 @define-color color15 #c0caf5;
 
-/* # extended colors */
+/* extended */
 @define-color color16 #ff9e64;
 @define-color color17 #db4b4b;
 
-/* * { */
-/*   all: unset; */
-/* } */
-
+/* ---- Global defaults ---- */
 * {
-  /* font-size: 20px; */
   font-family: "Berkeley Mono";
   transition: 100ms;
-  /* padding: 4px; */
-  box-shadow: unset;
+  box-shadow: none;
 }
 
-.control-center {
-  /* background: alpha(@bg, 0.9); */
+/* Transparent windows behind CC / floating notifications */
+notificationwindow,
+.blank-window,
+.blankwindow {
+  background: transparent;
+}
 
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 24px;
-  border: 2px solid @color1;
+/* ---- Theme variables (match upstream defaults but using your palette) ---- */
+:root {
+  /* Core surfaces */
+  --cc-bg: rgba(0, 0, 0, 0.6);
+  --surface: rgba(21, 22, 30, 0.6); /* color0 w/ alpha */
+  --surface-strong: rgba(21, 22, 30, 0.85);
+
+  /* Notification backgrounds (used by grouped/hover states) */
+  --noti-bg: 21, 22, 30; /* rgb tuple for rgba(var()) patterns */
+  --noti-bg-alpha: 0.6;
+  --noti-bg-opaque: rgb(21, 22, 30);
+  --noti-bg-darker: rgba(16, 17, 28, 0.85); /* background-ish */
+  --noti-bg-hover: rgba(65, 72, 104, 0.45); /* color8 w/ alpha */
+  --noti-bg-focus: rgba(169, 177, 214, 0.3); /* color7 w/ alpha */
+
+  /* Text */
+  --text-color: rgb(192, 202, 245); /* color15 */
+  --text-color-muted: rgba(169, 177, 214, 0.85); /* color7 */
+  --text-color-disabled: rgba(169, 177, 214, 0.45);
+
+  /* Accent + borders */
+  --accent: rgb(247, 118, 142); /* color1 */
+  --accent-2: rgb(125, 207, 255); /* color6 */
+  --border-color: rgba(247, 118, 142, 0.75);
+  --noti-border-color: rgba(169, 177, 214, 0.18);
+  --border: 2px solid var(--noti-border-color);
+
+  /* Geometry */
+  --radius-lg: 24px;
+  --radius-md: 20px;
+  --radius-sm: 12px;
+
+  /* Motion */
+  --hover-transition: background 0.12s ease-in-out;
+  --group-collapse-transition: opacity 300ms ease-in-out;
+
+  /* Sizes */
+  --notification-icon-size: 64px;
+  --notification-app-icon-size: calc(var(--notification-icon-size) / 3);
+  --notification-group-icon-size: 32px;
+
+  --font-size-body: 15px;
+  --font-size-summary: 16px;
+
+  /* Shadows (subtle; your config mostly removed them) */
+  --notification-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.2), 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+/* ---- Control Center ---- */
+.control-center {
+  background: var(--cc-bg);
+  color: var(--text-color);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--accent);
   margin: 2px;
   padding: 1rem;
 }
 
-.notification box {
-  border: unset;
+.control-center .control-center-list {
+  background: transparent;
 }
 
+.control-center .control-center-list .notification {
+  box-shadow: var(--notification-shadow);
+}
+
+/* Placeholder when no notifications */
+.control-center .control-center-list-placeholder {
+  opacity: 0.55;
+  color: var(--text-color-muted);
+}
+
+/* ---- Notification rows / focus ---- */
 .notification-row {
   padding: 4px;
   outline: none;
+  background: none;
 }
 
 .notification-row:focus,
 .notification-row:hover {
-  background: alpha(@color7, 0.5); /* @noti-bg-focus */
+  background: var(--noti-bg-focus);
 }
 
+/* spacing around each notification */
+.notification-row .notification-background {
+  padding: 6px 10px;
+}
+
+/* ---- Notification card ---- */
+.notification-row .notification-background .notification {
+  background: rgba(var(--noti-bg), var(--noti-bg-alpha));
+  border-radius: var(--radius-md);
+  border: 2px solid transparent; /* keep your “clean” look */
+  padding: 0;
+}
+
+/* Priority styling (you didn’t have these; now you do) */
+.notification-row .notification-background .notification.low {
+  border-color: rgba(169, 177, 214, 0.12);
+}
+.notification-row .notification-background .notification.normal {
+  border-color: rgba(169, 177, 214, 0.12);
+}
+.notification-row .notification-background .notification.critical {
+  border-color: rgba(219, 75, 75, 0.85); /* color17 */
+}
+
+/* ---- Default action area ---- */
 .notification-row
   .notification-background
   .notification
-  .notification-action:hover,
+  .notification-default-action {
+  padding: 4px;
+  margin: 0;
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  border-radius: var(--radius-md);
+  transition: var(--hover-transition);
+  box-shadow: none;
+}
+
 .notification-row
   .notification-background
   .notification
   .notification-default-action:hover {
-  background: alpha(@color8, 0.5);
-  border: 2px solid @color1;
+  background: var(--noti-bg-hover);
+  border: 2px solid var(--accent);
 }
 
+/* When alt-actions are visible */
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action:not(:only-child) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* ---- Content ---- */
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content {
+  background: transparent;
+  border-radius: var(--radius-md);
+  padding: 0;
+}
+
+/* Primary image */
 .notification-row
   .notification-background
   .notification
   .notification-default-action
   .notification-content
   .image {
-  /* Notification Primary Image */
+  -gtk-icon-filter: none;
+  -gtk-icon-size: var(--notification-icon-size);
   border-radius: 100px;
-  /* Size in px */
   margin: 4px;
-  padding: 8px;
+  padding: 8px; /* you had this; keep it */
+}
+
+/* App icon (was missing in your theme) */
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content
+  .app-icon {
+  -gtk-icon-filter: none;
+  -gtk-icon-size: var(--notification-app-icon-size);
+  margin: 6px;
+  -gtk-icon-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
+}
+
+/* GTK4 label opacity fix (from default) */
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content
+  .text-box
+  label {
+  filter: none;
 }
 
 .notification-row
@@ -96,11 +240,10 @@
   .notification-content
   .text-box
   .summary {
-  /* Notification summary/title */
-  font-size: 16px;
-  font-weight: bold;
+  font-size: var(--font-size-summary);
+  font-weight: 800;
   background: transparent;
-  color: alpha(@color7, 1);
+  color: rgba(169, 177, 214, 1); /* color7 */
   text-shadow: none;
   padding: 4px;
 }
@@ -112,11 +255,10 @@
   .notification-content
   .text-box
   .time {
-  /* Notification time-ago */
-  font-size: 16px;
-  font-weight: bold;
+  font-size: var(--font-size-summary);
+  font-weight: 800;
   background: transparent;
-  color: alpha(@color7, 1); /* @text-color */
+  color: rgba(169, 177, 214, 1);
   text-shadow: none;
   margin-right: 30px;
   padding: 4px;
@@ -129,201 +271,459 @@
   .notification-content
   .text-box
   .body {
-  /* Notification body */
-  /* font-size: 15px; */
-  font-weight: normal;
+  font-size: var(--font-size-body);
+  font-weight: 400;
   background: transparent;
-  color: alpha(@color15, 1);
+  color: rgba(192, 202, 245, 1); /* color15 */
   text-shadow: none;
   padding: 4px;
 }
 
-.notification {
-  background-color: alpha(@color0, 0.6);
-  border-radius: 20px;
-  border: 2px solid transparent;
-  /* border-style: solid; */
-  /* border-width: 1px; */
-  font-size: 12px;
-  /* padding: 8px; */
+/* Optional progress bar */
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content
+  progressbar {
+  margin-top: 4px;
+}
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content
+  progressbar
+  trough {
+  background: rgba(65, 72, 104, 0.35);
+  border: 1px solid rgba(16, 17, 28, 0.9);
+  border-radius: 999px;
+}
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content
+  progressbar
+  trough
+  progress {
+  background: var(--accent);
+  border-radius: 999px;
 }
 
-/* .notification { */
-/*   background-color: alpha(@color0, 0.6); */
-/*   border-radius: 20px; */
-/*   border: 2px solid @color17; */
-/*   font-size: 12px; */
-/*   padding: 8px; */
-/* } */
+/* Inline reply (missing in your theme) */
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content
+  .inline-reply {
+  margin-top: 4px;
+}
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content
+  .inline-reply
+  .inline-reply-entry {
+  background: var(--noti-bg-darker);
+  color: var(--text-color);
+  caret-color: var(--text-color);
+  border: 1px solid rgba(169, 177, 214, 0.15);
+  border-radius: var(--radius-sm);
+}
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content
+  .inline-reply
+  .inline-reply-button {
+  margin-left: 4px;
+  background: rgba(var(--noti-bg), var(--noti-bg-alpha));
+  border: 1px solid rgba(169, 177, 214, 0.15);
+  border-radius: var(--radius-sm);
+  color: var(--text-color);
+}
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content
+  .inline-reply
+  .inline-reply-button:hover {
+  background: var(--noti-bg-hover);
+}
+.notification-row
+  .notification-background
+  .notification
+  .notification-default-action
+  .notification-content
+  .inline-reply
+  .inline-reply-button:disabled {
+  background: transparent;
+  color: var(--text-color-disabled);
+  border-color: transparent;
+}
 
-/* Title widget */
+/* ---- Alt actions (buttons under notification) ---- */
+.notification-row
+  .notification-background
+  .notification
+  .notification-alt-actions {
+  background: transparent;
+  padding: 4px;
+  border-bottom-left-radius: var(--radius-md);
+  border-bottom-right-radius: var(--radius-md);
+}
+
+.notification-row .notification-background .notification .notification-action {
+  margin: 4px;
+  padding: 0;
+}
+
+.notification-row
+  .notification-background
+  .notification
+  .notification-action
+  > button {
+  border-radius: var(--radius-sm);
+  color: var(--text-color);
+  background: rgba(65, 72, 104, 0.25);
+  border: 1px solid rgba(169, 177, 214, 0.12);
+}
+
+.notification-row
+  .notification-background
+  .notification
+  .notification-action
+  > button:hover {
+  background: var(--noti-bg-hover);
+  border-color: rgba(247, 118, 142, 0.75);
+}
+
+/* ---- Close button (you were missing it) ---- */
+.close-button {
+  background: rgba(169, 177, 214, 0.1);
+  color: var(--text-color);
+  text-shadow: none;
+  padding: 0;
+  border-radius: 999px;
+  margin-top: 8px;
+  margin-right: 8px;
+  box-shadow: none;
+  border: 1px solid rgba(169, 177, 214, 0.12);
+  min-width: 24px;
+  min-height: 24px;
+}
+
+.close-button:hover {
+  background: rgba(247, 118, 142, 0.25);
+  border-color: rgba(247, 118, 142, 0.65);
+  transition: var(--hover-transition);
+}
+
+/* ---- Grouped notifications (missing in your theme) ---- */
+.notification-group {
+  transition: var(--group-collapse-transition);
+}
+
+.notification-group:focus {
+  background: var(--noti-bg-focus);
+}
+
+.notification-group .notification-group-close-button .close-button {
+  margin: 12px 20px;
+}
+
+.notification-group .notification-group-buttons,
+.notification-group .notification-group-headers {
+  margin: 0 16px;
+  color: var(--text-color);
+}
+
+.notification-group .notification-group-headers .notification-group-icon {
+  color: var(--text-color-muted);
+  -gtk-icon-size: var(--notification-group-icon-size);
+}
+
+.notification-group.collapsed.not-expanded {
+  opacity: 0.4;
+}
+
+.notification-group.collapsed .notification-row .notification {
+  background-color: rgba(var(--noti-bg), 1);
+}
+
+.notification-group.collapsed:hover
+  .notification-row:not(:only-child)
+  .notification {
+  background-color: var(--noti-bg-hover);
+}
+
+/* ---- Floating notifications ---- */
+.floating-notifications {
+  background: transparent;
+}
+
+.floating-notifications .notification {
+  box-shadow: none; /* keep your minimal style */
+}
+
+/* ---- Widgets base ---- */
+.widget {
+  margin: 8px;
+  padding: 8px;
+  border-radius: var(--radius-md);
+}
+
+/* Title widget (your style, tightened + consistent) */
 .widget-title {
   margin: 8px;
   font-size: 2rem;
   font-weight: 700;
-  background: alpha(@color0, 0);
-}
-.widget-title > button {
-  font-size: 1.5rem;
-  color: @color7;
-  text-shadow: none;
-  background: alpha(@background, 0);
-  border: 2px solid alpha(@color7, 0.5);
-  box-shadow: none;
-  border-radius: 12px;
-}
-.widget-title > button:hover {
-  background: @color1;
+  background: transparent;
 }
 
+.widget-title > label {
+  margin-right: 8px;
+  color: var(--text-color);
+}
+
+.widget-title > button {
+  font-size: 1.5rem;
+  color: rgba(169, 177, 214, 1);
+  text-shadow: none;
+  background: transparent;
+  border: 2px solid rgba(169, 177, 214, 0.5);
+  box-shadow: none;
+  border-radius: var(--radius-sm);
+  margin-left: 8px;
+}
+
+.widget-title > button:hover {
+  background: rgba(247, 118, 142, 0.9);
+  color: rgba(21, 22, 30, 1);
+}
+
+/* Label widget */
 .widget-label {
-  background: @color0;
+  background: rgba(21, 22, 30, 0.6);
+  color: var(--text-color);
   font-size: 2rem;
   padding: 20px;
   padding-bottom: 50px;
-  border-radius: 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(169, 177, 214, 0.1);
 }
 
 /* DND widget */
 .widget-dnd {
   background-color: transparent;
 }
+
+.widget-dnd label {
+  color: var(--text-color);
+  margin-right: 8px;
+  font-size: 1.1rem;
+}
+
 .widget-dnd > switch {
   font-size: initial;
   border-radius: 14px;
   background: rgba(0, 0, 0, 0.8);
-  border: 2px solid @color0;
+  border: 2px solid rgba(21, 22, 30, 1);
   box-shadow: none;
 }
+
 .widget-dnd > switch:checked {
-  background: @color3;
+  background: rgba(224, 175, 104, 1); /* color3 */
 }
+
 .widget-dnd > switch slider {
-  background: @color1;
+  background: rgba(247, 118, 142, 1);
   border-radius: 12px;
 }
 
-/* Volume widget */
+/* ---- MPRIS widget (missing in your theme; styled to match) ---- */
+:root {
+  --mpris-album-art-overlay: rgba(0, 0, 0, 0.55);
+  --mpris-button-hover: rgba(65, 72, 104, 0.35);
+  --mpris-album-art-icon-size: 96px;
+  --mpris-album-art-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55);
+}
+
+.widget-mpris {
+  padding: 0;
+}
+
+.widget-mpris .widget-mpris-player {
+  margin: 16px 20px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--mpris-album-art-shadow);
+  border: 1px solid rgba(169, 177, 214, 0.1);
+}
+
+.widget-mpris .widget-mpris-player .mpris-background {
+  filter: blur(10px);
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay {
+  padding: 16px;
+  background-color: var(--mpris-album-art-overlay);
+  border-radius: var(--radius-md);
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay button:hover {
+  background: var(--mpris-button-hover);
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay .widget-mpris-album-art {
+  border-radius: var(--radius-sm);
+  box-shadow: var(--mpris-album-art-shadow);
+  -gtk-icon-size: var(--mpris-album-art-icon-size);
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay .widget-mpris-title {
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--text-color);
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay .widget-mpris-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-color-muted);
+}
+
+/* ---- Sliders (volume/backlight/etc.) ---- */
 trough {
   font-family: "JetBrainsMono Nerd Font Mono";
-  border-radius: 20px;
-  /* background: @background; */
-  /* background: alpha(@color0, 0.8); */
-  background: alpha(@color8, 0.3);
-  border: 1px solid @background;
+  border-radius: 999px;
+  background: rgba(65, 72, 104, 0.3);
+  border: 1px solid rgba(16, 17, 28, 0.9);
 }
 
 trough highlight {
-  /* ´trough´ is the background of the slider, ´highlight´ is the actual slider */
   font-family: "JetBrainsMono Nerd Font Mono";
   padding-top: 1px;
-  background: @color1;
-  border: 1px solid @color1;
-  border-radius: 20px;
+  background: rgba(247, 118, 142, 1);
+  border: 1px solid rgba(247, 118, 142, 1);
+  border-radius: 999px;
 }
 
 trough slider {
   font-family: "JetBrainsMono Nerd Font Mono";
   padding: 1px;
-  background: @color1;
-  border: 1px solid @color1;
+  background: rgba(247, 118, 142, 1);
+  border: 1px solid rgba(247, 118, 142, 1);
+  border-radius: 999px;
 }
 
 trough slider:hover {
-  padding: 1px;
-  background: @color3;
+  background: rgba(224, 175, 104, 1);
+  border-color: rgba(224, 175, 104, 1);
 }
 
-.widget-volume {
-  font-family: "JetBrainsMono Nerd Font Mono";
-  background-color: alpha(@color0, 0.6);
-  border-radius: 20px;
-  font-size: 2rem;
-  margin-left: 16px;
-  margin-right: 16px;
-  /* padding-bottom: 5px; */
-  padding: 1rem 2rem;
-  border: 0px solid transparent;
-}
-
+/* Volume + Backlight containers (kept your sizing) */
+.widget-volume,
 .widget-backlight {
   font-family: "JetBrainsMono Nerd Font Mono";
-  background-color: alpha(@color0, 0.6);
-  border-radius: 20px;
+  background-color: rgba(21, 22, 30, 0.6);
+  border-radius: var(--radius-md);
   font-size: 2rem;
   margin-left: 16px;
   margin-right: 16px;
-  /* padding-bottom: 5px; */
   padding: 1rem 2rem;
-  border: 0px solid transparent;
+  border: 1px solid rgba(169, 177, 214, 0.1);
 }
 
-/* doesnt work rip */
+/* Per-app volume icon sizing (from default) */
+:root {
+  --widget-volume-row-icon-size: 24px;
+}
+.widget-volume row image {
+  -gtk-icon-size: var(--widget-volume-row-icon-size);
+}
+
+/* ---- Menubar (fixed selectors; your previous ones likely didn’t match) ---- */
 .widget-menubar {
   font-size: 1rem;
-  background: alpha(@color0, 0.6);
-  /* font-family: "Berkeley Mono"; */
-  border-radius: 20px;
+  background: rgba(21, 22, 30, 0.6);
+  border-radius: var(--radius-md);
   padding: 8px;
-  border: 0px solid transparent;
+  border: 1px solid rgba(169, 177, 214, 0.1);
 }
 
-.widget-menubar > box > .menu-button-bar #power {
-  font-size: 4rem;
-  background: alpha(@color0, 0.6);
-  font-family: "Berkeley Mono";
-  border-radius: 20px;
-  padding: 8px;
-  border: 0px solid transparent;
+/* buttons in the visible bar */
+.widget-menubar > .menu-button-bar > .widget-menubar-container button {
+  border-radius: var(--radius-sm);
+  margin: 0 4px;
+  background: rgba(65, 72, 104, 0.25);
+  border: 1px solid rgba(169, 177, 214, 0.12);
+  color: var(--text-color);
 }
-/* doesnt work rip */
 
-/* Buttons widget */
+.widget-menubar > .menu-button-bar > .widget-menubar-container button:hover {
+  background: var(--noti-bg-hover);
+  border-color: rgba(247, 118, 142, 0.65);
+}
+
+/* revealer content (expanded menu) */
+.widget-menubar > revealer * {
+  margin-top: 8px;
+}
+
+.widget-menubar > revealer * button {
+  border-radius: var(--radius-sm);
+  margin: 8px;
+  margin-top: 0;
+  background: rgba(65, 72, 104, 0.2);
+  border: 1px solid rgba(169, 177, 214, 0.1);
+}
+
+.widget-menubar > revealer * button:hover {
+  background: var(--noti-bg-hover);
+  border-color: rgba(247, 118, 142, 0.65);
+}
+
+.widget-menubar > revealer * button:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- Buttons grid widget ---- */
 .widget-buttons-grid {
-  /* font-size: 50px; */
   font-family: "JetBrainsMono Nerd Font Mono";
   font-size: 1rem;
-  background: alpha(@color0, 0.6);
-  /* font-family: "Berkeley Mono"; */
-  border-radius: 20px;
+  background: rgba(21, 22, 30, 0.6);
+  border-radius: var(--radius-md);
   padding: 8px;
-  /* margin: 4px; */
-  /* margin-left: 10px; */
-  /* margin-right: 10px; */
-  border: 0px solid transparent;
-  /* padding-left: 5px; */
-  /* margin-left: 10px; */
-  /* margin-right: 10px; */
-  /* border-radius: 20px; */
-  /* padding-top: 10px; */
-  /* padding-bottom: 10px; */
-  /* padding: 1rem; */
-  /* background-color: alpha(@background, 0.9); */
+  border: 1px solid rgba(169, 177, 214, 0.1);
 }
 
 .widget-buttons-grid > flowbox > flowboxchild > button {
-  /* font-size: 30px; */
-  /* padding: 10px; */
-  /* background: @color8; */
-  background: alpha(@color8, 0.3);
-  color: @color1;
-  border-radius: 20px;
+  background: rgba(65, 72, 104, 0.3);
+  color: rgba(247, 118, 142, 1);
+  border-radius: var(--radius-md);
   margin: 2px;
   padding: 4px;
-  border: 0px solid #04030a;
+  border: 1px solid rgba(16, 17, 28, 0.75);
 }
 
 .widget-buttons-grid > flowbox > flowboxchild > button:hover {
-  color: @color0;
-  background: @color6;
+  color: rgba(21, 22, 30, 1);
+  background: rgba(125, 207, 255, 0.95);
   transition: all 0.1s ease-in-out;
 }
 
+/* toggles: checked state (missing in your theme) */
+.widget-buttons-grid > flowbox > flowboxchild > button.toggle:checked {
+  background: rgba(247, 118, 142, 0.85);
+  color: rgba(21, 22, 30, 1);
+  border-color: rgba(247, 118, 142, 0.85);
+}
+
 .widget-buttons-grid > flowbox > flowboxchild > button label {
-  /* font-family: "Berkeley Mono"; */
   font-family: "JetBrainsMono Nerd Font Mono";
   font-size: 2.4rem;
-  /* padding: 0.4rem; */
-  /* margin: 2px; */
-  /* color: #e4e1e6; */
 }
