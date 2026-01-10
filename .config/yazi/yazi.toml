@@ -22,13 +22,13 @@ cache_dir = ""
 image_delay = 30
 image_filter = "triangle"
 image_quality = 75
-sixel_fraction = 15
+# sixel_fraction = 15
 ueberzug_scale = 1
 ueberzug_offset = [0, 0, 0, 0]
 
 [opener]
 edit = [
-  { run = '${EDITOR:-vi} "$@"', desc = "$EDITOR", block = true, for = "unix" },
+  { run = '${EDITOR:-nvim} "$@"', desc = "$EDITOR", block = true, for = "unix" },
   { run = 'code %*', orphan = true, desc = "code", for = "windows" },
   { run = 'code -w %*', block = true, desc = "code (block)", for = "windows" },
 ]
@@ -58,7 +58,7 @@ zathura = [{ run = 'zathura "$@"', orphan = true, for = "unix" }]
 [open]
 rules = [
   # Folder
-  { name = "*/", use = [
+  { url = "*/", use = [
     "edit",
     "open",
     "reveal",
@@ -100,7 +100,7 @@ rules = [
     "reveal",
   ] },
   # Fallback
-  { name = "*", use = [
+  { url = "*", use = [
     "open",
     "reveal",
   ] },
@@ -118,24 +118,32 @@ suppress_preload = false
 
 fetchers = [
   # Mimetype
-  { id = "mime", name = "*", run = "mime", if = "!mime", prio = "high" },
+  { id = "mime", url = "*/", run = "mime.dir", prio = "high" },
+  { id = "mime", url = "local://*", run = "mime.local", prio = "high" },
+  { id = "mime", url = "remote://*", run = "mime.remote", prio = "high" },
 ]
 spotters = [
-  { name = "*/", run = "folder" },
+  { url = "*/", run = "folder" },
   # Code
   { mime = "text/*", run = "code" },
-  { mime = "*/{xml,javascript,wine-extension-ini}", run = "code" },
+  { mime = "application/{mbox,javascript,wine-extension-ini}", run = "code" },
   # Image
-  { mime = "image/{avif,hei?,jxl,svg+xml}", run = "magick" },
+  { mime = "image/{avif,hei?,jxl}", run = "magick" },
+  { mime = "image/svg+xml", run = "svg" },
   { mime = "image/*", run = "image" },
   # Video
   { mime = "video/*", run = "video" },
+  # Virtual file system
+  { mime = "vfs/*", run = "vfs" },
+  # Error
+  { mime = "null/*", run = "null" },
   # Fallback
-  { name = "*", run = "file" },
+  { url = "*", run = "file" },
 ]
 preloaders = [
   # Image
-  { mime = "image/{avif,hei?,jxl,svg+xml}", run = "magick" },
+  { mime = "image/{avif,hei?,jxl}", run = "magick" },
+  { mime = "image/svg+xml", run = "svg" },
   { mime = "image/*", run = "image" },
   # Video
   { mime = "video/*", run = "video" },
@@ -146,14 +154,15 @@ preloaders = [
   { mime = "application/ms-opentype", run = "font" },
 ]
 previewers = [
-  { name = "*/", run = "folder", sync = true },
+  { url = "*/", run = "folder" },
   # Code
   { mime = "text/*", run = "code" },
-  { mime = "*/{xml,javascript,wine-extension-ini}", run = "code" },
+  { mime = "application/{mbox,javascript,wine-extension-ini}", run = "code" },
   # JSON
   { mime = "application/{json,ndjson}", run = "json" },
   # Image
-  { mime = "image/{avif,hei?,jxl,svg+xml}", run = "magick" },
+  { mime = "image/{avif,hei?,jxl}", run = "magick" },
+  { mime = "image/svg+xml", run = "svg" },
   { mime = "image/*", run = "image" },
   # Video
   { mime = "video/*", run = "video" },
@@ -162,19 +171,83 @@ previewers = [
   # Archive
   { mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", run = "archive" },
   { mime = "application/{debian*-package,redhat-package-manager,rpm,android.package-archive}", run = "archive" },
-  { name = "*.{AppImage,appimage}", run = "archive" },
+  { url = "*.{AppImage,appimage}", run = "archive" },
   # Virtual Disk / Disk Image
   { mime = "application/{iso9660-image,qemu-disk,ms-wim,apple-diskimage}", run = "archive" },
   { mime = "application/virtualbox-{vhd,vhdx}", run = "archive" },
-  { name = "*.{img,fat,ext,ext2,ext3,ext4,squashfs,ntfs,hfs,hfsx}", run = "archive" },
+  { url = "*.{img,fat,ext,ext2,ext3,ext4,squashfs,ntfs,hfs,hfsx}", run = "archive" },
   # Font
   { mime = "font/*", run = "font" },
   { mime = "application/ms-opentype", run = "font" },
   # Empty file
   { mime = "inode/empty", run = "empty" },
+  # Virtual file system
+  { mime = "vfs/*", run = "vfs" },
+  # Error
+  { mime = "null/*", run = "null" },
   # Fallback
-  { name = "*", run = "file" },
+  { url = "*", run = "file" },
 ]
+
+# fetchers = [
+#   # Mimetype
+#   { id = "mime", url = "*/", run = "mime", if = "!mime", prio = "high" },
+# ]
+# spotters = [
+#   { name = "*/", run = "folder" },
+#   # Code
+#   { mime = "text/*", run = "code" },
+#   { mime = "*/{xml,javascript,wine-extension-ini}", run = "code" },
+#   # Image
+#   { mime = "image/{avif,hei?,jxl,svg+xml}", run = "magick" },
+#   { mime = "image/*", run = "image" },
+#   # Video
+#   { mime = "video/*", run = "video" },
+#   # Fallback
+#   { name = "*", run = "file" },
+# ]
+# preloaders = [
+#   # Image
+#   { mime = "image/{avif,hei?,jxl,svg+xml}", run = "magick" },
+#   { mime = "image/*", run = "image" },
+#   # Video
+#   { mime = "video/*", run = "video" },
+#   # PDF
+#   { mime = "application/pdf", run = "pdf" },
+#   # Font
+#   { mime = "font/*", run = "font" },
+#   { mime = "application/ms-opentype", run = "font" },
+# ]
+# previewers = [
+#   { name = "*/", run = "folder", sync = true },
+#   # Code
+#   { mime = "text/*", run = "code" },
+#   { mime = "*/{xml,javascript,wine-extension-ini}", run = "code" },
+#   # JSON
+#   { mime = "application/{json,ndjson}", run = "json" },
+#   # Image
+#   { mime = "image/{avif,hei?,jxl,svg+xml}", run = "magick" },
+#   { mime = "image/*", run = "image" },
+#   # Video
+#   { mime = "video/*", run = "video" },
+#   # PDF
+#   { mime = "application/pdf", run = "pdf" },
+#   # Archive
+#   { mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", run = "archive" },
+#   { mime = "application/{debian*-package,redhat-package-manager,rpm,android.package-archive}", run = "archive" },
+#   { name = "*.{AppImage,appimage}", run = "archive" },
+#   # Virtual Disk / Disk Image
+#   { mime = "application/{iso9660-image,qemu-disk,ms-wim,apple-diskimage}", run = "archive" },
+#   { mime = "application/virtualbox-{vhd,vhdx}", run = "archive" },
+#   { name = "*.{img,fat,ext,ext2,ext3,ext4,squashfs,ntfs,hfs,hfsx}", run = "archive" },
+#   # Font
+#   { mime = "font/*", run = "font" },
+#   { mime = "application/ms-opentype", run = "font" },
+#   # Empty file
+#   { mime = "inode/empty", run = "empty" },
+#   # Fallback
+#   { name = "*", run = "file" },
+# ]
 
 [input]
 cursor_blink = false
@@ -227,13 +300,13 @@ delete_offset = [0, 0, 70, 20]
 
 # overwrite
 overwrite_title = "Overwrite file?"
-overwrite_content = "Will overwrite the following file:"
+overwrite_body = "Will overwrite the following file:"
 overwrite_origin = "center"
 overwrite_offset = [0, 0, 50, 15]
 
 # quit
 quit_title = "Quit?"
-quit_content = "The following task is still running, are you sure you want to quit?"
+quit_body = "The following task is still running, are you sure you want to quit?"
 quit_origin = "center"
 quit_offset = [0, 0, 50, 15]
 

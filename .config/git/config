@@ -50,7 +50,7 @@
 
 [pull]
     default = current
-    rebase = true
+    ; rebase = true
 
 [log]
     abbrevCommit = true
