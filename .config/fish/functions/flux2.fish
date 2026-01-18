@@ -51,6 +51,8 @@ function flux2
     set -l flux_prompt (gum write --value "$flux_last_prompt" --placeholder "Subject + Action + Style + Context" --height=3)
     set -g flux_last_prompt "$flux_prompt"
 
+    # need to add check if input image is empty
+
     set -l flux_payload \
         (printf "%s" "$input_image_1" | jq -Rn \
             --arg p "$flux_prompt"\
@@ -78,7 +80,7 @@ function flux2
     # echo $flux_polling_url
     echo $flux_image_id
 
-    poll_for_result $flux_image_id
+    gum spin -- flux_poll_for_result $flux_image_id
 
     gum spin -- curl --silent --request GET \
         --url https://api.bfl.ai/v1/credits \

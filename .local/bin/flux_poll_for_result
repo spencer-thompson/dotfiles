@@ -1,0 +1,18 @@
+#!/bin/bash
+
+finished=false
+
+while [[ "$finished" = false ]]; do
+
+    echo "$1"
+
+    flux_result="$(curl --silent "https://api.bfl.ai/v1/get_result?id=$1")"
+
+    if [[ $(echo $flux_result | jq -r '.status') == "Ready" ]]; then
+        curl --silent "$(echo $flux_result | jq -r '.result.sample')" # | tee flux_image.jpeg | chafa -
+        finished=true
+    fi
+
+    sleep 1
+
+done
