@@ -9,7 +9,17 @@ while [[ "$finished" = false ]]; do
     flux_result="$(curl --silent "https://api.bfl.ai/v1/get_result?id=$1")"
 
     if [[ $(echo $flux_result | jq -r '.status') == "Ready" ]]; then
-        curl --silent "$(echo $flux_result | jq -r '.result.sample')" # | tee flux_image.jpeg | chafa -
+        curl --silent "$(echo $flux_result | jq -r '.result.sample')" | tee flux_image.jpeg | chafa -
+        finished=true
+    fi
+
+    if [[ $(echo $flux_result | jq -r '.status') == "Request Moderated" ]]; then
+        echo "Request Moderated" # >&2
+        finished=true
+    fi
+
+    if [[ $(echo $flux_result | jq -r '.status') == "Content Moderated" ]]; then
+        echo "Content Moderated" # >&2
         finished=true
     fi
 
