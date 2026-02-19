@@ -48,6 +48,8 @@ set -gx MOZ_ENABLE_WAYLAND 1
 set -gx HOSTNAME $(hostname)
 set -gx SHELL fish
 
+set -gx PYTORCH_CUDA_ALLOC_CONF 'max_split_size_mb:256'
+
 set -gx FZF_DEFAULT_COMMAND 'fd --hidden --strip-cwd-prefix --exclude .git'
 set -gx FZF_DEFAULT_OPTS '--prompt="-> "'
 
