@@ -48,18 +48,35 @@ function flux2
         kitten icat --clear
     end
 
+    set -l flux_width (echo $flux_width | gum input --prompt="Width: ")
+    set -l flux_height (echo $flux_height | gum input --prompt="Height: ")
+
     set -l flux_prompt (gum write --value "$flux_last_prompt" --placeholder "Subject + Action + Style + Context" --height=3)
     set -g flux_last_prompt "$flux_prompt"
 
     # need to add check if input image is empty
 
+    # if test -z "$input_image_1"
+
     set -l flux_payload \
-        (printf "%s" "$input_image_1" | jq -Rn \
+        (jq -n \
             --arg p "$flux_prompt"\
             --argjson w $flux_width \
             --argjson h $flux_height \
             --argjson s 5 \
-            '{prompt: $p, safety_tolerance: $s, width: $w, height: $h, input_image: input}')
+            '{prompt: $p, safety_tolerance: $s, width: $w, height: $h}')
+    #
+    # else
+    #
+    #     set -l flux_payload \
+    #         (printf "%s" "$input_image_1" | jq -Rn \
+    #         --arg p "$flux_prompt"\
+    #         --argjson w $flux_width \
+    #         --argjson h $flux_height \
+    #         --argjson s 5 \
+    #         '{prompt: $p, safety_tolerance: $s, width: $w, height: $h, input_image: input}')
+    #
+    # end
 
     echo "$flux_payload" \
         | curl --silent --request POST \

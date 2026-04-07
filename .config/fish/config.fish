@@ -83,6 +83,7 @@ abbr --add gc git commit
 abbr --add ga git add
 # abbr --add gl git log --all --graph --pretty=format:'%C(magenta)%h %C(white)| %an | %ar%C(auto)  %D%n%s%n'
 alias gl="git log --all --graph --pretty=format:'%C(magenta)%h %C(white)| %an | %ar%C(auto)  %D%n%s%n'"
+# alias nvim="bob run 0.12.0"
 
 fish_add_path /home/sthom/.cargo/bin/
 

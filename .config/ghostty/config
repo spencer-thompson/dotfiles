@@ -4,12 +4,12 @@ theme = Slate
 
 font-family = "Berkeley Mono"
 
-theme = tokyonight 
+theme = dankcolors
 
 shell-integration = fish
 
 window-theme = ghostty
-gtk-adwaita = false
+# gtk-adwaita = false
 
 # Use a simple titlebar:
 gtk-titlebar = false
