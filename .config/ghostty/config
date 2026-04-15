@@ -1,8 +1,9 @@
 # vim set ft=conf
 
-theme = Slate
+# theme = Slate
 
 font-family = "Berkeley Mono"
+font-size = 12
 
 theme = dankcolors
 
@@ -15,11 +16,14 @@ window-theme = ghostty
 gtk-titlebar = false
 
 background = #000000
-background-opacity = 0.5
+background-opacity = 0.7
 background-blur = true
 
 # font-thicken = true # only on mac
 
 
-adjust-cell-width = -5%
-adjust-cell-height = 20%
+# adjust-cell-width = -5%
+# adjust-cell-height = 20%
+adjust-cursor-thickness = +50%
+
+alpha-blending = native

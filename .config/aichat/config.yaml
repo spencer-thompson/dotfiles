@@ -32,6 +32,13 @@ clients:
         output_price: 15
         supports_vision: true
         supports_function_calling: true
+      - name: gpt-5.4-mini
+        max_input_tokens: 400000
+        max_output_tokens: 128000
+        input_price: 0.75
+        output_price: 4.50
+        supports_vision: true
+        supports_function_calling: true
       - name: gpt-5.2
         max_input_tokens: 400000
         max_output_tokens: 128000
