@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+until ping -c 1 google.com >/dev/null 2>&1; do
+    sleep 1
+    printf "."
+done
