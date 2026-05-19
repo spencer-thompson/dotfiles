@@ -1,74 +1,70 @@
 {
-    "$schema": "https://opencode.ai/config.json",
-    // "model": "anthropic/claude-sonnet-4-20250514",
-    "model": "openai/gpt-5.3-codex-spark",
-    "autoshare": false,
-    "autoupdate": true,
-    "agent": {
-        // "build": {
-        //     "mode": "primary",
-        //     // "model": "anthropic/claude-sonnet-4-20250514",
-        //     "prompt": "{file:./prompts/build.txt}",
-        //     "tools": {
-        //         "write": true,
-        //         "edit": true,
-        //         "bash": true
-        //     }
-        // },
-        // "plan": {
-        //     "mode": "primary",
-        //     // "model": "anthropic/claude-haiku-4-20250514",
-        //     "tools": {
-        //         "write": false,
-        //         "edit": false,
-        //         "bash": false
-        //     }
-        // },
-        "review": {
-            "description": "Reviews code for best practices and potential issues",
-            "mode": "subagent",
-            // "model": "anthropic/claude-sonnet-4-20250514",
-            "prompt": "You are a code reviewer. Focus on security, performance, and maintainability.",
-            "tools": {
-                "write": false,
-                "edit": false
-            }
-        },
-        "docs": {
-            "mode": "primary",
-            "prompt": "{file:./prompts/documentation.txt}",
-            "tools": {
-                "write": true,
-                "edit": true,
-                "bash": false,
-                "read": true,
-                "grep": true,
-                "glob": true
-            }
-        }
-    }
-    // "mode": {
-    //     "docs": {
-    //         "prompt": "{file:./prompts/documentation.txt}",
-    //         "tools": {
-    //             "write": true,
-    //             "edit": true,
-    //             "bash": false,
-    //             "read": true,
-    //             "grep": true,
-    //             "glob": true
-    //         }
-    //     }
-    // },
-    // "mcp": {
-    //     "playwright": {
-    //         "type": "local",
-    //         "command": [
-    //             "bun",
-    //             "x",
-    //             "@executeautomation/playwright-mcp-server"
-    //         ],
-    //         "enabled": true
-    //     }
-    // }
+  "$schema": "https://opencode.ai/config.json",
+  // "model": "anthropic/claude-sonnet-4-20250514",
+  "model": "openai/gpt-5.3-codex-spark",
+  "autoshare": false,
+  "autoupdate": true,
+  "agent": {
+    "review": {
+      "description": "Reviews code for best practices and potential issues",
+      "mode": "subagent",
+      // "model": "anthropic/claude-sonnet-4-20250514",
+      "prompt": "You are a code reviewer. Focus on security, performance, and maintainability.",
+      "tools": {
+        "write": false,
+        "edit": false,
+      },
+    },
+    "docs": {
+      "mode": "primary",
+      "prompt": "{file:./prompts/documentation.txt}",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": false,
+        "read": true,
+        "grep": true,
+        "glob": true,
+      },
+    },
+    "understand": {
+      "mode": "primary",
+      "prompt": "You read through to understand and explain code and code repositories.",
+      // "model": "",
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+      },
+    },
+  },
+  // "mode": {
+  //     "docs": {
+  //         "prompt": "{file:./prompts/documentation.txt}",
+  //         "tools": {
+  //             "write": true,
+  //             "edit": true,
+  //             "bash": false,
+  //             "read": true,
+  //             "grep": true,
+  //             "glob": true
+  //         }
+  //     }
+  // },
+  "mcp": {
+    "supabase": {
+      "type": "remote",
+      "url": "https://mcp.supabase.com/mcp?read_only=true",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer {env:OUTRIVAL_SUPABASE_READ_ONLY_TOKEN}",
+      },
+      // "environment": {
+      //   "SUPABASE_ACCESS_TOKEN": "{env:OUTRIVAL_SUPABASE_READ_ONLY_TOKEN}",
+      // },
+    },
+  },
 }

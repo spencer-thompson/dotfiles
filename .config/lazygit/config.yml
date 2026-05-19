@@ -1,7 +1,32 @@
 notARepository: "quit"
+promptToReturnFromSubprocess: false
+git:
+  overrideGpg: true
+  pagers:
+    - pager: delta --paging=never -n --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}" --file-style="omit"
 os:
   editPreset: nvim
 gui:
   showBottomLine: false
-  border: rounded
+  theme:
+    activeBorderColor:
+      - magenta
+    selectedLineBgColor:
+      - black
+    unstagedChangesColor:
+      - yellow
+  border: single
   nerdFontsVersion: "3"
+  skipDiscardChangeWarning: true
+keybinding:
+  files:
+    commitChangesWithoutHook: <disabled>
+customCommands:
+  - key: w
+    prompts:
+      - type: input
+        title: Commit summary
+        initialValue: ""
+    description: Commit changes without pre-commit hook
+    command: git commit -n -m '{{index .PromptResponses 0}}'
+    context: files
