@@ -1,0 +1,8 @@
+{
+  "$schema": "https://opencode.ai/tui.json",
+  "leader_timeout": 1000,
+  "keybinds": {
+    "leader": "ctrl+k",
+    "input_delete_to_line_end": "ctrl+x",
+  },
+}

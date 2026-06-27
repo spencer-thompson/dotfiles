@@ -18,13 +18,14 @@ set fish_emoji_width 2
 
 fzf --fish | source
 starship init fish | source
-direnv hook fish | source
+# direnv hook fish | source
 atuin init fish | source
 atuin gen-completions --shell fish | source
 zoxide init fish | source
-hcloud completion fish | source
+# hcloud completion fish | source
 codex completion fish | source
 # jj util completion fish | source
+mise activate fish | source
 
 bind -M insert up _atuin_search
 
@@ -46,7 +47,7 @@ set -gx R_HOME_USER "$XDG_CONFIG_HOME/R"
 set -gx R_PROFILE_USER "$XDG_CONFIG_HOME/R/profile"
 set -gx MOZ_ENABLE_WAYLAND 1
 set -gx HOSTNAME $(hostname)
-set -gx SHELL fish
+set -gx SHELL /usr/bin/fish
 
 set -gx RESUME_FILE ~/projects/my-resume/resume.toml
 
@@ -62,6 +63,7 @@ set -gx GROFF_NO_SGR 1
 source ~/.env
 
 # ABBREVIATIONS
+abbr --add lg lazygit
 abbr --add cd z
 abbr --add ci zi
 abbr --add ll eza --color=always -lah --git --icons=always --no-user --no-permissions --group-directories-first
@@ -86,6 +88,9 @@ alias gl="git log --all --graph --pretty=format:'%C(magenta)%h %C(white)| %an | 
 # alias nvim="bob run 0.12.0"
 
 fish_add_path /home/sthom/.cargo/bin/
+fish_add_path /home/sthom/go/bin
+fish_add_path /home/sthom/git/whisper.cpp/build/bin/
+# fish_add_path /home/sthom/.local/bin/
 
 # YAZI
 function y
