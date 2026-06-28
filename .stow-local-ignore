@@ -6,4 +6,7 @@ ricing-todo.md
 \.gitignore
 \.gitmodules
 
+(^|/)\.agents/NOTES\.md$
+^/\.local/bin/(claude|hermes|posting)$
+
 ^/README.*

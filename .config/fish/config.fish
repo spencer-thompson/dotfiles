@@ -4,32 +4,9 @@ function fish_greeting
     # toilet -f univers -F metal -t "arch btw" | sed '1,1 d; s/^/ /' | boxes -d ansi-rounded -p a2
     # fortune
     printf "\n"
-    fastfetch
+    type -q fastfetch; and fastfetch
 end
 
-# VIM BINDS
-set -g fish_key_bindings fish_vi_key_bindings
-bind --mode insert \cy forward-char
-bind --mode insert up ctrl-r
-bind --mode command k history-pager
-
-set -gx fish_cursor_replace_one underscore
-set fish_emoji_width 2
-
-fzf --fish | source
-starship init fish | source
-# direnv hook fish | source
-atuin init fish | source
-atuin gen-completions --shell fish | source
-zoxide init fish | source
-# hcloud completion fish | source
-codex completion fish | source
-# jj util completion fish | source
-mise activate fish | source
-
-bind -M insert up _atuin_search
-
-set -gx STARSHIP_CONFIG ~/.config/starship/starship.toml
 set -gx EDITOR nvim
 set -gx VISUAL $EDITOR
 set -gx SUDO_EDITOR $EDITOR
@@ -60,37 +37,13 @@ set -gx FZF_DEFAULT_OPTS '--prompt="-> "'
 set -gx MANPAGER 'less -R --use-color -Dd+r -Du+b'
 set -gx GROFF_NO_SGR 1
 
-source ~/.env
+test -f "$HOME/.env"; and source "$HOME/.env"
 
-# ABBREVIATIONS
-abbr --add lg lazygit
-abbr --add cd z
-abbr --add ci zi
-abbr --add ll eza --color=always -lah --git --icons=always --no-user --no-permissions --group-directories-first
-abbr --add off systemctl poweroff
-abbr --add ... cd ../..
-abbr --add .... cd ../../..
-abbr --add ..... cd ../../../..
-abbr --add ...... cd ../../../../..
-abbr --add ai aichat
-abbr --add oc opencode
-abbr --add ultradark hyprsunset --temperature 3000 --gamma 40
-
-## git
-abbr --add gs git status --short
-abbr --add gd git diff
-abbr --add gp git pull
-abbr --add gP git push
-abbr --add gc git commit
-abbr --add ga git add
-# abbr --add gl git log --all --graph --pretty=format:'%C(magenta)%h %C(white)| %an | %ar%C(auto)  %D%n%s%n'
-alias gl="git log --all --graph --pretty=format:'%C(magenta)%h %C(white)| %an | %ar%C(auto)  %D%n%s%n'"
-# alias nvim="bob run 0.12.0"
-
-fish_add_path /home/sthom/.cargo/bin/
-fish_add_path /home/sthom/go/bin
-fish_add_path /home/sthom/git/whisper.cpp/build/bin/
-# fish_add_path /home/sthom/.local/bin/
+fish_add_path --global "$HOME/go/bin"
+fish_add_path --global "$HOME/git/whisper.cpp/build/bin"
+fish_add_path --global "$HOME/.local/share/npm-global/bin"
+fish_add_path --global "$HOME/.local/bin"
+fish_add_path --global "$HOME/.cargo/bin"
 
 # YAZI
 function y
@@ -102,16 +55,72 @@ function y
     rm -f -- "$tmp"
 end
 
-# AI HELP
-function _aichat_fish
-    set -l _old (commandline)
-    if test -n $_old
-        echo -n "⌛"
-        commandline -f repaint
-        commandline (aichat -e $_old)
-    end
-end
-bind --mode insert ctrl-h _aichat_fish
+if status is-interactive
+    # VIM BINDS
+    set -g fish_key_bindings fish_vi_key_bindings
+    bind --mode insert \cy forward-char
+    bind --mode command k history-pager
 
-# uv
-fish_add_path "/home/sthom/.local/share/../bin"
+    set -gx fish_cursor_replace_one underscore
+    set fish_emoji_width 2
+
+    if type -q fzf
+        fzf --fish | source
+    end
+
+    if type -q starship
+        starship init fish | source
+    end
+
+    # type -q direnv; and direnv hook fish | source
+
+    if type -q atuin
+        atuin init fish | source
+        atuin gen-completions --shell fish | source
+
+        # Use Atuin's wrapper so completion/search paging can keep handling Up.
+        bind -M insert up _atuin_bind_up
+    end
+
+    if type -q zoxide
+        zoxide init fish | source
+    end
+
+    # type -q hcloud; and hcloud completion fish | source
+
+    if type -q codex
+        codex completion fish | source
+    end
+
+    # type -q jj; and jj util completion fish | source
+
+    if type -q mise
+        mise activate fish | source
+    end
+
+    # ABBREVIATIONS
+    abbr --add lg lazygit
+    abbr --add cd z
+    abbr --add ci zi
+    abbr --add ll eza --color=always -lah --git --icons=always --no-user --no-permissions --group-directories-first
+    abbr --add off systemctl poweroff
+    abbr --add ... cd ../..
+    abbr --add .... cd ../../..
+    abbr --add ..... cd ../../../..
+    abbr --add ...... cd ../../../../..
+    abbr --add ai aichat
+    abbr --add oc opencode
+    abbr --add ultradark hyprsunset --temperature 3000 --gamma 40
+
+    ## git
+    abbr --add gs git status --short
+    abbr --add gd git diff
+    abbr --add gp git pull
+    abbr --add gP git push
+    abbr --add gc git commit
+    abbr --add ga git add
+    # abbr --add gl git log --all --graph --pretty=format:'%C(magenta)%h %C(white)| %an | %ar%C(auto)  %D%n%s%n'
+    alias gl="git log --all --graph --pretty=format:'%C(magenta)%h %C(white)| %an | %ar%C(auto)  %D%n%s%n'"
+    # alias nvim="bob run 0.12.0"
+
+end

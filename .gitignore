@@ -7,11 +7,21 @@ client_id.env
 .venv
 
 .config/aichat/rags/*
+.config/yazi/flavors/
+.config/hypr/dms/
+.config/kitty/dank-tabs.conf
+.config/kitty/dank-theme.conf
+.config/ghostty/themes/dankcolors
+
+**/.agents/NOTES.md
 
 */tmux/plugins/*
 */hypr/modules/device.conf
 .ipython/profile_default/history.sqlite
 
+.local/bin/claude
+.local/bin/hermes
+.local/bin/posting
 .local/bin/f2py
 .local/bin/fonttools
 .local/bin/pyftmerge

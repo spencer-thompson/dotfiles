@@ -1,25 +1,35 @@
 function clean
-    echo -e "\e[1;35mCleaning uv cache\e[0m"
-    uv cache prune
+    if type -q uv
+        echo -e "\e[1;35mPruning uv cache\e[0m"
+        uv cache prune
+    end
 
-    echo -e "\e[1;35mCleaning pnpm store\e[0m"
-    pnpm store prune
+    if type -q pnpm
+        echo -e "\e[1;35mPruning pnpm store\e[0m"
+        pnpm store prune
+    end
 
-    echo -e "\e[1;35mCleaning npm cache\e[0m"
-    npm cache clean --force
+    if type -q npm
+        echo -e "\e[1;35mVerifying npm cache\e[0m"
+        npm cache verify
+    end
 
-    echo -e "\e[1;35mCleaning go cache\e[0m"
-    go clean -cache -modcache
+    if type -q go
+        echo -e "\e[1;35mCleaning go build cache\e[0m"
+        go clean -cache
+    end
 
-    echo -e "\e[1;35mCleaning docker images\e[0m"
-    docker system prune
+    if type -q paru
+        echo -e "\e[1;35mRemoving orphan packages\e[0m"
+        set -l orphans (paru -Qtdq)
 
-    echo -e "\e[1;35mCleaning docker volumes\e[0m"
-    docker volume prune
+        if test (count $orphans) -gt 0
+            paru -Rns $orphans
+        else
+            echo "No orphan packages found"
+        end
 
-    echo -e "\e[1;35mCleaning removing orphan packages\e[0m"
-    paru -R $(paru -Qtdq)
-
-    echo -e "\e[1;35mCleaning pacman and aur cache\e[0m"
-    paru -Scc
+        echo -e "\e[1;35mCleaning pacman and AUR cache\e[0m"
+        paru -Sc
+    end
 end
