@@ -34,17 +34,16 @@ My most used, _and most recommended_, applications are:
 
 ## Gaming
 
-Steam launch options for: 
+Steam launch options for:
 
 **The Finals**:
 
-```
+```text
 PROTON_ENABLE_FSYNC=1 PROTON_USE_EAC_LINUX=1 PROTON_ENABLE_NVAPI=1 PROTON_USE_NTSYNC=1 PROTON_ENABLE_WAYLAND=1 gamemoderun %command% -useallavailablecores
 ```
 
 **Arc Raiders**:
 
-```
+```text
 PROTON_ENABLE_FSYNC=1 PROTON_ENABLE_NVAPI=1 PROTON_USE_NTSYNC=1 PROTON_USE_EAC_LINUX=1 PROTON_ENABLE_WAYLAND=1 gamemoderun %command% -useallavailablecores
 ```
-

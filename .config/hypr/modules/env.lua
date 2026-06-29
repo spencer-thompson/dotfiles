@@ -27,6 +27,7 @@ local env = {
 	{ "NVD_BACKEND", "direct" },
 	{ "ELECTRON_OZONE_PLATFORM_HINT", "auto" },
 	{ "MOZ_ENABLE_WAYLAND", "1" },
+	{ "CODEX_LINUX_RENDERING_MODE", "wayland-gpu" },
 
 	{ "XDG_CURRENT_DESKTOP", "Hyprland" },
 	{ "XDG_SESSION_DESKTOP", "Hyprland" },

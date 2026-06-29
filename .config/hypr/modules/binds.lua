@@ -34,6 +34,10 @@ local function dispatch(name, arg)
 	return exec(command)
 end
 
+local function move_to_workspace(workspace)
+	return hl.dsp.window.move({ workspace = workspace, follow = false })
+end
+
 -- Hyprland utility binds
 bind(mod .. " + Return", exec(terminal), "Open terminal")
 bind(mod .. " + Escape", exec(terminal), "Open terminal")
@@ -123,8 +127,8 @@ bind(mod .. " + Tab", hl.dsp.layout("rollnext"), "Roll master")
 bind("SHIFT + " .. mod .. " + Tab", hl.dsp.layout("orientationnext"), "Rotate master")
 bind(mod .. " + mouse_down", hl.dsp.layout("mfact +0.01"), "Expand master")
 bind(mod .. " + mouse_up", hl.dsp.layout("mfact -0.01"), "Shrink master")
-bind(mod .. " + code:34", hl.dsp.layout("mfact -0.01"), "Shrink master", { repeating = true })
-bind(mod .. " + code:35", hl.dsp.layout("mfact +0.01"), "Expand master", { repeating = true })
+bind(mod .. " + bracketleft", hl.dsp.layout("mfact -0.01"), "Shrink master", { repeating = true })
+bind(mod .. " + bracketright", hl.dsp.layout("mfact +0.01"), "Expand master", { repeating = true })
 bind("SHIFT + " .. mod .. " + h", dispatch("movewindow", "l"), "Move window left")
 bind("SHIFT + " .. mod .. " + j", dispatch("movewindow", "d"), "Move window down")
 bind("SHIFT + " .. mod .. " + k", dispatch("movewindow", "u"), "Move window up")
@@ -137,7 +141,7 @@ for workspace = 1, 10 do
 	bind(mod .. " + " .. key, hl.dsp.focus({ workspace = workspace }), "Workspace " .. workspace)
 	bind(
 		"SHIFT + " .. mod .. " + " .. key,
-		dispatch("movetoworkspacesilent", tostring(workspace)),
+		move_to_workspace(workspace),
 		"Move to workspace " .. workspace
 	)
 end

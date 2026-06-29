@@ -165,7 +165,7 @@ return {
 
     binds = {
         {
-            keys = "SUPER + code:49",
+            keys = "SUPER + grave",
             dispatcher = hl.dsp.focus({ workspace = "name:laptop" }),
             desc = "Laptop workspace",
         },

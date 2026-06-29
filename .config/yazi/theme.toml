@@ -1,3 +1,22 @@
 [flavor]
 dark = "tokyo-night"
 light = "tokyo-night"
+
+[git]
+unknown = { fg = "#565f89" }
+clean = { fg = "#565f89" }
+modified = { fg = "#e0af68" }
+added = { fg = "#9ece6a" }
+untracked = { fg = "#bb9af7" }
+ignored = { fg = "#565f89" }
+deleted = { fg = "#f7768e" }
+updated = { fg = "#7dcfff" }
+
+unknown_sign = "▎ "
+clean_sign = "▎ "
+modified_sign = "▎+"
+added_sign = "▎+"
+untracked_sign = "▎?"
+ignored_sign = "▎󰛑"
+deleted_sign = "▎-"
+updated_sign = "▎="

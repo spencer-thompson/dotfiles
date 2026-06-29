@@ -8,10 +8,13 @@ client_id.env
 
 .config/aichat/rags/*
 .config/yazi/flavors/
+.config/yazi/plugins/
 .config/hypr/dms/
 .config/kitty/dank-tabs.conf
 .config/kitty/dank-theme.conf
 .config/ghostty/themes/dankcolors
+.config/cava/themes/
+.config/cava/shaders/eye_of_phi.frag
 
 **/.agents/NOTES.md
 

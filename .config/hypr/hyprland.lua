@@ -64,6 +64,9 @@ hl.config({
 	cursor = {
 		no_hardware_cursors = true,
 	},
+	xwayland = {
+		force_zero_scaling = true,
+	},
 
 	-- Shared bind behavior from modules/binds.conf.
 	binds = {

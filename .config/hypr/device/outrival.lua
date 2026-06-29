@@ -56,13 +56,13 @@ return {
 
 	binds = {
 		{
-			keys = "SUPER + code:49",
+			keys = "SUPER + grave",
 			dispatcher = hl.dsp.focus({ workspace = "name:laptop" }),
 			desc = "Laptop workspace",
 		},
 		{
-			keys = "SUPER + SHIFT + code:49",
-			command = "hyprctl dispatch movetoworkspacesilent name:laptop",
+			keys = "SUPER + SHIFT + grave",
+			dispatcher = hl.dsp.window.move({ workspace = "name:laptop", follow = false }),
 			desc = "Move to laptop workspace",
 		},
 		{
