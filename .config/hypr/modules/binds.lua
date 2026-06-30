@@ -50,7 +50,7 @@ bind("SHIFT + " .. mod .. " + R", hl.dsp.force_renderer_reload(), "Reload render
 bind(mod .. " + F", hl.dsp.window.fullscreen(0), "Toggle fullscreen")
 bind(mod .. " + P", exec("hyprpicker -a"), "Pick color")
 bind(mod .. " + E", execr([[wl-copy $(cut -d ';' -f1 ~/.config/hypr/scripts/*.txt | tofi | sed "s/ .*//")]]), "Copy symbol")
-bind(mod .. " + B", exec("~/.config/hypr/modules/toggleblur.sh"), "Toggle blur")
+bind(mod .. " + B", exec("~/.config/hypr/scripts/toggleblur.sh"), "Toggle blur")
 bind(
 	"SHIFT + " .. mod .. " + C",
 	exec([[kill $(pgrep cava) || kitty +kitten panel --edge=background --class=cava --name=cava -o background_opacity=0 -o font_size=7 sh -c 'cava']]),
