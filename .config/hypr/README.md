@@ -11,13 +11,15 @@ legacy/reference material, but the active compositor config is the Lua path.
 
 1. Apply one central `hl.config({ ... })` call for compositor options.
 2. Register the shared `ydotoold-virtual-device` keyboard settings.
-3. Load the hostname-specific device profile with `require("device")`.
-4. Load shared behavior modules:
+3. Load shared environment, animation, and startup behavior.
+4. Load the hostname-specific device profile with `require("device")`.
+5. Load shared binds, gestures, and rules:
 
 ```lua
 require("modules.env")
 require("modules.looks")
 require("modules.exec")
+local device = require("device")
 require("modules.binds")
 require("modules.gestures")
 require("modules.rules").setup(device)

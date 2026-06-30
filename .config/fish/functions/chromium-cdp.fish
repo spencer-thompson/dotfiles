@@ -16,6 +16,7 @@ function chromium-cdp --description "Launch Chromium with CDP using the default 
     mkdir -p $log_dir
 
     command /usr/bin/chromium \
+        --ozone-platform-hint=auto \
         --remote-debugging-address=127.0.0.1 \
         --remote-debugging-port=$port \
         --user-data-dir="$user_data_dir" \

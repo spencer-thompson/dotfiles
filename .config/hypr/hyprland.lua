@@ -139,11 +139,12 @@ hl.device({
 	kb_options = "",
 })
 
-local device = require("device")
-
 require("modules.env")
 require("modules.looks")
 require("modules.exec")
+
+local device = require("device")
+
 require("modules.binds")
 require("modules.gestures")
 require("modules.rules").setup(device)
