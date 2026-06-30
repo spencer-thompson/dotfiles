@@ -28,6 +28,8 @@ line-length = 120
 code-blocks = false
 tables = false
 ignore-link-urls = true
+reflow = true
+reflow-mode = "normalize"
 
 [MD026]
 punctuation = ".,;:!"

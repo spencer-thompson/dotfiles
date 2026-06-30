@@ -68,6 +68,22 @@ function M.setup(opts)
 		scroll_touchpad = 2.5,
 	})
 
+	hl.window_rule({
+		name = "codex-pet-overlay",
+		match = {
+			class = "^codex-desktop$",
+			title = "^Codex$",
+			float = true,
+		},
+
+		pin = true,
+		no_initial_focus = true,
+		no_follow_mouse = true,
+		decorate = false,
+		no_shadow = true,
+		no_blur = true,
+	})
+
 	workspace("name:steam", { on_created_empty = "steam" })
 	if has_monitor(main_monitor) then
 		workspace("name:steam", { monitor = main_monitor })

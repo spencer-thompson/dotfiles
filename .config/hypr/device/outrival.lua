@@ -1,5 +1,6 @@
+local programs = require("modules.programs")
 local laptop_monitor = "desc:Samsung Display Corp. 0x4165"
-local external_monitor = "HDMI-A-1"
+local external_monitor = "desc:CSF HDMI"
 
 local workspaces = {
 	{
@@ -49,7 +50,7 @@ return {
 
 	startup = {
 		{
-			command = "firefox",
+			command = programs.browser,
 			rules = { workspace = "1 silent" },
 		},
 	},

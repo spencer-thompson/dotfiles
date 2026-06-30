@@ -1,3 +1,4 @@
+local programs = require("modules.programs")
 local main_monitor = "DP-1"
 local secondary_monitor = "HDMI-A-1"
 
@@ -37,11 +38,11 @@ return {
 
 	startup = {
 		{
-			command = "firefox",
+			command = programs.browser,
 			rules = { workspace = "name:vertical silent" },
 		},
 		{
-			command = "kitty",
+			command = programs.terminal,
 			rules = { workspace = "1 silent" },
 		},
 		"hyprctl dispatch focusmonitor DP-1",

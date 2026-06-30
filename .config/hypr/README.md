@@ -53,6 +53,9 @@ reason. This keeps the final state easy to reason about.
 `modules/env.lua`
 : Applies environment variables with `hl.env(...)`.
 
+`modules/programs.lua`
+: Defines shared app command names used by binds and device startup entries.
+
 `modules/looks.lua`
 : Registers animation curves and animation rules with `hl.curve(...)` and
 `hl.animation(...)`.
@@ -118,7 +121,7 @@ Example:
 
 ```lua
 local laptop_monitor = "desc:Samsung Display Corp. 0x4165"
-local external_monitor = "HDMI-A-1"
+local external_monitor = "desc:CSF HDMI"
 
 return {
     main_monitor = external_monitor,
@@ -190,9 +193,9 @@ Then use the `description` field:
 local laptop_monitor = "desc:Samsung Display Corp. 0x4165"
 ```
 
-The current `outrival` profile uses a real `desc:` selector for its laptop
-panel. Some external monitors still use port names because their descriptions
-were not available when the profile was created.
+The current `outrival` profile uses real `desc:` selectors for its laptop panel
+and external display. Other device profiles may still use port names until their
+monitor descriptions are captured while connected.
 
 ## Adding A New Device
 

@@ -1,12 +1,5 @@
 local M = {}
 
-M.programs = {
-	terminal = "kitty",
-	file_manager = "dolphin",
-	menu = "tofi --show drun",
-	browser = "firefox",
-}
-
 local env = {
 	{ "HYPRCURSOR_THEME", "HyprBibataModernClassicSVG" },
 	{ "HYPRCURSOR_SIZE", "24" },

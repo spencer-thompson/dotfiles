@@ -1,3 +1,4 @@
+local programs = require("modules.programs")
 local laptop_monitor = "eDP-1"
 local mirrored_monitor = "HDMI-A-1"
 
@@ -31,9 +32,9 @@ return {
 	},
 
 	startup = {
-		"firefox",
+		programs.browser,
 		{
-			command = "kitty",
+			command = programs.terminal,
 			rules = { workspace = "2 silent" },
 		},
 	},

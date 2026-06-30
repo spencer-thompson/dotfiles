@@ -1,5 +1,5 @@
 local mod = "SUPER"
-local terminal = "kitty"
+local programs = require("modules.programs")
 
 local function bind(keys, dispatcher, desc, opts)
 	if type(desc) == "table" and opts == nil then
@@ -39,14 +39,13 @@ local function move_to_workspace(workspace)
 end
 
 -- Hyprland utility binds
-bind(mod .. " + Return", exec(terminal), "Open terminal")
-bind(mod .. " + Escape", exec(terminal), "Open terminal")
+bind(mod .. " + Return", exec(programs.terminal), "Open terminal")
+bind(mod .. " + Escape", exec(programs.terminal), "Open terminal")
 bind(mod .. " + Q", hl.dsp.window.close(), "Close window")
 bind("SHIFT + " .. mod .. " + Q", execr([[hyprctl -j activewindow | jq '.pid' | xargs -r kill]]), "Force kill window")
 bind(mod .. " + T", hl.dsp.window.float({ action = "toggle" }), "Toggle floating")
 bind(mod .. " + SHIFT + G", exec("~/.config/hypr/scripts/gamemode.sh"), "Toggle game mode")
 bind(mod .. " + G", hl.dsp.focus({ workspace = "name:steam" }), "Steam workspace")
-bind(mod .. " + G", execr([[fish -c "kill (pgrep swww)"]]), "Stop wallpaper daemon")
 bind("SHIFT + " .. mod .. " + R", hl.dsp.force_renderer_reload(), "Reload renderer")
 bind(mod .. " + F", hl.dsp.window.fullscreen(0), "Toggle fullscreen")
 bind(mod .. " + P", exec("hyprpicker -a"), "Pick color")
@@ -101,8 +100,8 @@ bind("SHIFT + " .. mod .. " + Space", dispatch("movetoworkspace", "special"), "M
 
 -- Laptop keys
 bind("XF86AudioMute", exec("dms ipc call audio mute"), "Mute audio")
-bind("XF86AudioLowerVolume", exec("pactl set-sink-volume 0 -1%"), "Volume down", { repeating = true })
-bind("XF86AudioRaiseVolume", exec("pactl set-sink-volume 0 +1%"), "Volume up", { repeating = true })
+bind("XF86AudioLowerVolume", exec("pactl set-sink-volume @DEFAULT_SINK@ -1%"), "Volume down", { repeating = true })
+bind("XF86AudioRaiseVolume", exec("pactl set-sink-volume @DEFAULT_SINK@ +1%"), "Volume up", { repeating = true })
 bind("XF86AudioPrev", exec("playerctl previous"), "Previous track")
 bind("XF86AudioPlay", exec("playerctl play-pause"), "Play/pause")
 bind("XF86AudioNext", exec("playerctl next"), "Next track")
