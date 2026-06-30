@@ -106,6 +106,17 @@ function M.setup(opts)
 
 	layer("^(dms)$", { no_anim = true })
 
+	hl.window_rule({
+		name = "dms-settings",
+		match = {
+			class = "^com\\.danklinux\\.dms$",
+			title = "^Settings$",
+		},
+		center = true,
+		float = true,
+		size = "950 1400",
+	})
+
 	window("org.quickshell", { center = true })
 	window("org.quickshell", { float = true })
 	window("org.quickshell", { size = "900 1100" })

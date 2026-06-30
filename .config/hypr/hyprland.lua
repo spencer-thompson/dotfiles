@@ -27,10 +27,10 @@ hl.config({
 		gaps_out = 32,
 		border_size = 0,
 		col = {
-			-- Current DMS colors. The previous gradient borders are kept in git
-			-- history if you want them back later.
-			active_border = "rgb(a6c8ff)",
-			inactive_border = "rgb(8c919c)",
+			-- Fallback DMS colors. Generated dms/colors.lua may override these
+			-- below when it exists on the local machine.
+			active_border = "rgb(b6c7e9)",
+			inactive_border = "rgb(8f9098)",
 		},
 		layout = "master",
 		allow_tearing = false,
@@ -87,10 +87,21 @@ hl.config({
 		},
 		shadow = {
 			enabled = true,
-			range = 36,
-			render_power = 3,
+			range = 64,
+			render_power = 4,
 			color = "rgba(000000aa)",
+			color_inactive = "rgba(000000aa)",
 			offset = { 0, 1 },
+		},
+		glow = {
+			enabled = false,
+			range = 64,
+			render_power = 4,
+			-- color = "rgba(b6c7e955)",
+			-- color = "rgba(00000055)",
+			color = "rgba(00000000)",
+			-- color_inactive = "rgba(8f909800)",
+			color_inactive = "rgba(00000088)",
 		},
 		active_opacity = 1.0,
 		inactive_opacity = 1.0,
@@ -104,20 +115,20 @@ hl.config({
 		enabled = true,
 	},
 
-	-- Current DMS group colors from dms/colors.lua.
+	-- Fallback DMS group colors. Generated dms/colors.lua may override these.
 	group = {
 		col = {
-			border_active = "rgb(a6c8ff)",
-			border_inactive = "rgb(8c919c)",
+			border_active = "rgb(b6c7e9)",
+			border_inactive = "rgb(8f9098)",
 			border_locked_active = "rgb(ffb4ab)",
-			border_locked_inactive = "rgb(8c919c)",
+			border_locked_inactive = "rgb(8f9098)",
 		},
 		groupbar = {
 			col = {
-				active = "rgb(a6c8ff)",
-				inactive = "rgb(8c919c)",
+				active = "rgb(b6c7e9)",
+				inactive = "rgb(8f9098)",
 				locked_active = "rgb(ffb4ab)",
-				locked_inactive = "rgb(8c919c)",
+				locked_inactive = "rgb(8f9098)",
 			},
 		},
 	},
@@ -149,10 +160,9 @@ require("modules.binds")
 require("modules.gestures")
 require("modules.rules").setup(device)
 
--- DMS colors are copied into the config table above so this file owns the only
--- active config call. Re-enable this only if you want DMS to apply its own
--- generated config call again.
--- require("dms.colors")
+-- Generated DMS colors are ignored in git. If absent, the fallback colors in the
+-- central config above remain active.
+pcall(require, "dms.colors")
 --
 -- Keep plugins disabled until you want the old commented plugin config active.
 -- require("modules.plugins")
