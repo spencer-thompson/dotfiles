@@ -1,16 +1,19 @@
 # Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
 
-add_newline = true
+add_newline = false
 # continuation_prompt = "[▎│ ](dimmed white)"
 continuation_prompt = "[∙ ](dimmed white)"
-format = """[┌ ](green)$battery$shell$all\
-[└ ](green)$jobs$directory$character"""
+# format = """[┌ ](green)$battery$shell$all\
+# [└ ](green)$jobs$directory$character"""
+format = """ [](dimmed purple) $fill $cmd_duration$time $fill [](dimmed purple) 
+$jobs$directory$character"""
 
-# right_format = """$all"""
+right_format = """$git_metrics$all"""
 
 [fill]
-symbol = ' '
+symbol = '─'
+style = "black"
 
 # [character]
 # success_symbol = "[│](bold green)"
@@ -24,9 +27,10 @@ symbol = ' '
 # # vimcmd_symbol = "[󰅁󰇝](bold green)"
 
 [character]
-success_symbol = "[❯](green)"
-error_symbol = "[❯](red)"
-vimcmd_symbol = "[❮](purple)"
+# success_symbol = "[❯](green)"
+success_symbol = "[|>](green)"
+error_symbol = "[|>](bold red)"
+vimcmd_symbol = "[<|](purple)"
 
 # [package]
 # disabled = true
@@ -52,11 +56,15 @@ ahead = '\[󰁔${count}\]'
 behind = '\[󰁍${count}\]'
 up_to_date = '[\[✓\]](bold green)'
 
+[git_metrics]
+disabled = false
+
 [directory]
 home_symbol = "~"
 read_only = " "
 truncation_length = 4
-truncation_symbol = "••/"
+# truncation_symbol = "••/"
+truncation_symbol = ".../"
 format = '[$path]($style)[$read_only]($read_only_style) '
 # format = '[\[󰇝󱋱](bold fg:green)[$path]($style)[$read_only]($read_only_style)[\]](bold fg:green)'
 
@@ -76,9 +84,10 @@ full_symbol = "󰁹"
 # charging_symbol = "[↑](italic bold green)"
 charging_symbol = "[󰂄](italic bold green)"
 # discharging_symbol = "↓"
-unknown_symbol = "󰂑"
+# unknown_symbol = "󰂑"
+unknown_symbol = ""
 empty_symbol = "󰂎"
-# disabled = false
+disabled = true
 
 [[battery.display]]
 threshold = 5
@@ -147,6 +156,13 @@ style = "italic bold green"
 charging_symbol = "󰂄"
 discharging_symbol = "󰁹"
 
+[time]
+disabled = false
+use_12hr = true
+style = "bold purple dimmed"
+format = "[$time]($style)"
+time_format = '%l:%M %P'
+
 [shell]
 bash_indicator = 'B'
 fish_indicator = '󰈺'
@@ -156,7 +172,7 @@ unknown_indicator = '?'
 format = '[$indicator]($style) '
 # format = '[\[](bold fg:green)[$indicator]($style)[\]](bold fg:green)'
 style = 'purple bold'
-disabled = false
+disabled = true
 
 [direnv]
 format = "[$symbol$loaded/$allowed]($style) "
@@ -176,7 +192,7 @@ symbol = "☁️ "
 disabled = true
 
 [golang]
-version_format = '${raw}'
+version_format = "${major}.${minor}"
 symbol = "󰟓 "
 style = 'bold fg:cyan'
 
@@ -255,15 +271,19 @@ ssh_symbol = " "
 
 [java]
 symbol = " "
+version_format = "${major}.${minor}"
 
 [julia]
 symbol = " "
+version_format = "${major}.${minor}"
 
 [kotlin]
 symbol = " "
+version_format = "${major}.${minor}"
 
 [lua]
 symbol = " "
+version_format = "${major}.${minor}"
 
 [memory_usage]
 symbol = "󰍛 "
@@ -273,15 +293,18 @@ symbol = "󰔷 "
 
 [nim]
 symbol = "󰆥 "
+version_format = "${major}.${minor}"
 
 [nix_shell]
 symbol = " "
 
 [nodejs]
 symbol = " "
+version_format = "${major}.${minor}"
 
 [ocaml]
 symbol = " "
+version_format = "${major}.${minor}"
 
 [os.symbols]
 Alpaquita = " "
@@ -330,33 +353,44 @@ Windows = "󰍲 "
 
 [package]
 symbol = "󰏗 "
+version_format = "${major}.${minor}"
+
 
 [perl]
 symbol = " "
+version_format = "${major}.${minor}"
 
 [php]
 symbol = " "
+version_format = "${major}.${minor}"
 
 [pijul_channel]
 symbol = " "
 
 [python]
 symbol = " "
+version_format = "${major}.${minor}"
 
 [rlang]
 symbol = "󰟔 "
+version_format = "${major}.${minor}"
 
 [ruby]
 symbol = " "
+version_format = "${major}.${minor}"
 
 [rust]
 symbol = "󱘗 "
+version_format = "${major}.${minor}"
 
 [scala]
 symbol = " "
+version_format = "${major}.${minor}"
 
 [swift]
 symbol = " "
+version_format = "${major}.${minor}"
 
 [zig]
 symbol = " "
+version_format = "${major}.${minor}"

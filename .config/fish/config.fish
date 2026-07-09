@@ -45,6 +45,16 @@ fish_add_path --global "$HOME/.local/share/npm-global/bin"
 fish_add_path --global "$HOME/.local/bin"
 fish_add_path --global "$HOME/.cargo/bin"
 
+function starship_transient_prompt_func
+    starship module directory
+    starship module character
+end
+
+function starship_transient_rprompt_func
+    starship module cmd_duration
+    starship module time
+end
+
 # YAZI
 function y
     set tmp (mktemp -t "yazi-cwd.XXXXXX")
@@ -70,6 +80,7 @@ if status is-interactive
 
     if type -q starship
         starship init fish | source
+        enable_transience
     end
 
     # type -q direnv; and direnv hook fish | source
@@ -103,7 +114,7 @@ if status is-interactive
     abbr --add cd z
     abbr --add ci zi
     abbr --add ll eza --color=always -lah --git --icons=always --no-user --no-permissions --group-directories-first
-    abbr --add off systemctl poweroff
+    abbr --add off "hyprshutdown -t 'Shutting down...' --post-cmd 'systemctl poweroff'"
     abbr --add ... cd ../..
     abbr --add .... cd ../../..
     abbr --add ..... cd ../../../..
@@ -124,3 +135,6 @@ if status is-interactive
     # alias nvim="bob run 0.12.0"
 
 end
+
+# Added by codebase-memory-mcp install
+fish_add_path /home/sthom/.local/bin

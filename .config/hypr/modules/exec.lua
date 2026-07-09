@@ -20,11 +20,13 @@ local session_env = table.concat({
 	"ELECTRON_OZONE_PLATFORM_HINT",
 }, " ")
 
+local function start_session()
+	os.execute("dbus-update-activation-environment --systemd " .. session_env)
+	os.execute("systemctl --user import-environment " .. session_env)
+	os.execute("systemctl --user start hyprland-session.target")
+end
+
 M.once = {
-	"sh -lc 'dbus-update-activation-environment --systemd " .. session_env
-		.. "; systemctl --user import-environment "
-		.. session_env
-		.. "'",
 	"dms run",
 	"wl-paste --type text --watch cliphist store",
 	"wl-paste --type image --watch cliphist store",
@@ -34,9 +36,15 @@ M.once = {
 }
 
 hl.on("hyprland.start", function()
+	start_session()
+
 	for _, command in ipairs(M.once) do
 		hl.exec_cmd(command)
 	end
+end)
+
+hl.on("hyprland.shutdown", function()
+	os.execute("systemctl --user stop hyprland-session.target && sleep 0.1")
 end)
 
 return M
