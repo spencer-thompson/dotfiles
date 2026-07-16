@@ -152,5 +152,8 @@
             "symbol": "square",
             // "block": [1, 2],
         },
+        {
+            "type": "break",
+        },
     ],
 }

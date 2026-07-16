@@ -1,6 +1,7 @@
 local programs = require("modules.programs")
 local laptop_monitor = "desc:Samsung Display Corp. 0x4165"
-local external_monitor = "desc:CSF HDMI"
+local work_external_monitor = "desc:CSF HDMI"
+local home_external_monitor = "desc:Samsung Electric Company Odyssey G75F HNTL201148"
 
 local workspaces = {
 	{
@@ -13,14 +14,14 @@ local workspaces = {
 for workspace = 1, 5 do
 	workspaces[#workspaces + 1] = {
 		workspace = tostring(workspace),
-		monitor = external_monitor,
+		monitor = work_external_monitor,
 		default = workspace == 1,
 	}
 end
 
 return {
-	main_monitor = external_monitor,
-	secondary_monitor = external_monitor,
+	main_monitor = work_external_monitor,
+	secondary_monitor = work_external_monitor,
 	laptop_monitor = laptop_monitor,
 
 	monitors = {
@@ -31,10 +32,16 @@ return {
 			scale = 1.5,
 		},
 		{
-			output = external_monitor,
+			output = work_external_monitor,
 			mode = "modeline 594.00 5120 5168 5200 5280 2160 2163 2173 2250 +hsync -vsync",
 			position = "-640x-2160",
 			scale = 1,
+		},
+		{
+			output = home_external_monitor,
+			mode = "5120x2160@60",
+			position = "2560x0",
+			scale = 1.5,
 		},
 	},
 

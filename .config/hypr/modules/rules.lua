@@ -28,12 +28,6 @@ function M.setup(opts)
 	layer("launcher", { blur = true })
 	layer("launcher", { xray = false })
 	layer("launcher", { dim_around = true })
-	layer("waybar", { blur = true })
-	layer("waybar", { xray = false })
-	layer("waybar", { ignore_alpha = 0 })
-	layer("swaync.*", { blur = true })
-	layer("swaync.*", { xray = false })
-	layer("swaync.*", { ignore_alpha = 0 })
 
 	window("nwg-look", { float = true })
 	window("nwg-look", { size = "800 500" })
@@ -46,10 +40,28 @@ function M.setup(opts)
 	window("xdg-desktop-portal-gtk", { size = "900 600" })
 
 	hl.window_rule({
+		name = "imv",
+		match = { class = "^imv$" },
+		center = true,
+		float = true,
+	})
+
+	hl.window_rule({
+		name = "termfilechooser",
+		match = {
+			class = "^kitty$",
+			title = "^termfilechooser$",
+		},
+		center = true,
+		float = true,
+	})
+
+	hl.window_rule({
 		name = "screenshots",
 		match = { class = "com.gabm.satty" },
 		min_size = "800 500",
 		border_size = 2,
+		rounding = 0,
 		dim_around = true,
 		float = true,
 	})
@@ -57,7 +69,7 @@ function M.setup(opts)
 	hl.window_rule({
 		name = "special-kitty",
 		match = { class = "kitty" },
-		rounding = 4,
+		rounding = 0,
 		scroll_touchpad = 2.5,
 	})
 
@@ -105,6 +117,24 @@ function M.setup(opts)
 	window("discord", { no_initial_focus = true })
 
 	layer("^(dms)$", { no_anim = true })
+
+	hl.layer_rule({
+		name = "noctalia",
+		match = {
+			namespace = "^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd)$",
+		},
+		no_anim = true,
+		ignore_alpha = 0.5,
+		blur = true,
+		blur_popups = true,
+	})
+
+	hl.window_rule({
+		name = "noctalia-settings",
+		match = { class = "dev.noctalia.Noctalia" },
+		float = true,
+		size = { 1080, 1280 },
+	})
 
 	hl.window_rule({
 		name = "dms-settings",

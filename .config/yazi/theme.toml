@@ -1,6 +1,6 @@
 [flavor]
-dark = "tokyo-night"
-light = "tokyo-night"
+dark = "noctalia"
+light = "noctalia"
 
 [git]
 unknown = { fg = "#565f89" }

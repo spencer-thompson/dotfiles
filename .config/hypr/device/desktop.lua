@@ -45,7 +45,7 @@ return {
 			command = programs.terminal,
 			rules = { workspace = "1 silent" },
 		},
-		"hyprctl dispatch focusmonitor DP-1",
+		[[hyprctl dispatch 'hl.dsp.focus({ monitor = "DP-1" })']],
 	},
 
 	window_rules = {

@@ -1,0 +1,208 @@
+[accessibility]
+ui_scale = 1.2500000111758709
+
+[bar]
+order = [ "Top", "Bottom" ]
+
+    [bar.Bottom]
+    capsule_border = "surface"
+    capsule_fill = "surface"
+    capsule_opacity = 0.79999998211860657
+    capsule_padding = 24.0
+    center = [ "media", "workspaces", "audio_visualizer" ]
+    enabled = true
+    end = [ "date" ]
+    layer = "overlay"
+    margin_ends = 0
+    padding = 36
+    position = "bottom"
+    radius = 80
+    scale = 1.2500000111758709
+    start = [ "weather" ]
+    thickness = 36
+
+    [bar.Top]
+    center = [ "battery", "clock", "network", "network_rx", "network_tx", "sysmon" ]
+    end = [ "tray", "bluetooth", "volume", "brightness", "ram", "cpu", "temp", "spacer_2", "session" ]
+    font_family = "Berkeley Mono Variable"
+    font_weight = 800
+    margin_ends = 0
+    padding = 36
+    panel_overlap = 2
+    scale = 1.2500000111758709
+    start = [ "launcher", "wallpaper", "control-center", "clipboard", "notifications" ]
+    thickness = 36
+    widget_spacing = 32
+
+[control_center]
+width = 800
+
+[desktop_widgets]
+enabled = false
+
+[location]
+auto_locate = true
+
+[lockscreen]
+blurred_desktop = true
+
+[lockscreen_widgets]
+enabled = true
+schema_version = 2
+widget_order = [ "lockscreen-login-box@HDMI-A-1", "lockscreen-login-box@eDP-1" ]
+
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1"]
+    box_height = 70.0
+    box_width = 400.0
+    cx = 1720.0
+    cy = 1321.0
+    output = "HDMI-A-1"
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        input_opacity = 1.0
+        input_radius = 6.0
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_password_hint = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@eDP-1"]
+    box_height = 70.0
+    box_width = 400.0
+    cx = 1280.0
+    cy = 1481.0
+    output = "eDP-1"
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@eDP-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        input_opacity = 1.0
+        input_radius = 6.0
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_password_hint = true
+
+[notification]
+offset_x = 16
+
+[osd]
+offset_y = 24
+position = "bottom_center"
+scale = 1.5000000149011612
+
+[shell]
+button_borders = false
+clipboard_history_max_entries = 1000
+font_family = "Berkeley Mono Variable"
+polkit_agent = true
+
+    [shell.animation]
+    speed = 2.0000000298023224
+
+    [shell.panel]
+    borders = false
+
+    [shell.screen_corners]
+    enabled = true
+
+    [shell.screenshot]
+    pipe_command = "satty --font-family \"Berkeley Mono\" --filename - --output-filename ~/screenshots/satty-$(date '+%Y%m%d-%H:%M:%S').png --copy-command wl-copy"
+    pipe_to_command = true
+    save_to_file = false
+
+[theme]
+builtin = "Catppuccin"
+community_palette = "GitHub Dark"
+pure_black_dark = true
+source = "wallpaper"
+wallpaper_scheme = "faithful"
+
+    [theme.templates]
+    builtin_ids = [ "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "qt", "starship" ]
+    community_ids = [ "papirus-icons", "yazi" ]
+
+[wallpaper]
+directory = "/home/sthom/.wallpapers"
+fill_color = "surface"
+transition = [ "disc", "fade", "honeycomb", "wipe", "zoom" ]
+transition_on_startup = true
+
+    [wallpaper.default]
+    path = "/home/sthom/.wallpapers/mountain-landscape-5120x2880-24317.jpg"
+
+    [wallpaper.last]
+    path = "/home/sthom/.wallpapers/mountain-landscape-5120x2880-24317.jpg"
+
+    [wallpaper.monitors.HDMI-A-1]
+    path = "/home/sthom/.wallpapers/mountain-landscape-5120x2880-24317.jpg"
+
+    [wallpaper.monitors.eDP-1]
+    path = "/home/sthom/.wallpapers/mountain-landscape-5120x2880-24317.jpg"
+
+[weather]
+unit = "imperial"
+
+[widget.audio_visualizer]
+bands = 128
+width = 400
+
+[widget.battery]
+display_mode = "graphic"
+scale = 0.69999999999999996
+show_label = false
+
+[widget.clock]
+anchor = true
+
+[widget.control-center]
+glyph = "pyramid"
+
+[widget.media]
+hide_when_no_media = true
+max_length = 400
+title_scroll = "on_hover"
+
+[widget.network]
+show_label = false
+
+[widget.network_rx]
+enabled = false
+network_speed_compact = true
+
+[widget.network_tx]
+enabled = false
+
+[widget.spacer_2]
+enabled = false
+length = 40
+type = "spacer"
+
+[widget.sysmon]
+enabled = false
+
+[widget.temp]
+show_label = false
+
+[widget.wallpaper]
+glyph = "image"
+
+[widget.workspaces]
+anchor = true
+empty_color = "tertiary"
+font_weight = 800
+minimal = true
+scale = 1.5

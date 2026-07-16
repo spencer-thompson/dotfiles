@@ -11,6 +11,7 @@ local session_env = table.concat({
 	"XCURSOR_SIZE",
 	"HYPRCURSOR_THEME",
 	"HYPRCURSOR_SIZE",
+	"STARSHIP_CONFIG",
 	"QT_AUTO_SCREEN_SCALE_FACTOR",
 	"QT_WAYLAND_DISABLE_WINDOWDECORATION",
 	"QT_QPA_PLATFORM",
@@ -27,10 +28,10 @@ local function start_session()
 end
 
 M.once = {
-	"dms run",
+	-- "dms run",
+	"noctalia",
 	"wl-paste --type text --watch cliphist store",
 	"wl-paste --type image --watch cliphist store",
-	"systemctl --user start hyprpolkitagent",
 	"~/.config/hypr/scripts/weather_notification.sh",
 	"~/.config/hypr/scripts/updates_notification.sh",
 }
