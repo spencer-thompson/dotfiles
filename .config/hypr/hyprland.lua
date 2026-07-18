@@ -21,6 +21,7 @@ hl.config({
 		repeat_rate = 60,
 		repeat_delay = 200,
 		follow_mouse = 2,
+		float_switch_override_focus = 0,
 		sensitivity = 0,
 		touchpad = {
 			natural_scroll = true,
@@ -32,6 +33,7 @@ hl.config({
 	general = {
 		gaps_in = 12,
 		gaps_out = 24,
+		float_gaps = -1,
 		border_size = 2,
 		col = {
 			-- Fallback colors. Generated noctalia.lua overrides these below.
@@ -40,6 +42,9 @@ hl.config({
 		},
 		layout = "lua:center_columns",
 		allow_tearing = false,
+		snap = {
+			enabled = true,
+		},
 	},
 
 	-- Layout tuning.
@@ -81,7 +86,8 @@ hl.config({
 
 	-- Decoration and opacity settings from modules/looks.conf.
 	decoration = {
-		rounding = 16,
+		-- rounding = 16,
+		rounding = 0,
 		rounding_power = 4.0,
 		blur = {
 			enabled = true,
@@ -187,8 +193,8 @@ hl.config({
 
 	general = {
 		col = {
-			-- active_border = with_alpha(noctalia.colors.primary, 0.9),
-			inactive_border = with_alpha(noctalia.colors.surface, 0.5),
+			active_border = with_alpha(noctalia.colors.secondary, 1.0),
+			inactive_border = with_alpha(noctalia.colors.surface, 1.0),
 		},
 	},
 })

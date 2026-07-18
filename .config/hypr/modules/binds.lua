@@ -1,5 +1,6 @@
 local mod = "SUPER"
 local programs = require("modules.programs")
+local layouts = require("modules.layouts")
 
 local function bind(keys, dispatcher, desc, opts)
 	if type(desc) == "table" and opts == nil then
@@ -22,6 +23,72 @@ end
 
 local function move_to_workspace(workspace)
 	return hl.dsp.window.move({ workspace = workspace, follow = false })
+end
+
+local function float_and_center()
+	local window = hl.get_active_window()
+
+	if not window then
+		return
+	end
+
+	if not window.floating then
+		hl.dispatch(hl.dsp.window.float({ action = "enable", window = window }))
+
+		local monitor = window.monitor
+		if monitor then
+			hl.dispatch(hl.dsp.window.resize({
+				x = math.floor(monitor.width * 0.3 / monitor.scale),
+				y = math.floor(monitor.height * 0.8 / monitor.scale),
+				window = window,
+			}))
+		end
+	end
+
+	hl.dispatch(hl.dsp.window.center({ window = window }))
+end
+
+local function tile_window(window)
+	layouts.prepare_spatial_tile(window)
+	hl.dispatch(hl.dsp.window.float({ action = "disable", window = window }))
+end
+
+local function tile_active_window()
+	local window = hl.get_active_window()
+
+	if window and window.floating then
+		tile_window(window)
+	end
+end
+
+local function toggle_floating()
+	local window = hl.get_active_window()
+
+	if not window then
+		return
+	end
+
+	if window.floating then
+		tile_window(window)
+	else
+		hl.dispatch(hl.dsp.window.float({ action = "enable", window = window }))
+	end
+end
+
+local function swap_or_snap(direction)
+	return function()
+		local window = hl.get_active_window()
+
+		if not window then
+			return
+		end
+
+		if window.floating then
+			hl.dispatch(hl.dsp.window.move({ direction = direction, window = window }))
+		else
+			hl.dispatch(hl.dsp.window.swap({ direction = direction }))
+		end
+	end
 end
 
 local function adjust_gaps(delta)
@@ -67,7 +134,9 @@ bind(mod .. " + Return", exec(programs.terminal), "Open terminal")
 bind(mod .. " + Escape", exec(programs.terminal), "Open terminal")
 bind(mod .. " + Q", hl.dsp.window.close(), "Close window")
 bind("SHIFT + " .. mod .. " + Q", hl.dsp.window.kill(), "Force kill window")
-bind(mod .. " + T", hl.dsp.window.float({ action = "toggle" }), "Toggle floating")
+bind(mod .. " + U", toggle_floating, "Toggle floating")
+bind(mod .. " + C", float_and_center, "Float and center")
+bind("SHIFT + " .. mod .. " + C", tile_active_window, "Tile window")
 bind(mod .. " + SHIFT + G", toggle_performance_mode, "Toggle performance mode")
 bind(mod .. " + G", hl.dsp.focus({ workspace = "name:steam" }), "Steam workspace")
 bind("SHIFT + " .. mod .. " + R", hl.dsp.force_renderer_reload(), "Reload renderer")
@@ -77,13 +146,6 @@ bind(
 	mod .. " + E",
 	exec([[wl-copy $(cut -d ';' -f1 ~/.config/hypr/scripts/*.txt | tofi | sed "s/ .*//")]]),
 	"Copy symbol"
-)
-bind(
-	"SHIFT + " .. mod .. " + C",
-	exec(
-		[[kill $(pgrep cava) || kitty +kitten panel --edge=background --class=cava --name=cava -o background_opacity=0 -o font_size=7 sh -c 'cava']]
-	),
-	"Toggle cava"
 )
 bind("SHIFT + " .. mod .. " + B", exec("killall -SIGUSR1 waybar"), "Reload waybar")
 
@@ -103,12 +165,11 @@ bind(mod .. " + period", adjust_gaps(-2), "Decrease Gaps", { repeating = true })
 bind(mod .. " + N", exec("noctalia msg panel-toggle control-center notifications"), "Notifications")
 
 bind(mod .. " + SHIFT + N", exec("dms ipc call night toggle"), "Night mode")
-bind(mod .. " + C", exec("noctalia msg panel-toggle control-center"), "Control center")
-bind(mod .. " + SHIFT + W", exec("dms ipc call hypr toggleOverview"), "Overview")
+bind(mod .. " + D", exec("noctalia msg panel-toggle control-center"), "Control center")
+-- bind(mod .. " + SHIFT + W", exec("dms ipc call hypr toggleOverview"), "Overview")
 -- bind(mod .. " + W", exec("dms ipc call wallpaper next"), "Next wallpaper")
 bind(mod .. " + W", exec("noctalia msg wallpaper-next"), "Next wallpaper")
 bind(mod .. " + SHIFT + W", exec("noctalia msg panel-toggle noctalia/wallhaven:browser"), "Next wallpaper")
-bind(mod .. " + D", exec([[dms ipc call dash toggle ""]]), "Dash")
 
 -- bind(mod .. " + V", exec("dms ipc call clipboard toggle"), "Clipboard")
 bind(mod .. " + V", exec("noctalia msg panel-toggle clipboard"), "Clipboard")
@@ -170,6 +231,32 @@ bind(mod .. " + j", hl.dsp.focus({ direction = "down" }), "Focus down")
 bind(mod .. " + k", hl.dsp.focus({ direction = "up" }), "Focus up")
 bind(mod .. " + l", hl.dsp.focus({ direction = "right" }), "Focus right")
 
+-- Nudge floating windows
+bind(
+	"CTRL + " .. mod .. " + h",
+	hl.dsp.window.move({ x = -12, y = 0, relative = true }),
+	"Nudge window left",
+	{ repeating = true }
+)
+bind(
+	"CTRL + " .. mod .. " + j",
+	hl.dsp.window.move({ x = 0, y = 12, relative = true }),
+	"Nudge window down",
+	{ repeating = true }
+)
+bind(
+	"CTRL + " .. mod .. " + k",
+	hl.dsp.window.move({ x = 0, y = -12, relative = true }),
+	"Nudge window up",
+	{ repeating = true }
+)
+bind(
+	"CTRL + " .. mod .. " + l",
+	hl.dsp.window.move({ x = 12, y = 0, relative = true }),
+	"Nudge window right",
+	{ repeating = true }
+)
+
 -- Master layout controls
 bind(mod .. " + Tab", hl.dsp.layout("rollnext"), "Roll windows right")
 bind("SHIFT + " .. mod .. " + Tab", hl.dsp.layout("rollprev"), "Roll windows left")
@@ -177,10 +264,10 @@ bind(mod .. " + mouse_down", hl.dsp.layout("mfact +0.01"), "Expand master")
 bind(mod .. " + mouse_up", hl.dsp.layout("mfact -0.01"), "Shrink master")
 bind(mod .. " + bracketleft", hl.dsp.layout("mfact -0.01"), "Shrink master", { repeating = true })
 bind(mod .. " + bracketright", hl.dsp.layout("mfact +0.01"), "Expand master", { repeating = true })
-bind("SHIFT + " .. mod .. " + h", hl.dsp.window.swap({ direction = "left" }), "Swap window left")
-bind("SHIFT + " .. mod .. " + j", hl.dsp.window.swap({ direction = "down" }), "Swap window down")
-bind("SHIFT + " .. mod .. " + k", hl.dsp.window.swap({ direction = "up" }), "Swap window up")
-bind("SHIFT + " .. mod .. " + l", hl.dsp.window.swap({ direction = "right" }), "Swap window right")
+bind("SHIFT + " .. mod .. " + h", swap_or_snap("left"), "Move window left")
+bind("SHIFT + " .. mod .. " + j", swap_or_snap("down"), "Move window down")
+bind("SHIFT + " .. mod .. " + k", swap_or_snap("up"), "Move window up")
+bind("SHIFT + " .. mod .. " + l", swap_or_snap("right"), "Move window right")
 
 -- Switch workspaces and move active windows.
 for workspace = 1, 10 do

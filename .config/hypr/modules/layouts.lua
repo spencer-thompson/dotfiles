@@ -1,4 +1,7 @@
 local workspace_states = {}
+local pending_tile_centers = {}
+local slave_column_fill_order = { 1, 2, 4, 3 }
+local M = {}
 
 local function clamp(value, minimum, maximum)
 	return math.max(minimum, math.min(value, maximum))
@@ -30,6 +33,47 @@ local function copy(values)
 	end
 
 	return result
+end
+
+local function adjacent_slave_index(target_count, side)
+	local first_index = side == "left" and 2 or 3
+
+	if target_count < first_index then
+		return nil
+	end
+
+	local column_count = #slave_column_fill_order
+	return first_index + math.floor((target_count - first_index) / column_count) * column_count
+end
+
+local function place_pending_target(state, order, id, center_x, targets_by_id)
+	if #order == 0 then
+		table.insert(order, id)
+		return
+	end
+
+	local master = targets_by_id[order[1]]
+	if not master then
+		table.insert(order, id)
+		return
+	end
+
+	local master_box = master.box
+	local side = center_x < master_box.x + master_box.w / 2 and "left" or "right"
+
+	table.insert(order, id)
+
+	if #order == 2 then
+		state.two_window_slave_side = side
+		return
+	end
+
+	local target_index = adjacent_slave_index(#order, side)
+	local added_index = #order
+
+	if target_index and target_index ~= added_index then
+		order[target_index], order[added_index] = order[added_index], order[target_index]
+	end
 end
 
 local function same_members(left, right)
@@ -112,7 +156,12 @@ local function sync_targets(ctx)
 			end
 		end
 
-		if previous_count == 2 and #retained == 2 and #added == 1 then
+		local pending_id = #added == 1 and added[1] or nil
+		local pending_center = pending_id and pending_tile_centers[pending_id] or nil
+
+		if pending_id and pending_center then
+			place_pending_target(state, retained, pending_id, pending_center, targets_by_id)
+		elseif previous_count == 2 and #retained == 2 and #added == 1 then
 			-- When the center master first appears, put the new window on the left
 			-- so the existing right-hand window does not cross the workspace.
 			table.insert(retained, 2, added[1])
@@ -123,6 +172,14 @@ local function sync_targets(ctx)
 		end
 
 		state.order = retained
+	end
+
+	if #state.order ~= 2 then
+		state.two_window_slave_side = nil
+	end
+
+	for _, id in ipairs(raw_order) do
+		pending_tile_centers[id] = nil
 	end
 
 	state.raw_order = copy(raw_order)
@@ -148,8 +205,6 @@ local function base_master_ratio(slave_count)
 	return 0.3
 end
 
-local slave_column_fill_order = { 1, 2, 4, 3 }
-
 local function build_slave_columns(values)
 	local columns = { {}, {}, {}, {} }
 
@@ -162,8 +217,12 @@ local function build_slave_columns(values)
 	return columns
 end
 
-local function visual_slots(target_count)
+local function visual_slots(target_count, two_window_slave_side)
 	local slots = {}
+
+	if target_count == 2 and two_window_slave_side == "left" then
+		return { 2, 1 }
+	end
 
 	if target_count <= 2 then
 		for index = 1, target_count do
@@ -200,7 +259,7 @@ local function visual_slots(target_count)
 end
 
 local function roll_visual_order(state, direction)
-	local slots = visual_slots(#state.order)
+	local slots = visual_slots(#state.order, state.two_window_slave_side)
 	local occupants = {}
 
 	for position, logical_index in ipairs(slots) do
@@ -277,8 +336,14 @@ hl.layout.register("center_columns", {
 		local master_ratio = clamp(base_master_ratio(slave_count) + state.mfact_adjustment, 0.1, 0.9)
 
 		if target_count == 2 then
-			targets[1]:place(ctx:split(ctx.area, "left", master_ratio))
-			targets[2]:place(ctx:split(ctx.area, "right", 1 - master_ratio))
+			if state.two_window_slave_side == "left" then
+				targets[2]:place(ctx:split(ctx.area, "left", 1 - master_ratio))
+				targets[1]:place(ctx:split(ctx.area, "right", master_ratio))
+			else
+				targets[1]:place(ctx:split(ctx.area, "left", master_ratio))
+				targets[2]:place(ctx:split(ctx.area, "right", 1 - master_ratio))
+			end
+
 			return
 		end
 
@@ -329,3 +394,17 @@ hl.layout.register("center_columns", {
 		return nil
 	end,
 })
+
+function M.prepare_spatial_tile(window)
+	if not window or not window.stable_id then
+		return
+	end
+
+	local position = window.at
+	local size = window.size
+	local id = "window:" .. tostring(window.stable_id)
+
+	pending_tile_centers[id] = position.x + size.x / 2
+end
+
+return M
