@@ -70,7 +70,7 @@ function M.setup(opts)
 		name = "special-kitty",
 		match = { class = "kitty" },
 		rounding = 0,
-		scroll_touchpad = 2.5,
+		scroll_touchpad = 4,
 	})
 
 	hl.window_rule({
