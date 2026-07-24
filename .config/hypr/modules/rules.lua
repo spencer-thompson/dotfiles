@@ -105,10 +105,15 @@ function M.setup(opts)
 	workspace("2", { on_created_empty = "kitty" })
 	workspace("3", { on_created_empty = "kitty" })
 
-	window("steam_app_\\d+", { fullscreen = true })
+	local steam_game = {
+		name = "steam-games",
+		content = "game",
+		fullscreen = true,
+	}
 	if has_monitor(main_monitor) then
-		window("steam_app_\\d+", { monitor = main_monitor })
+		steam_game.monitor = main_monitor
 	end
+	window("^steam_app_[0-9]+$", steam_game)
 
 	if has_monitor(secondary_monitor) then
 		workspace("name:discord", { monitor = secondary_monitor })

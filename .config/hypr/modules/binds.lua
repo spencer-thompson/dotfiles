@@ -105,11 +105,19 @@ local function adjust_gaps(delta)
 	end
 end
 
-local function toggle_performance_mode()
-	local performance_mode = hl.get_config("animations.enabled") == false
+local function performance_mode_enabled()
+	return hl.get_config("animations.enabled") == false
+end
 
-	if performance_mode then
-		hl.notification.create({ text = "Performance mode disabled", timeout = 2000, icon = "ok" })
+local function set_performance_mode(enabled)
+	if enabled == performance_mode_enabled() then
+		return
+	end
+
+	if not enabled then
+		hl.exec_cmd(
+			[[notify-send -a Hyprland -i noctalia-glyph:bolt-off -t 2000 "Performance mode disabled"]]
+		)
 		hl.exec_cmd("hyprctl reload config-only")
 		return
 	end
@@ -121,13 +129,50 @@ local function toggle_performance_mode()
 		decoration = {
 			shadow = { enabled = false },
 			blur = { enabled = false },
+			motion_blur = { enabled = false },
 			glow = { enabled = false },
 			rounding = 0,
 		},
 	})
 
-	hl.notification.create({ text = "Performance mode enabled", timeout = 2000, icon = "ok" })
+	hl.animation({ leaf = "borderangle", enabled = false })
+	hl.animation({ leaf = "glowangle", enabled = false })
+	hl.exec_cmd(
+		[[notify-send -a Hyprland -i noctalia-glyph:bolt-filled -t 2000 "Performance mode enabled"]]
+	)
 end
+
+local function toggle_performance_mode()
+	set_performance_mode(not performance_mode_enabled())
+end
+
+local function steam_workspace_active()
+	for _, monitor in ipairs(hl.get_monitors()) do
+		if monitor.active_workspace and monitor.active_workspace.name == "steam" then
+			return true
+		end
+	end
+
+	return false
+end
+
+local automatic_performance_mode = false
+
+local function sync_game_workspace_performance_mode()
+	if steam_workspace_active() then
+		if not performance_mode_enabled() then
+			set_performance_mode(true)
+			automatic_performance_mode = true
+		end
+	elseif automatic_performance_mode then
+		automatic_performance_mode = false
+		set_performance_mode(false)
+	end
+end
+
+hl.on("workspace.active", sync_game_workspace_performance_mode)
+hl.on("monitor.layout_changed", sync_game_workspace_performance_mode)
+hl.on("config.reloaded", sync_game_workspace_performance_mode)
 
 -- Hyprland utility binds
 bind(mod .. " + Return", exec(programs.terminal), "Open terminal")
@@ -147,8 +192,6 @@ bind(
 	exec([[wl-copy $(cut -d ';' -f1 ~/.config/hypr/scripts/*.txt | tofi | sed "s/ .*//")]]),
 	"Copy symbol"
 )
-bind("SHIFT + " .. mod .. " + B", exec("killall -SIGUSR1 waybar"), "Reload waybar")
-
 bind("F11", hl.dsp.window.fullscreen(0), "Toggle fullscreen")
 
 bind(
@@ -160,34 +203,21 @@ bind(mod .. " + SHIFT + D", hl.dsp.focus({ workspace = "name:discord" }), "Disco
 bind(mod .. " + comma", adjust_gaps(2), "Increase Gaps", { repeating = true })
 bind(mod .. " + period", adjust_gaps(-2), "Decrease Gaps", { repeating = true })
 
--- DMS
--- bind(mod .. " + N", exec("dms ipc call notifications toggle"), "Notifications")
+-- Noctalia
 bind(mod .. " + N", exec("noctalia msg panel-toggle control-center notifications"), "Notifications")
-
-bind(mod .. " + SHIFT + N", exec("dms ipc call night toggle"), "Night mode")
 bind(mod .. " + D", exec("noctalia msg panel-toggle control-center"), "Control center")
--- bind(mod .. " + SHIFT + W", exec("dms ipc call hypr toggleOverview"), "Overview")
--- bind(mod .. " + W", exec("dms ipc call wallpaper next"), "Next wallpaper")
 bind(mod .. " + W", exec("noctalia msg wallpaper-next"), "Next wallpaper")
-bind(mod .. " + SHIFT + W", exec("noctalia msg panel-toggle noctalia/wallhaven:browser"), "Next wallpaper")
+bind(mod .. " + SHIFT + W", exec("noctalia msg panel-toggle noctalia/wallhaven:browser"), "Browse wallpapers")
 
--- bind(mod .. " + V", exec("dms ipc call clipboard toggle"), "Clipboard")
 bind(mod .. " + V", exec("noctalia msg panel-toggle clipboard"), "Clipboard")
 
--- bind(mod .. " + R", exec("dms ipc call spotlight toggle"), "Spotlight")
 bind(mod .. " + R", exec("noctalia msg panel-toggle launcher"), "Launcher")
--- bind(
--- 	mod .. " + S",
--- 	exec(
--- 		[[dms screenshot --stdout | satty --font-family "Berkeley Mono" --filename - --output-filename ~/screenshots/satty-$(date '+%Y%m%d-%H:%M:%S').png --copy-command wl-copy]]
--- 	),
--- 	"Screenshot"
--- )
 bind(mod .. " + S", exec([[noctalia msg screenshot-region]]), "Screenshot")
--- bind(mod .. " + SHIFT + S", exec("dms ipc call settings toggle"), "Settings")
 bind(mod .. " + SHIFT + S", exec("noctalia msg settings-toggle"), "Settings")
--- bind(mod .. " + Backspace", exec("dms ipc call lock lock"), "Lock")
 bind(mod .. " + Backspace", exec("noctalia msg session lock"), "Lock")
+
+-- transcription with hyprwhspr
+bind(mod .. " + T", exec([[/usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.sh record]]), "Transcribe")
 
 -- Flexible bind
 bind(mod .. " + Z", exec("/home/sthom/projects/my-resume/scripts/quick_paste"), "Quick paste")
@@ -214,9 +244,7 @@ bind("XF86AudioRaiseVolume", exec("pactl set-sink-volume @DEFAULT_SINK@ +1%"), "
 bind("XF86AudioPrev", exec("playerctl previous"), "Previous track")
 bind("XF86AudioPlay", exec("playerctl play-pause"), "Play/pause")
 bind("XF86AudioNext", exec("playerctl next"), "Next track")
--- bind("XF86MonBrightnessDown", exec([[dms ipc call brightness decrement 1 ""]]), "Brightness down", { repeating = true })
 bind("XF86MonBrightnessDown", exec([[noctalia msg brightness-down]]), "Brightness down", { repeating = true })
--- bind("XF86MonBrightnessUp", exec([[dms ipc call brightness increment 1 ""]]), "Brightness up", { repeating = true })
 bind("XF86MonBrightnessUp", exec([[noctalia msg brightness-up]]), "Brightness up", { repeating = true })
 
 -- Move focus with mainMod + arrow keys
@@ -257,13 +285,13 @@ bind(
 	{ repeating = true }
 )
 
--- Master layout controls
+-- Equal-column layout controls
 bind(mod .. " + Tab", hl.dsp.layout("rollnext"), "Roll windows right")
 bind("SHIFT + " .. mod .. " + Tab", hl.dsp.layout("rollprev"), "Roll windows left")
-bind(mod .. " + mouse_down", hl.dsp.layout("mfact +0.01"), "Expand master")
-bind(mod .. " + mouse_up", hl.dsp.layout("mfact -0.01"), "Shrink master")
-bind(mod .. " + bracketleft", hl.dsp.layout("mfact -0.01"), "Shrink master", { repeating = true })
-bind(mod .. " + bracketright", hl.dsp.layout("mfact +0.01"), "Expand master", { repeating = true })
+bind(mod .. " + mouse_down", hl.dsp.layout("mfact +0.01"), "Widen layout column")
+bind(mod .. " + mouse_up", hl.dsp.layout("mfact -0.01"), "Narrow layout column")
+bind(mod .. " + bracketleft", hl.dsp.layout("mfact -0.01"), "Narrow layout column", { repeating = true })
+bind(mod .. " + bracketright", hl.dsp.layout("mfact +0.01"), "Widen layout column", { repeating = true })
 bind("SHIFT + " .. mod .. " + h", swap_or_snap("left"), "Move window left")
 bind("SHIFT + " .. mod .. " + j", swap_or_snap("down"), "Move window down")
 bind("SHIFT + " .. mod .. " + k", swap_or_snap("up"), "Move window up")

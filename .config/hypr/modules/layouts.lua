@@ -1,18 +1,25 @@
+local MAX_COLUMNS = 5
+local MIN_COLUMN_RATIO = 0.1
+local OVERFLOW_COLUMNS = { 4, 2, 5, 1 }
+
 local workspace_states = {}
-local pending_tile_centers = {}
-local slave_column_fill_order = { 1, 2, 4, 3 }
+local pending_insertions = {}
 local M = {}
 
 local function clamp(value, minimum, maximum)
 	return math.max(minimum, math.min(value, maximum))
 end
 
-local function target_id(target)
-	if target.window and target.window.stable_id then
-		return "window:" .. tostring(target.window.stable_id)
+local function window_id(window)
+	if not window or not window.stable_id then
+		return nil
 	end
 
-	return "target:" .. tostring(target.index)
+	return "window:" .. tostring(window.stable_id)
+end
+
+local function target_id(target)
+	return window_id(target.window) or "target:" .. tostring(target.index)
 end
 
 local function workspace_key(ctx)
@@ -35,47 +42,6 @@ local function copy(values)
 	return result
 end
 
-local function adjacent_slave_index(target_count, side)
-	local first_index = side == "left" and 2 or 3
-
-	if target_count < first_index then
-		return nil
-	end
-
-	local column_count = #slave_column_fill_order
-	return first_index + math.floor((target_count - first_index) / column_count) * column_count
-end
-
-local function place_pending_target(state, order, id, center_x, targets_by_id)
-	if #order == 0 then
-		table.insert(order, id)
-		return
-	end
-
-	local master = targets_by_id[order[1]]
-	if not master then
-		table.insert(order, id)
-		return
-	end
-
-	local master_box = master.box
-	local side = center_x < master_box.x + master_box.w / 2 and "left" or "right"
-
-	table.insert(order, id)
-
-	if #order == 2 then
-		state.two_window_slave_side = side
-		return
-	end
-
-	local target_index = adjacent_slave_index(#order, side)
-	local added_index = #order
-
-	if target_index and target_index ~= added_index then
-		order[target_index], order[added_index] = order[added_index], order[target_index]
-	end
-end
-
 local function same_members(left, right)
 	if #left ~= #right then
 		return false
@@ -96,14 +62,239 @@ local function same_members(left, right)
 	return true
 end
 
+local function flatten_columns(columns)
+	local values = {}
+
+	for column_index, column in ipairs(columns) do
+		for row_index, id in ipairs(column) do
+			table.insert(values, {
+				column = column_index,
+				id = id,
+				row = row_index,
+			})
+		end
+	end
+
+	return values
+end
+
+local function flatten_ids(columns)
+	local ids = {}
+
+	for _, slot in ipairs(flatten_columns(columns)) do
+		table.insert(ids, slot.id)
+	end
+
+	return ids
+end
+
+local function build_columns(ids)
+	local columns = {}
+
+	for index = 1, math.min(#ids, MAX_COLUMNS) do
+		columns[index] = { ids[index] }
+	end
+
+	for index = MAX_COLUMNS + 1, #ids do
+		local fill_index = (index - MAX_COLUMNS - 1) % #OVERFLOW_COLUMNS + 1
+		local column_index = OVERFLOW_COLUMNS[fill_index]
+
+		table.insert(columns[column_index], ids[index])
+	end
+
+	return columns
+end
+
+local function find_slot(columns, id)
+	if not id then
+		return nil, nil
+	end
+
+	for column_index, column in ipairs(columns) do
+		for row_index, candidate in ipairs(column) do
+			if candidate == id then
+				return column_index, row_index
+			end
+		end
+	end
+
+	return nil, nil
+end
+
+local function shortest_column(columns, column_indices)
+	local best = column_indices[1]
+
+	for _, column_index in ipairs(column_indices) do
+		if #columns[column_index] < #columns[best] then
+			best = column_index
+		end
+	end
+
+	return best
+end
+
+local function shortest_side_column(columns)
+	return shortest_column(columns, OVERFLOW_COLUMNS)
+end
+
+local function longest_side_column(columns, minimum_size)
+	local best = nil
+
+	for _, column_index in ipairs(OVERFLOW_COLUMNS) do
+		if #columns[column_index] >= minimum_size and (not best or #columns[column_index] > #columns[best]) then
+			best = column_index
+		end
+	end
+
+	return best
+end
+
+local function normalize_columns(columns)
+	local ids = flatten_ids(columns)
+
+	if #ids <= MAX_COLUMNS then
+		return build_columns(ids)
+	end
+
+	for column_index = #columns + 1, MAX_COLUMNS do
+		columns[column_index] = {}
+	end
+
+	while #columns > MAX_COLUMNS do
+		local extra = table.remove(columns)
+
+		for _, id in ipairs(extra) do
+			table.insert(columns[shortest_side_column(columns)], id)
+		end
+	end
+
+	if #columns[3] == 0 then
+		local donor = longest_side_column(columns, 1)
+
+		if donor then
+			table.insert(columns[3], table.remove(columns[donor], 1))
+		end
+	end
+
+	while #columns[3] > 1 do
+		table.insert(columns[shortest_side_column(columns)], table.remove(columns[3]))
+	end
+
+	for _, column_index in ipairs(OVERFLOW_COLUMNS) do
+		if #columns[column_index] == 0 then
+			local donor = longest_side_column(columns, 2)
+
+			if donor then
+				table.insert(columns[column_index], table.remove(columns[donor]))
+			end
+		end
+	end
+
+	return columns
+end
+
+local function target_center_x(target)
+	return target.box.x + target.box.w / 2
+end
+
+local function nearest_column(columns, column_indices, center_x, targets_by_id)
+	local nearest = column_indices[1]
+	local nearest_distance = math.huge
+
+	for _, column_index in ipairs(column_indices) do
+		local target = targets_by_id[columns[column_index][1]]
+
+		if target then
+			local distance = math.abs(target_center_x(target) - center_x)
+
+			if distance < nearest_distance then
+				nearest = column_index
+				nearest_distance = distance
+			end
+		end
+	end
+
+	return nearest
+end
+
+local function insertion_index_for_x(columns, center_x, targets_by_id)
+	for column_index, column in ipairs(columns) do
+		local target = targets_by_id[column[1]]
+
+		if target and center_x <= target_center_x(target) then
+			return column_index
+		end
+	end
+
+	return #columns + 1
+end
+
+local function insert_target(state, id, pending, ctx, targets_by_id)
+	local columns = state.columns
+	local target_count = #flatten_ids(columns)
+	local anchor_column, anchor_row = find_slot(columns, pending and pending.anchor_id)
+
+	if target_count < MAX_COLUMNS then
+		local column_index = #columns + 1
+
+		if anchor_column then
+			local anchor = targets_by_id[pending.anchor_id]
+			local anchor_is_left = anchor and target_center_x(anchor) <= ctx.area.x + ctx.area.w / 2
+
+			column_index = anchor_is_left and anchor_column or anchor_column + 1
+		elseif pending and pending.center_x then
+			column_index = insertion_index_for_x(columns, pending.center_x, targets_by_id)
+		end
+
+		table.insert(columns, column_index, { id })
+		return
+	end
+
+	state.columns = normalize_columns(columns)
+	columns = state.columns
+
+	if anchor_column then
+		local candidates
+
+		if anchor_column == 3 then
+			candidates = { 2, 1 }
+		elseif anchor_column < 3 then
+			candidates = { anchor_column, anchor_column == 1 and 2 or 1 }
+		else
+			candidates = { anchor_column, anchor_column == 4 and 5 or 4 }
+		end
+
+		local column_index = shortest_column(columns, candidates)
+
+		if column_index == anchor_column then
+			table.insert(columns[column_index], anchor_row + 1, id)
+		else
+			table.insert(columns[column_index], id)
+		end
+
+		return
+	end
+
+	if pending and pending.center_x then
+		local left_side = pending.center_x <= ctx.area.x + ctx.area.w / 2
+		local candidates = left_side and { 1, 2 } or { 4, 5 }
+		local column_index = nearest_column(columns, candidates, pending.center_x, targets_by_id)
+
+		table.insert(columns[column_index], id)
+		return
+	end
+
+	table.insert(columns[shortest_side_column(columns)], id)
+end
+
 local function sync_targets(ctx)
 	local key = workspace_key(ctx)
 	local state = workspace_states[key]
 
 	if not state then
 		state = {
+			columns = {},
 			mfact_adjustment = 0,
-			order = {},
 			raw_order = {},
 		}
 		workspace_states[key] = state
@@ -114,156 +305,150 @@ local function sync_targets(ctx)
 
 	for index, target in ipairs(ctx.targets) do
 		local id = target_id(target)
+
 		raw_order[index] = id
 		targets_by_id[id] = target
 	end
 
 	if #state.raw_order == 0 then
-		state.order = copy(raw_order)
+		state.columns = build_columns(raw_order)
 	elseif same_members(state.raw_order, raw_order) then
-		-- Hyprland's spatial swap changes the provider target order. Apply the same
-		-- permutation to our visual order without discarding a prior rollnext.
+		-- A spatial swap permutes Hyprland's target list. Mirror that
+		-- permutation in the visual slots without undoing a prior roll.
 		local replacements = {}
 
 		for index, id in ipairs(state.raw_order) do
 			replacements[id] = raw_order[index]
 		end
 
-		for index, id in ipairs(state.order) do
-			state.order[index] = replacements[id]
+		for _, slot in ipairs(flatten_columns(state.columns)) do
+			state.columns[slot.column][slot.row] = replacements[slot.id]
 		end
 	else
-		local previous_count = #state.order
 		local present = {}
-		local retained = {}
-		local added = {}
 
 		for _, id in ipairs(raw_order) do
 			present[id] = true
 		end
 
-		for _, id in ipairs(state.order) do
-			if present[id] then
-				table.insert(retained, id)
-				present[id] = nil
+		for _, column in ipairs(state.columns) do
+			for row_index = #column, 1, -1 do
+				if not present[column[row_index]] then
+					table.remove(column, row_index)
+				end
 			end
+		end
+
+		state.columns = normalize_columns(state.columns)
+
+		local retained = {}
+		for _, id in ipairs(flatten_ids(state.columns)) do
+			retained[id] = true
 		end
 
 		for _, id in ipairs(raw_order) do
-			if present[id] then
-				table.insert(added, id)
-				present[id] = nil
+			if not retained[id] then
+				insert_target(state, id, pending_insertions[id], ctx, targets_by_id)
+				retained[id] = true
 			end
 		end
 
-		local pending_id = #added == 1 and added[1] or nil
-		local pending_center = pending_id and pending_tile_centers[pending_id] or nil
-
-		if pending_id and pending_center then
-			place_pending_target(state, retained, pending_id, pending_center, targets_by_id)
-		elseif previous_count == 2 and #retained == 2 and #added == 1 then
-			-- When the center master first appears, put the new window on the left
-			-- so the existing right-hand window does not cross the workspace.
-			table.insert(retained, 2, added[1])
-		else
-			for _, id in ipairs(added) do
-				table.insert(retained, id)
-			end
-		end
-
-		state.order = retained
-	end
-
-	if #state.order ~= 2 then
-		state.two_window_slave_side = nil
+		state.columns = normalize_columns(state.columns)
 	end
 
 	for _, id in ipairs(raw_order) do
-		pending_tile_centers[id] = nil
+		pending_insertions[id] = nil
 	end
 
 	state.raw_order = copy(raw_order)
-
-	local targets = {}
-
-	for _, id in ipairs(state.order) do
-		table.insert(targets, targets_by_id[id])
-	end
-
-	return state, targets
+	return state, targets_by_id
 end
 
-local function base_master_ratio(slave_count)
-	if slave_count <= 1 then
-		return 0.5
-	elseif slave_count == 2 then
-		return 0.4
-	elseif slave_count == 3 then
-		return 0.33
-	end
+local function place_stack(column, area, targets_by_id)
+	local y = area.y
+	local remaining_height = area.h
 
-	return 0.3
-end
+	for row_index, id in ipairs(column) do
+		local remaining_count = #column - row_index + 1
+		local height = remaining_height / remaining_count
+		local target = targets_by_id[id]
 
-local function build_slave_columns(values)
-	local columns = { {}, {}, {}, {} }
-
-	for index = 2, #values do
-		local fill_position = (index - 2) % #slave_column_fill_order + 1
-		local column_index = slave_column_fill_order[fill_position]
-		table.insert(columns[column_index], values[index])
-	end
-
-	return columns
-end
-
-local function visual_slots(target_count, two_window_slave_side)
-	local slots = {}
-
-	if target_count == 2 and two_window_slave_side == "left" then
-		return { 2, 1 }
-	end
-
-	if target_count <= 2 then
-		for index = 1, target_count do
-			table.insert(slots, index)
+		if target then
+			target:place({
+				x = area.x,
+				y = y,
+				w = area.w,
+				h = height,
+			})
 		end
 
-		return slots
+		y = y + height
+		remaining_height = remaining_height - height
 	end
-
-	local logical_indices = {}
-
-	for index = 1, target_count do
-		logical_indices[index] = index
-	end
-
-	local columns = build_slave_columns(logical_indices)
-
-	-- Traverse physical slots from left to right and top to bottom within a stack.
-	for _, column_index in ipairs({ 3, 1 }) do
-		for _, logical_index in ipairs(columns[column_index]) do
-			table.insert(slots, logical_index)
-		end
-	end
-
-	table.insert(slots, 1)
-
-	for _, column_index in ipairs({ 2, 4 }) do
-		for _, logical_index in ipairs(columns[column_index]) do
-			table.insert(slots, logical_index)
-		end
-	end
-
-	return slots
 end
 
-local function roll_visual_order(state, direction)
-	local slots = visual_slots(#state.order, state.two_window_slave_side)
+local function mfact_column(state)
+	local column_count = #state.columns
+
+	if column_count % 2 == 1 then
+		return (column_count + 1) / 2
+	end
+
+	return clamp(state.mfact_column or math.floor(column_count / 2), 1, column_count)
+end
+
+local function column_ratios(state)
+	local column_count = #state.columns
+
+	if column_count <= 1 then
+		return { 1 }
+	end
+
+	local base_ratio = 1 / column_count
+	local target_column = mfact_column(state)
+	local maximum_ratio = 1 - (column_count - 1) * MIN_COLUMN_RATIO
+	local target_ratio = clamp(base_ratio + state.mfact_adjustment, MIN_COLUMN_RATIO, maximum_ratio)
+	local other_ratio = (1 - target_ratio) / (column_count - 1)
+	local ratios = {}
+
+	for column_index = 1, column_count do
+		ratios[column_index] = column_index == target_column and target_ratio or other_ratio
+	end
+
+	return ratios
+end
+
+local function place_columns(state, ctx, targets_by_id)
+	local ratios = column_ratios(state)
+	local x = ctx.area.x
+	local remaining_width = ctx.area.w
+
+	for column_index, column in ipairs(state.columns) do
+		local width = column_index == #state.columns and remaining_width or ctx.area.w * ratios[column_index]
+
+		place_stack(column, {
+			x = x,
+			y = ctx.area.y,
+			w = width,
+			h = ctx.area.h,
+		}, targets_by_id)
+
+		x = x + width
+		remaining_width = remaining_width - width
+	end
+end
+
+local function roll_columns(state, direction, focused_id)
+	local slots = flatten_columns(state.columns)
 	local occupants = {}
+	local focused_position = nil
 
-	for position, logical_index in ipairs(slots) do
-		occupants[position] = state.order[logical_index]
+	for position, slot in ipairs(slots) do
+		occupants[position] = slot.id
+
+		if slot.id == focused_id then
+			focused_position = position
+		end
 	end
 
 	if direction == "right" then
@@ -272,106 +457,73 @@ local function roll_visual_order(state, direction)
 		table.insert(occupants, table.remove(occupants, 1))
 	end
 
-	for position, logical_index in ipairs(slots) do
-		state.order[logical_index] = occupants[position]
-	end
-end
-
-local function place_stack(ctx, targets, area)
-	local remaining = area
-
-	for position, target in ipairs(targets) do
-		local remaining_count = #targets - position + 1
-
-		if remaining_count == 1 then
-			target:place(remaining)
-		else
-			local height = 1 / remaining_count
-			target:place(ctx:split(remaining, "top", height))
-			remaining = ctx:split(remaining, "bottom", 1 - height)
-		end
-	end
-end
-
-local function place_columns(ctx, columns, area)
-	local active_columns = {}
-
-	for _, column in ipairs(columns) do
-		if #column > 0 then
-			table.insert(active_columns, column)
-		end
+	for position, slot in ipairs(slots) do
+		state.columns[slot.column][slot.row] = occupants[position]
 	end
 
-	local remaining = area
+	if not focused_position then
+		local center_column = math.floor((#state.columns + 1) / 2)
 
-	for position, column in ipairs(active_columns) do
-		local remaining_count = #active_columns - position + 1
-		local column_area = remaining
-
-		if remaining_count > 1 then
-			local width = 1 / remaining_count
-			column_area = ctx:split(remaining, "left", width)
-			remaining = ctx:split(remaining, "right", 1 - width)
-		end
-
-		place_stack(ctx, column, column_area)
-	end
-end
-
-hl.layout.register("center_columns", {
-	recalculate = function(ctx)
-		local state, targets = sync_targets(ctx)
-		local target_count = #targets
-
-		if target_count == 0 then
-			return
-		end
-
-		if target_count == 1 then
-			targets[1]:place(ctx.area)
-			return
-		end
-
-		local slave_count = target_count - 1
-		local master_ratio = clamp(base_master_ratio(slave_count) + state.mfact_adjustment, 0.1, 0.9)
-
-		if target_count == 2 then
-			if state.two_window_slave_side == "left" then
-				targets[2]:place(ctx:split(ctx.area, "left", 1 - master_ratio))
-				targets[1]:place(ctx:split(ctx.area, "right", master_ratio))
-			else
-				targets[1]:place(ctx:split(ctx.area, "left", master_ratio))
-				targets[2]:place(ctx:split(ctx.area, "right", 1 - master_ratio))
+		for position, slot in ipairs(slots) do
+			if slot.column == center_column then
+				focused_position = position
+				break
 			end
+		end
+	end
 
+	return focused_position and occupants[focused_position] or nil
+end
+
+local function same_workspace(left, right)
+	return left and right and left.workspace and right.workspace and left.workspace.id == right.workspace.id
+end
+
+hl.on("window.open_early", function(window)
+	if not window or window.floating then
+		return
+	end
+
+	local id = window_id(window)
+	local focused = hl.get_active_window()
+
+	if not id or not same_workspace(window, focused) then
+		return
+	end
+
+	if focused.floating then
+		pending_insertions[id] = {
+			center_x = focused.at.x + focused.size.x / 2,
+		}
+	else
+		pending_insertions[id] = {
+			anchor_id = window_id(focused),
+		}
+	end
+end)
+
+hl.layout.register("equal_columns", {
+	recalculate = function(ctx)
+		local state, targets_by_id = sync_targets(ctx)
+
+		if #state.columns == 0 then
 			return
 		end
 
-		local side_ratio = (1 - master_ratio) / 2
-		local left_area = ctx:split(ctx.area, "left", side_ratio)
-		local right_area = ctx:split(ctx.area, "right", side_ratio)
-		local center_and_right = ctx:split(ctx.area, "right", 1 - side_ratio)
-		local master_area = ctx:split(center_and_right, "left", master_ratio / (1 - side_ratio))
-		local columns = build_slave_columns(targets)
-
-		targets[1]:place(master_area)
-		place_columns(ctx, { columns[3], columns[1] }, left_area)
-		place_columns(ctx, { columns[2], columns[4] }, right_area)
+		place_columns(state, ctx, targets_by_id)
 	end,
 	layout_msg = function(ctx, message)
-		local state, targets = sync_targets(ctx)
+		local state, targets_by_id = sync_targets(ctx)
 		local command, argument = message:match("^(%S+)%s*(.-)%s*$")
 
 		if command == "rollnext" or command == "rollprev" then
-			if #targets > 1 then
+			if #flatten_ids(state.columns) > 1 then
 				local direction = command == "rollnext" and "right" or "left"
-				roll_visual_order(state, direction)
+				local focus_id = roll_columns(state, direction, window_id(hl.get_active_window()))
+				local target = focus_id and targets_by_id[focus_id]
 
-				for _, target in ipairs(targets) do
-					if target_id(target) == state.order[1] and target.window then
-						hl.dispatch(hl.dsp.focus({ window = target.window }))
-						break
-					end
+				if target and target.window then
+					hl.dispatch(hl.dsp.focus({ window = target.window }))
 				end
 			end
 
@@ -380,14 +532,34 @@ hl.layout.register("center_columns", {
 
 		if command == "mfact" then
 			local delta = tonumber(argument)
+			local column_count = #state.columns
 
 			if not delta then
 				return nil
 			end
 
-			local base_ratio = base_master_ratio(math.max(#targets - 1, 0))
-			local current_ratio = clamp(base_ratio + state.mfact_adjustment, 0.1, 0.9)
-			state.mfact_adjustment = clamp(current_ratio + delta, 0.1, 0.9) - base_ratio
+			if column_count <= 1 then
+				return true
+			end
+
+			if column_count % 2 == 1 then
+				state.mfact_column = (column_count + 1) / 2
+			else
+				local focused_column = find_slot(state.columns, window_id(hl.get_active_window()))
+
+				if not focused_column then
+					return true
+				end
+
+				state.mfact_column = focused_column
+			end
+
+			local base_ratio = 1 / column_count
+			local maximum_ratio = 1 - (column_count - 1) * MIN_COLUMN_RATIO
+			local current_ratio = clamp(base_ratio + state.mfact_adjustment, MIN_COLUMN_RATIO, maximum_ratio)
+
+			state.mfact_adjustment = clamp(current_ratio + delta, MIN_COLUMN_RATIO, maximum_ratio) - base_ratio
+
 			return true
 		end
 
@@ -396,15 +568,15 @@ hl.layout.register("center_columns", {
 })
 
 function M.prepare_spatial_tile(window)
-	if not window or not window.stable_id then
+	local id = window_id(window)
+
+	if not id then
 		return
 	end
 
-	local position = window.at
-	local size = window.size
-	local id = "window:" .. tostring(window.stable_id)
-
-	pending_tile_centers[id] = position.x + size.x / 2
+	pending_insertions[id] = {
+		center_x = window.at.x + window.size.x / 2,
+	}
 end
 
 return M

@@ -28,10 +28,7 @@ local function start_session()
 end
 
 M.once = {
-	-- "dms run",
 	"noctalia",
-	"wl-paste --type text --watch cliphist store",
-	"wl-paste --type image --watch cliphist store",
 	"~/.config/hypr/scripts/weather_notification.sh",
 	"~/.config/hypr/scripts/updates_notification.sh",
 }

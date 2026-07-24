@@ -30,7 +30,6 @@ return {
 		},
 		{
 			workspace = "name:discord",
-			monitor = main_monitor,
 			default = false,
 			on_created_empty = "discord",
 		},
