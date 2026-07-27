@@ -10,6 +10,14 @@ They probably will not work on your computer, but are good reference regardless 
 git clone --recurse-submodules
 ```
 
+### Vale
+
+Downloaded Vale styles are not tracked. On a new machine, install Vale, link these dotfiles, and sync the styles:
+
+```bash
+vale --no-global --config="$HOME/.config/vale/.vale.ini" sync
+```
+
 ## Most Used Applications
 
 My most used, _and most recommended_, applications are:

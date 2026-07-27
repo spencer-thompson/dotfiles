@@ -25,20 +25,9 @@ end
 
 local main_monitor = external_monitor or laptop_monitor
 
-local workspaces = {
-	{
-		workspace = "name:laptop",
-		monitor = laptop_monitor,
-		default = true,
-	},
-}
-
-for workspace = 1, 5 do
-	workspaces[#workspaces + 1] = {
-		workspace = tostring(workspace),
-		monitor = main_monitor,
-		default = external_monitor ~= nil and workspace == 1,
-	}
+local routed_workspaces = {}
+for workspace = 1, 10 do
+	routed_workspaces[#routed_workspaces + 1] = tostring(workspace)
 end
 
 return {
@@ -75,7 +64,18 @@ return {
 		},
 	},
 
-	workspaces = workspaces,
+	workspaces = {
+		{
+			workspace = "name:laptop",
+			monitor = laptop_monitor,
+			default = true,
+		},
+	},
+
+	workspace_routing = {
+		monitors = { work_external_monitor, home_external_monitor },
+		workspaces = routed_workspaces,
+	},
 
 	startup = {
 		{

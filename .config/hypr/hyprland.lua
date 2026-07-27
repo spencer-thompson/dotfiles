@@ -217,3 +217,6 @@ end
 
 -- Keep plugins disabled until you want the old commented plugin config active.
 -- require("modules.plugins")
+
+-- For Noctalia Color templates
+require("noctalia").apply_theme()

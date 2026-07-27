@@ -239,9 +239,10 @@ local function insert_target(state, id, pending, ctx, targets_by_id)
 
 		if anchor_column then
 			local anchor = targets_by_id[pending.anchor_id]
-			local anchor_is_left = anchor and target_center_x(anchor) <= ctx.area.x + ctx.area.w / 2
+			local insert_before_anchor =
+				target_count > 1 and anchor and target_center_x(anchor) <= ctx.area.x + ctx.area.w / 2
 
-			column_index = anchor_is_left and anchor_column or anchor_column + 1
+			column_index = insert_before_anchor and anchor_column or anchor_column + 1
 		elseif pending and pending.center_x then
 			column_index = insertion_index_for_x(columns, pending.center_x, targets_by_id)
 		end

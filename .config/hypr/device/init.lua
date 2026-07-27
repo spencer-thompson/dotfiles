@@ -78,6 +78,7 @@ local function apply_profile(profile)
 
 	apply_startup(profile.startup)
 	apply_binds(profile.binds)
+	require("modules.workspace_routing").setup(profile)
 end
 
 local hostname = trim(read_first_line("/proc/sys/kernel/hostname") or os.getenv("HOSTNAME") or "")

@@ -155,18 +155,23 @@ for count = 1, 5 do
 	end
 end
 
+local first_split = new_workspace()
+first_split:add(6)
+first_split:add(7)
+assert(physical_order(first_split.context) == "6,7", "first split opens right")
+
 local adjacent = new_workspace()
-adjacent:add(11)
-local adjacent_b = adjacent:add(12)
-adjacent:add(13, adjacent_b.window)
-assert(physical_order(adjacent.context) == "13,12,11", "left-side opening")
+local adjacent_a = adjacent:add(11)
+adjacent:add(12)
+adjacent:add(13, adjacent_a.window)
+assert(physical_order(adjacent.context) == "13,11,12", "left-side opening")
 
 local centered = new_workspace()
 local centered_a = centered:add(21)
 centered:add(22)
 centered:add(23, centered_a.window)
 centered:add(24, centered_a.window)
-assert(physical_order(centered.context) == "22,24,21,23", "center tie opens left")
+assert(physical_order(centered.context) == "23,24,21,22", "center tie opens left")
 
 local overflow = new_workspace()
 local overflow_targets = {}
@@ -177,18 +182,18 @@ end
 
 overflow_targets[36] = overflow:add(36, overflow_targets[33].window)
 close_enough(overflow_targets[33].box.h, 1000, "overflow center stays tall")
-close_enough(overflow_targets[34].box.h, 500, "overflow upper stack")
+close_enough(overflow_targets[32].box.h, 500, "overflow upper stack")
 close_enough(overflow_targets[36].box.h, 500, "overflow lower stack")
 close_enough(overflow_targets[36].box.y, 500, "overflow opens below")
 
 overflow_targets[37] = overflow:add(37, overflow_targets[36].window)
-close_enough(overflow_targets[35].box.h, 500, "overflow stack remains balanced")
+close_enough(overflow_targets[31].box.h, 500, "overflow stack remains balanced")
 close_enough(overflow_targets[36].box.h, 500, "overflow focused stack height")
 close_enough(overflow_targets[37].box.h, 500, "overflow uses the shorter side column")
 close_enough(overflow_targets[37].box.y, 500, "overflow remains below")
 
 overflow:remove(overflow_targets[33])
-close_enough(overflow_targets[34].box.h, 1000, "overflow promotes a new tall center")
+close_enough(overflow_targets[32].box.h, 1000, "overflow promotes a new tall center")
 
 local rolling = new_workspace()
 local rolling_targets = {}
@@ -200,12 +205,12 @@ end
 rolling:set_active(rolling_targets[42])
 provider.layout_msg(rolling.context, "rollnext")
 rolling:recalculate()
-assert(physical_order(rolling.context) == "41,44,43,42", "rollnext visual order")
-assert(active_window == rolling_targets[43].window, "rollnext keeps focus in its slot")
+assert(physical_order(rolling.context) == "44,41,42,43", "rollnext visual order")
+assert(active_window == rolling_targets[41].window, "rollnext keeps focus in its slot")
 
 provider.layout_msg(rolling.context, "rollprev")
 rolling:recalculate()
-assert(physical_order(rolling.context) == "44,43,42,41", "rollprev visual order")
+assert(physical_order(rolling.context) == "41,42,43,44", "rollprev visual order")
 assert(active_window == rolling_targets[42].window, "rollprev keeps focus in its slot")
 
 local odd_mfact = new_workspace()

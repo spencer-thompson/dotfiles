@@ -81,6 +81,10 @@ labels so Hyprland can expose readable descriptions.
 `modules/lid.lua`
 : Owns lid and clamshell behavior on profiles that define `laptop_monitor`.
 
+`modules/workspace_routing.lua`
+: Routes profile-managed workspaces to the first connected preferred monitor when monitors appear, disappear, or the
+  config reloads, and when those workspaces are created later.
+
 `modules/gestures.lua`
 : Registers touch gestures with `hl.gesture(...)`.
 
@@ -98,8 +102,8 @@ plugin config was commented out too.
 The `equal_columns` Lua layout gives one through five tiled windows equal, full-height columns. Additional windows stack
 in the side columns while the third column remains full-height.
 
-- Through five windows, new windows open immediately left of a focused window in the left half and immediately right in
-  the right half.
+- The second tiled window opens to the right of the first. Through five windows, later windows open immediately left of
+  a focused window in the left half and immediately right in the right half.
 - Overflow uses the shorter column on the focused side and stacks below. A centered focus breaks left.
 - `SUPER + Tab` and `SUPER + SHIFT + Tab` rotate occupants while keeping focus in the same physical slot.
 - `mfact` adjusts the center column when one exists; with an even number of columns, it adjusts the focused window's
@@ -150,8 +154,12 @@ Supported profile fields:
 - `workspaces`
 - `window_rules`
 - `layer_rules`
+- `workspace_routing`
 - `startup`
 - `binds`
+
+`workspace_routing` accepts ordered `monitors` and a list of `workspaces`. Managed workspaces follow the first connected
+preferred monitor. Without one, Hyprland leaves them on the remaining or focused monitor.
 
 ## Lid And Clamshell Behavior
 
@@ -241,11 +249,12 @@ Then use the `description` field:
 local laptop_monitor = "desc:Samsung Display Corp. 0x4165"
 ```
 
-The current `outrival` profile uses real `desc:` selectors for its laptop panel and external display. Other device
+The current `outrival` profile uses real `desc:` selectors for its laptop panel and external displays. Other device
 profiles may still use port names until their monitor descriptions are captured while connected.
 
-When `outrival` loads, it selects the connected external display in this order: work display, home display, then the
-laptop panel as a fallback.
+For its main monitor, `outrival` selects the connected external display in this order: work display, home display, then
+the laptop panel as a fallback. Numeric workspaces 1 through 10 use the same external-display priority at runtime and
+stay on the laptop when neither external is connected.
 
 ## Adding A New Device
 
@@ -298,6 +307,7 @@ Useful checks after editing:
 
 ```sh
 lua tests/layouts.lua
+lua tests/workspace_routing.lua
 luac -p hyprland.lua modules/*.lua device/*.lua
 lua-language-server --check=. --checklevel=Error --check_format=pretty --logpath=/tmp/hypr-lua-language-server
 hyprctl reload
