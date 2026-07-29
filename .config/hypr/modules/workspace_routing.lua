@@ -63,12 +63,20 @@ function M.setup(device)
 		end
 	end
 
+	local function move_created_workspace(workspace)
+		if not workspace or not managed_workspaces[workspace.name] then
+			return
+		end
+
+		hl.timer(function()
+			move_workspace(workspace, preferred_monitor())
+		end, { timeout = 1, type = "oneshot" })
+	end
+
 	hl.on("monitor.added", sync_workspaces)
 	hl.on("monitor.removed", sync_workspaces)
 	hl.on("config.reloaded", sync_workspaces)
-	hl.on("workspace.created", function(workspace)
-		move_workspace(workspace, preferred_monitor())
-	end)
+	hl.on("workspace.created", move_created_workspace)
 end
 
 return M

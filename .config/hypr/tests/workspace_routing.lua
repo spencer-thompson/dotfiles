@@ -2,6 +2,7 @@ local monitors = {}
 local workspaces = {}
 local event_handlers = {}
 local moves = {}
+local timers = {}
 
 _G.hl = {
 	dispatch = function(dispatcher)
@@ -20,10 +21,20 @@ _G.hl = {
 	get_workspaces = function()
 		return workspaces
 	end,
+	timer = function(callback, opts)
+		timers[#timers + 1] = { callback = callback, opts = opts }
+	end,
 	on = function(event, callback)
 		event_handlers[event] = callback
 	end,
 }
+
+local function run_next_timer()
+	local timer = table.remove(timers, 1)
+	assert(timer, "scheduled a timer")
+	timer.callback()
+	return timer
+end
 
 local laptop = { name = "eDP-1", description = "Laptop" }
 local work_external = { name = "HDMI-A-1", description = "Work" }
@@ -56,13 +67,19 @@ assert(moves[1].workspace == workspaces[1], "moved the expected existing workspa
 assert(moves[1].monitor == work_external, "moved the existing workspace to the work monitor")
 
 event_handlers["workspace.created"]({ name = "2", monitor = laptop })
-assert(#moves == 2, "moved a newly created managed workspace")
+assert(#moves == 1, "deferred moving a newly created workspace until Hyprland tracks it")
+local timer = run_next_timer()
+assert(timer.opts.timeout == 1, "scheduled the workspace move for the next event-loop tick")
+assert(timer.opts.type == "oneshot", "scheduled a one-shot workspace move")
+assert(#moves == 2, "moved a newly created managed workspace after the delay")
 assert(moves[2].monitor == work_external, "routed a new workspace to the connected external monitor")
 
 event_handlers["workspace.created"]({ name = "3", monitor = work_external })
+run_next_timer()
 assert(#moves == 2, "kept a managed workspace already on the preferred monitor")
 
 event_handlers["workspace.created"]({ name = "4", monitor = laptop })
+assert(#timers == 0, "did not schedule a move for an unmanaged workspace")
 assert(#moves == 2, "ignored unmanaged workspaces")
 
 monitors = { laptop, home_external }
@@ -73,6 +90,7 @@ assert(moves[3].monitor == home_external, "used the remaining home monitor")
 
 monitors = { laptop, home_external, work_external }
 event_handlers["workspace.created"]({ name = "1", monitor = laptop })
+run_next_timer()
 assert(#moves == 4, "moved a managed workspace when both external monitors were present")
 assert(moves[4].monitor == work_external, "respected configured external-monitor priority")
 

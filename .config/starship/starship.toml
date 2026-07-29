@@ -214,6 +214,7 @@ format = '[$symbol$number]($style) '
 # style = 'bold fg:cyan'
 
 [aws]
+disabled = true
 symbol = "  "
 
 [buf]
