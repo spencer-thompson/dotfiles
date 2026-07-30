@@ -1,9 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
+set -euo pipefail
 
-function ask() {
-    read -p "$1 (y/n): " response
-    [ -z "$response" ] || [ "$response" = "y" ]
-}
-
-
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
+exec stow --restow --target="$HOME" .

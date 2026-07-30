@@ -20,7 +20,7 @@ vale --no-global --config="$HOME/.config/vale/.vale.ini" sync
 
 ## Most Used Applications
 
-My most used, _and most recommended_, applications are:
+My most used, *and most recommended*, applications are:
 
 - **Neovim**: `.config/nvim/`
 - **Fish**: `.config/fish/`
@@ -34,8 +34,7 @@ My most used, _and most recommended_, applications are:
 ## Desktop UI
 
 - **Hyprland**: `.config/hypr/`
-- **Waybar**: `.config/waybar/`
-- **Swaync**: `.config/swaync/`
+- **Noctalia**: `.config/noctalia/`
 - **FastFetch**: `.config/fastfetch/`
 - **Kitty**: `.config/kitty/`
 - **Tofi**: `.config/tofi/`

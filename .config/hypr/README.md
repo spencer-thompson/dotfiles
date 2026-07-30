@@ -93,10 +93,6 @@ labels so Hyprland can expose readable descriptions.
 device profile so monitor-specific rules can use `device.main_monitor` and
 `device.secondary_monitor` when they exist.
 
-`modules/plugins.lua`
-: Returns plugin config data. It is not required by default because the old
-plugin config was commented out too.
-
 ## Equal-Column Layout
 
 The `equal_columns` Lua layout gives one through five tiled windows equal, full-height columns. Additional windows stack

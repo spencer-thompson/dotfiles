@@ -6,6 +6,8 @@ client_id.env
 
 .venv
 
+**/.rumdl_cache/
+
 .config/aichat/rags/*
 .config/yazi/flavors/
 .config/yazi/plugins/
@@ -16,13 +18,26 @@ client_id.env
 .config/cava/themes/
 .config/cava/shaders/eye_of_phi.frag
 
+# Generated theme state
+.config/hypr/hyprtoolkit.conf
+.config/kitty/current-theme.conf
+.config/zathura/noctaliarc
+.icons/default/index.theme
+
 **/.agents/NOTES.md
 
-*/tmux/plugins/*
+/.config/tmux/plugins/
 */hypr/modules/device.conf
-.ipython/profile_default/history.sqlite
+
+# IPython runtime state
+/.ipython/profile_default/db/
+/.ipython/profile_default/log/
+/.ipython/profile_default/pid/
+/.ipython/profile_default/security/
+/.ipython/profile_default/history.sqlite*
 
 .local/bin/claude
+.local/bin/codex
 .local/bin/hermes
 .local/bin/posting
 .local/bin/f2py
@@ -32,11 +47,11 @@ client_id.env
 .local/bin/ttx
 .local/bin/easyocr
 
-tt.*
-.tests
-doc/tags
-debug
-.repro
-foo.*
+/tt.*
+/.tests
+/doc/tags
+/debug
+/.repro
+/foo.*
 *.log
-data
+/data

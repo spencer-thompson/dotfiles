@@ -151,14 +151,6 @@ hl.config({
 			},
 		},
 	},
-
-	-- Plugin config from modules/plugins.conf. Keep disabled for parity with
-	-- the old commented source line.
-	-- plugin = {
-	-- 	hyprwinwrap = {
-	-- 		class = "kitty-bg",
-	-- 	},
-	-- },
 })
 
 -- Per-device keyboard config uses the dedicated device API.
@@ -214,9 +206,3 @@ if noctalia_ok then
 		},
 	})
 end
-
--- Keep plugins disabled until you want the old commented plugin config active.
--- require("modules.plugins")
-
--- For Noctalia Color templates
-require("noctalia").apply_theme()

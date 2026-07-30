@@ -7,6 +7,6 @@ ricing-todo.md
 \.gitmodules
 
 (^|/)\.agents/NOTES\.md$
-^/\.local/bin/(claude|hermes|posting)$
+^/\.local/bin/(claude|codex|hermes|posting)$
 
 ^/README.*

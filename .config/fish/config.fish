@@ -136,6 +136,3 @@ if status is-interactive
     # alias nvim="bob run 0.12.0"
 
 end
-
-# Added by codebase-memory-mcp install
-fish_add_path /home/sthom/.local/bin
