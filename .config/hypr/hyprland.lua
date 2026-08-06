@@ -206,3 +206,6 @@ if noctalia_ok then
 		},
 	})
 end
+
+-- For Noctalia Color templates
+require("noctalia").apply_theme()

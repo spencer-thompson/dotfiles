@@ -114,9 +114,26 @@ function M.setup(device)
 
 	local function handle_lid_opened()
 		lid_closed = false
+		local laptop_monitor_restored = false
 
 		for _, rule in ipairs(device.monitors or {}) do
-			hl.monitor(rule)
+			if rule.output == laptop_monitor then
+				local enabled_rule = {}
+
+				for key, value in pairs(rule) do
+					enabled_rule[key] = value
+				end
+
+				enabled_rule.disabled = false
+				hl.monitor(enabled_rule)
+				laptop_monitor_restored = true
+			else
+				hl.monitor(rule)
+			end
+		end
+
+		if not laptop_monitor_restored then
+			hl.monitor({ output = laptop_monitor, disabled = false })
 		end
 
 		hl.dispatch(hl.dsp.dpms({ action = "enable", monitor = laptop_monitor }))

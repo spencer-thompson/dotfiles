@@ -54,6 +54,7 @@ function M.setup(opts)
 		},
 		center = true,
 		float = true,
+		size = { "(monitor_w*0.4)", "(monitor_h*0.8)" },
 	})
 
 	hl.window_rule({
@@ -120,6 +121,7 @@ function M.setup(opts)
 		window("discord", { monitor = secondary_monitor })
 	end
 	window("discord", { no_initial_focus = true })
+	window("^chromium$", { no_initial_focus = true })
 
 	layer("^(dms)$", { no_anim = true })
 

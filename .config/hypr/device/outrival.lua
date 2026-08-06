@@ -1,6 +1,7 @@
 local programs = require("modules.programs")
 local laptop_monitor = "desc:Samsung Display Corp. 0x4165"
-local work_external_monitor = "desc:CSF HDMI"
+local work_external_dp_monitor = "desc:CSF DP"
+local work_external_hdmi_monitor = "desc:CSF HDMI"
 local home_external_monitor = "desc:Samsung Electric Company Odyssey G75F HNTL201148"
 
 local function monitor_is_connected(selector)
@@ -16,7 +17,7 @@ local function monitor_is_connected(selector)
 end
 
 local external_monitor
-for _, selector in ipairs({ work_external_monitor, home_external_monitor }) do
+for _, selector in ipairs({ work_external_dp_monitor, work_external_hdmi_monitor, home_external_monitor }) do
 	if monitor_is_connected(selector) then
 		external_monitor = selector
 		break
@@ -26,7 +27,7 @@ end
 local main_monitor = external_monitor or laptop_monitor
 
 local routed_workspaces = {}
-for workspace = 1, 10 do
+for workspace = 2, 10 do
 	routed_workspaces[#routed_workspaces + 1] = tostring(workspace)
 end
 
@@ -43,7 +44,13 @@ return {
 			scale = 1.5,
 		},
 		{
-			output = work_external_monitor,
+			output = work_external_dp_monitor,
+			mode = "5120x2160@120",
+			position = "-640x-2160",
+			scale = 1,
+		},
+		{
+			output = work_external_hdmi_monitor,
 			mode = "modeline 594.00 5120 5168 5200 5280 2160 2163 2173 2250 +hsync -vsync",
 			position = "-640x-2160",
 			scale = 1,
@@ -66,14 +73,14 @@ return {
 
 	workspaces = {
 		{
-			workspace = "name:laptop",
+			workspace = "1",
 			monitor = laptop_monitor,
 			default = true,
 		},
 	},
 
 	workspace_routing = {
-		monitors = { work_external_monitor, home_external_monitor },
+		monitors = { work_external_dp_monitor, work_external_hdmi_monitor, home_external_monitor },
 		workspaces = routed_workspaces,
 	},
 
@@ -81,19 +88,6 @@ return {
 		{
 			command = programs.browser,
 			rules = { workspace = "1 silent" },
-		},
-	},
-
-	binds = {
-		{
-			keys = "SUPER + grave",
-			dispatcher = hl.dsp.focus({ workspace = "name:laptop" }),
-			desc = "Laptop workspace",
-		},
-		{
-			keys = "SUPER + SHIFT + grave",
-			dispatcher = hl.dsp.window.move({ workspace = "name:laptop", follow = false }),
-			desc = "Move to laptop workspace",
 		},
 	},
 }
