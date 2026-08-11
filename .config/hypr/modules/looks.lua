@@ -1,3 +1,16 @@
+local M = {}
+
+function M.set_angle_loops_enabled(enabled)
+	if not enabled then
+		hl.animation({ leaf = "borderangle", enabled = false })
+		hl.animation({ leaf = "glowangle", enabled = false })
+		return
+	end
+
+	hl.animation({ leaf = "borderangle", enabled = true, speed = 40, bezier = "linear", style = "loop" })
+	hl.animation({ leaf = "glowangle", enabled = true, speed = 40, bezier = "linear", style = "loop" })
+end
+
 hl.curve("auto_default", {
 	type = "bezier",
 	points = {
@@ -41,11 +54,12 @@ hl.animation({ leaf = "windowsMove", enabled = true, speed = 3, bezier = "defaul
 hl.animation({ leaf = "layers", enabled = true, speed = 2, spring = "rubber", style = "fade" })
 -- hl.animation({ leaf = "border", enabled = true, speed = 1, bezier = "linear" })
 hl.animation({ leaf = "border", enabled = true, speed = 1, bezier = "default" })
-hl.animation({ leaf = "borderangle", enabled = true, speed = 40, bezier = "linear", style = "loop" })
-hl.animation({ leaf = "glowangle", enabled = true, speed = 40, bezier = "linear", style = "loop" })
+M.set_angle_loops_enabled(true)
 -- hl.animation({ leaf = "fade", enabled = true, speed = 6, bezier = "default" })
 hl.animation({ leaf = "fadeGlow", enabled = true, speed = 4, bezier = "default" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 3, bezier = "default", style = "slide" })
 -- hl.animation({ leaf = "workspacesIn", enabled = true, speed = 3, bezier = "default", style = "slide" })
 -- hl.animation({ leaf = "workspacesOut", enabled = true, speed = 3, bezier = "default", style = "slidefade" })
 hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 3, bezier = "default", style = "slidevert" })
+
+return M

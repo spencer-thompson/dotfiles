@@ -32,6 +32,66 @@ local function lid_is_closed()
 	return false
 end
 
+local function external_monitors(laptop_monitor)
+	local monitors = {}
+
+	for _, monitor in ipairs(hl.get_monitors()) do
+		if not selector_matches_monitor(laptop_monitor, monitor) then
+			monitors[#monitors + 1] = monitor
+		end
+	end
+
+	return monitors
+end
+
+local function monitor_is_enabled(selector)
+	for _, monitor in ipairs(hl.get_monitors()) do
+		if selector_matches_monitor(selector, monitor) then
+			return monitor.disabled ~= true
+		end
+	end
+
+	return false
+end
+
+function M.effective_monitor_rules(device)
+	local rules = device.monitors or {}
+	local laptop_monitor = device.laptop_monitor
+
+	if type(laptop_monitor) ~= "string"
+		or laptop_monitor == ""
+		or not lid_is_closed()
+		or #external_monitors(laptop_monitor) == 0
+	then
+		return rules
+	end
+
+	local effective_rules = {}
+	local laptop_rule_found = false
+
+	for _, rule in ipairs(rules) do
+		if rule.output == laptop_monitor then
+			local effective_rule = {}
+
+			for key, value in pairs(rule) do
+				effective_rule[key] = value
+			end
+
+			effective_rule.disabled = true
+			effective_rules[#effective_rules + 1] = effective_rule
+			laptop_rule_found = true
+		else
+			effective_rules[#effective_rules + 1] = rule
+		end
+	end
+
+	if not laptop_rule_found then
+		effective_rules[#effective_rules + 1] = { output = laptop_monitor, disabled = true }
+	end
+
+	return effective_rules
+end
+
 function M.setup(device)
 	local laptop_monitor = device.laptop_monitor
 	if type(laptop_monitor) ~= "string" or laptop_monitor == "" then
@@ -43,18 +103,6 @@ function M.setup(device)
 	)
 
 	local lid_closed = lid_is_closed()
-
-	local function external_monitors()
-		local monitors = {}
-
-		for _, monitor in ipairs(hl.get_monitors()) do
-			if not selector_matches_monitor(laptop_monitor, monitor) then
-				monitors[#monitors + 1] = monitor
-			end
-		end
-
-		return monitors
-	end
 
 	local function profile_rule_for(monitor)
 		for _, rule in ipairs(device.monitors or {}) do
@@ -92,7 +140,7 @@ function M.setup(device)
 
 	local function handle_lid_closed()
 		lid_closed = true
-		local monitors = external_monitors()
+		local monitors = external_monitors(laptop_monitor)
 
 		if #monitors == 0 then
 			suspend_for_closed_lid()
@@ -108,7 +156,9 @@ function M.setup(device)
 			end
 		end
 
-		hl.monitor({ output = laptop_monitor, disabled = true })
+		if monitor_is_enabled(laptop_monitor) then
+			hl.monitor({ output = laptop_monitor, disabled = true })
+		end
 		hl.notification.create({ text = "Clamshell mode enabled", timeout = 2000, icon = "ok" })
 	end
 
@@ -149,7 +199,7 @@ function M.setup(device)
 		end
 
 		hl.timer(function()
-			if lid_closed and #external_monitors() == 0 then
+			if lid_closed and #external_monitors(laptop_monitor) == 0 then
 				suspend_for_closed_lid()
 			end
 		end, { timeout = 500, type = "oneshot" })

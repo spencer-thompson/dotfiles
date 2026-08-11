@@ -25,19 +25,27 @@ function M.setup(opts)
 	local main_monitor = opts.main_monitor or opts.mainMonitor
 	local secondary_monitor = opts.secondary_monitor or opts.secondaryMonitor
 
-	layer("launcher", { blur = true })
-	layer("launcher", { xray = false })
-	layer("launcher", { dim_around = true })
+	layer("launcher", {
+		blur = true,
+		xray = false,
+		dim_around = true,
+	})
 
-	window("nwg-look", { float = true })
-	window("nwg-look", { size = "800 500" })
+	window("nwg-look", {
+		float = true,
+		size = "800 500",
+	})
 
-	window("org.pulseaudio.pavucontrol", { float = true })
-	window("org.pulseaudio.pavucontrol", { size = "800 500" })
+	window("org.pulseaudio.pavucontrol", {
+		float = true,
+		size = "800 500",
+	})
 
-	window("xdg-desktop-portal-gtk", { center = true })
-	window("xdg-desktop-portal-gtk", { float = true })
-	window("xdg-desktop-portal-gtk", { size = "900 600" })
+	window("xdg-desktop-portal-gtk", {
+		center = true,
+		float = true,
+		size = "900 600",
+	})
 
 	hl.window_rule({
 		name = "imv",
@@ -71,7 +79,7 @@ function M.setup(opts)
 		name = "special-kitty",
 		match = { class = "kitty" },
 		rounding = 0,
-		scroll_touchpad = 4,
+		scroll_touchpad = 5,
 	})
 
 	hl.window_rule({
@@ -97,14 +105,16 @@ function M.setup(opts)
 		no_blur = true,
 	})
 
-	workspace("name:steam", { on_created_empty = "steam" })
+	local steam_workspace = { on_created_empty = "steam" }
 	if has_monitor(main_monitor) then
-		workspace("name:steam", { monitor = main_monitor })
+		steam_workspace.monitor = main_monitor
 		window("steam", { monitor = main_monitor })
 	end
+	workspace("name:steam", steam_workspace)
 
-	workspace("2", { on_created_empty = "kitty" })
-	workspace("3", { on_created_empty = "kitty" })
+	for number = 2, 5 do
+		workspace(tostring(number), { on_created_empty = "kitty" })
+	end
 
 	local steam_game = {
 		name = "steam-games",
@@ -116,11 +126,12 @@ function M.setup(opts)
 	end
 	window("^steam_app_[0-9]+$", steam_game)
 
+	local discord = { no_initial_focus = true }
 	if has_monitor(secondary_monitor) then
 		workspace("name:discord", { monitor = secondary_monitor })
-		window("discord", { monitor = secondary_monitor })
+		discord.monitor = secondary_monitor
 	end
-	window("discord", { no_initial_focus = true })
+	window("discord", discord)
 	window("^chromium$", { no_initial_focus = true })
 
 	layer("^(dms)$", { no_anim = true })
@@ -154,9 +165,11 @@ function M.setup(opts)
 		size = "950 1400",
 	})
 
-	window("org.quickshell", { center = true })
-	window("org.quickshell", { float = true })
-	window("org.quickshell", { size = "900 1100" })
+	window("org.quickshell", {
+		center = true,
+		float = true,
+		size = "900 1100",
+	})
 end
 
 return M

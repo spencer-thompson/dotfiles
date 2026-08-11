@@ -1,6 +1,7 @@
 local mod = "SUPER"
 local programs = require("modules.programs")
 local layouts = require("modules.layouts")
+local looks = require("modules.looks")
 
 local function bind(keys, dispatcher, desc, opts)
 	if type(desc) == "table" and opts == nil then
@@ -105,27 +106,35 @@ local function adjust_gaps(delta)
 	end
 end
 
-local function performance_mode_enabled()
-	return hl.get_config("animations.enabled") == false
+local performance_snapshot = nil
+local performance_mode_source = nil
+local automatic_performance_mode_suppressed = false
+
+local function capture_visual_settings()
+	return {
+		animations = {
+			enabled = hl.get_config("animations.enabled"),
+		},
+		decoration = {
+			shadow = { enabled = hl.get_config("decoration.shadow.enabled") },
+			blur = { enabled = hl.get_config("decoration.blur.enabled") },
+			motion_blur = { enabled = hl.get_config("decoration.motion_blur.enabled") },
+			glow = { enabled = hl.get_config("decoration.glow.enabled") },
+			rounding = hl.get_config("decoration.rounding"),
+		},
+	}
 end
 
-local function set_performance_mode(enabled)
-	if enabled == performance_mode_enabled() then
+local function enable_performance_mode(source)
+	if performance_mode_source then
 		return
 	end
 
-	if not enabled then
-		hl.exec_cmd(
-			[[notify-send -a Hyprland -i noctalia-glyph:bolt-off -t 2000 "Performance mode disabled"]]
-		)
-		hl.exec_cmd("hyprctl reload config-only")
-		return
-	end
+	performance_snapshot = capture_visual_settings()
+	performance_mode_source = source
 
 	hl.config({
-		animations = {
-			enabled = false,
-		},
+		animations = { enabled = false },
 		decoration = {
 			shadow = { enabled = false },
 			blur = { enabled = false },
@@ -134,21 +143,33 @@ local function set_performance_mode(enabled)
 			rounding = 0,
 		},
 	})
-
-	hl.animation({ leaf = "borderangle", enabled = false })
-	hl.animation({ leaf = "glowangle", enabled = false })
+	looks.set_angle_loops_enabled(false)
 	hl.exec_cmd(
 		[[notify-send -a Hyprland -i noctalia-glyph:bolt-filled -t 2000 "Performance mode enabled"]]
 	)
 end
 
-local function toggle_performance_mode()
-	set_performance_mode(not performance_mode_enabled())
+local function disable_performance_mode()
+	if not performance_mode_source then
+		return
+	end
+
+	local snapshot = performance_snapshot
+	performance_snapshot = nil
+	performance_mode_source = nil
+
+	hl.config(snapshot)
+	looks.set_angle_loops_enabled(true)
+	hl.exec_cmd(
+		[[notify-send -a Hyprland -i noctalia-glyph:bolt-off -t 2000 "Performance mode disabled"]]
+	)
 end
 
-local function steam_workspace_active()
+local function active_steam_workspace_is_occupied()
 	for _, monitor in ipairs(hl.get_monitors()) do
-		if monitor.active_workspace and monitor.active_workspace.name == "steam" then
+		local workspace = monitor.active_workspace
+
+		if workspace and workspace.name == "steam" and workspace.windows > 0 then
 			return true
 		end
 	end
@@ -156,23 +177,43 @@ local function steam_workspace_active()
 	return false
 end
 
-local automatic_performance_mode = false
-
 local function sync_game_workspace_performance_mode()
-	if steam_workspace_active() then
-		if not performance_mode_enabled() then
-			set_performance_mode(true)
-			automatic_performance_mode = true
+	if not active_steam_workspace_is_occupied() then
+		automatic_performance_mode_suppressed = false
+
+		if performance_mode_source == "automatic" then
+			disable_performance_mode()
 		end
-	elseif automatic_performance_mode then
-		automatic_performance_mode = false
-		set_performance_mode(false)
+
+		return
+	end
+
+	if not automatic_performance_mode_suppressed and not performance_mode_source then
+		enable_performance_mode("automatic")
 	end
 end
 
-hl.on("workspace.active", sync_game_workspace_performance_mode)
-hl.on("monitor.layout_changed", sync_game_workspace_performance_mode)
-hl.on("config.reloaded", sync_game_workspace_performance_mode)
+local function toggle_performance_mode()
+	if performance_mode_source then
+		disable_performance_mode()
+		automatic_performance_mode_suppressed = active_steam_workspace_is_occupied()
+		return
+	end
+
+	automatic_performance_mode_suppressed = false
+	enable_performance_mode("manual")
+end
+
+for _, event in ipairs({
+	"workspace.active",
+	"monitor.layout_changed",
+	"window.open",
+	"window.destroy",
+	"window.move_to_workspace",
+	"config.reloaded",
+}) do
+	hl.on(event, sync_game_workspace_performance_mode)
+end
 
 -- Hyprland utility binds
 bind(mod .. " + Return", exec(programs.terminal), "Open terminal")
@@ -217,7 +258,8 @@ bind(mod .. " + SHIFT + S", exec("noctalia msg settings-toggle"), "Settings")
 bind(mod .. " + Backspace", exec("noctalia msg session lock"), "Lock")
 
 -- transcription with hyprwhspr
-bind(mod .. " + T", exec([[/usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.sh record]]), "Transcribe")
+bind(mod .. " + A", exec([[/usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.sh record]]), "Toggle dictation")
+bind(mod .. " + SHIFT + A", exec("hyprwhspr record cancel"), "Cancel dictation")
 
 -- Flexible bind
 bind(mod .. " + Z", exec("/home/sthom/projects/my-resume/scripts/quick_paste"), "Quick paste")

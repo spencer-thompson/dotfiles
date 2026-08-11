@@ -69,6 +69,16 @@ return {
 			sensitivity = 0.5,
 			scroll_factor = 1.0,
 		},
+		{
+			name = "apple-inc.-magic-trackpad",
+			sensitivity = 0.5,
+			clickfinger_behavior = true,
+		},
+		{
+			name = "apple-inc.-magic-trackpad-1",
+			sensitivity = 0.5,
+			clickfinger_behavior = true,
+		},
 	},
 
 	workspaces = {

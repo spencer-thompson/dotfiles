@@ -5,13 +5,15 @@ ui_scale = 1.2500000111758709
 order = [ "Top", "Bottom" ]
 
     [bar.Bottom]
+    capsule = true
     capsule_border = "surface"
     capsule_fill = "surface"
-    capsule_opacity = 0.79999998211860657
-    capsule_padding = 24.0
+    capsule_opacity = 0.99999997764825821
+    capsule_padding = 16.0
     center = [ "media", "workspaces", "audio_visualizer" ]
     enabled = true
     end = [ "date" ]
+    font_weight = 600
     layer = "top"
     margin_ends = 0
     padding = 36
@@ -20,22 +22,27 @@ order = [ "Top", "Bottom" ]
     scale = 1.2500000111758709
     start = [ "weather" ]
     thickness = 36
+    widget_spacing = 32
 
     [bar.Top]
-    center = [ "battery", "clock", "network", "network_rx", "network_tx", "sysmon" ]
-    end = [ "tray", "bluetooth", "volume", "brightness", "ram", "cpu", "temp", "spacer_2", "session" ]
+    center = [ "control-center", "battery", "clock", "network", "network_rx", "network_tx", "sysmon", "status" ]
+    end = [ "tray", "widget", "bluetooth", "volume", "brightness", "ram", "cpu", "temp", "spacer_2", "session" ]
     font_family = "Berkeley Mono Variable"
     font_weight = 800
     margin_ends = 0
     padding = 36
     panel_overlap = 2
     scale = 1.2500000111758709
-    start = [ "launcher", "wallpaper", "control-center", "clipboard", "notifications", "wallhaven" ]
+    start = [ "launcher", "wallpaper", "clipboard", "notifications", "wallhaven" ]
     thickness = 36
     widget_spacing = 32
 
+[battery]
+warning_threshold = 20
+
 [brightness]
 enable_ddcutil = true
+sync_all_monitors = true
 
 [control_center]
 width = 800
@@ -59,18 +66,85 @@ blurred_desktop = true
 [lockscreen_widgets]
 enabled = true
 schema_version = 2
-widget_order = [ "lockscreen-login-box@HDMI-A-1", "lockscreen-login-box@eDP-1" ]
+widget_order = [
+    "lockscreen-login-box@DP-1",
+    "lockscreen-login-box@DP-3",
+    "lockscreen-login-box@HDMI-A-1",
+    "lockscreen-login-box@eDP-1",
+    "lockscreen-widget-0000000000000001",
+    "lockscreen-widget-0000000000000002",
+    "lockscreen-widget-0000000000000003",
+    "lockscreen-widget-0000000000000004",
+    "lockscreen-widget-0000000000000005",
+    "lockscreen-widget-0000000000000007",
+    "lockscreen-widget-0000000000000008",
+    "lockscreen-widget-000000000000000a",
+    "lockscreen-widget-000000000000000b",
+    "lockscreen-widget-000000000000000c",
+    "lockscreen-widget-000000000000000d",
+    "lockscreen-widget-000000000000000e"
+]
 
     [lockscreen_widgets.grid]
-    cell_size = 16
+    cell_size = 32
     major_interval = 4
     visible = true
 
+    [lockscreen_widgets.widget."lockscreen-login-box@DP-1"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 2560.0
+    cy = 1978.0
+    output = "DP-1"
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@DP-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@DP-3"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 2560.0
+    cy = 1978.0
+    output = "DP-3"
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@DP-3".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
     [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1"]
-    box_height = 70.0
-    box_width = 400.0
-    cx = 1720.0
-    cy = 1321.0
+    box_height = 196.0
+    box_width = 720.0
+    cx = 2560.0
+    cy = 1080.0
     output = "HDMI-A-1"
     rotation = 0.0
     type = "login_box"
@@ -79,35 +153,237 @@ widget_order = [ "lockscreen-login-box@HDMI-A-1", "lockscreen-login-box@eDP-1" ]
         background_color = "surface_variant"
         background_opacity = 0.88
         background_radius = 12.0
+        center_password_text = false
         input_opacity = 1.0
         input_radius = 6.0
+        layout = "regular"
         show_caps_lock = true
         show_keyboard_layout = true
         show_login_button = true
-        show_password_hint = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
 
     [lockscreen_widgets.widget."lockscreen-login-box@eDP-1"]
-    box_height = 70.0
-    box_width = 400.0
+    box_height = 196.0
+    box_width = 720.0
     cx = 1280.0
-    cy = 1481.0
+    cy = 800.0
     output = "eDP-1"
     rotation = 0.0
     type = "login_box"
 
         [lockscreen_widgets.widget."lockscreen-login-box@eDP-1".settings]
-        background_color = "surface_variant"
-        background_opacity = 0.88
+        background_color = "surface"
+        background_opacity = 0.0
         background_radius = 12.0
+        center_password_text = true
         input_opacity = 1.0
         input_radius = 6.0
+        layout = "regular"
         show_caps_lock = true
         show_keyboard_layout = true
-        show_login_button = true
-        show_password_hint = true
+        show_login_button = false
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000001]
+    box_height = 288.0
+    box_width = 2560.0
+    cx = 1280.0
+    cy = 1456.0
+    output = "eDP-1"
+    rotation = 0.0
+    type = "audio_visualizer"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000001.settings]
+        background = false
+        bands = 128
+        centered = false
+        color_2 = "primary"
+        show_when_idle = true
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000002]
+    box_height = 128.0
+    box_width = 256.0
+    cx = 1024.0
+    cy = 448.0
+    output = "eDP-1"
+    rotation = -0.0
+    type = "weather"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000002.settings]
+        background_opacity = 1.0
+        background_padding = 16
+        forecast_days = 3
+        shadow = true
+        show_forecast = false
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000003]
+    box_height = 256.0
+    box_width = 768.0
+    cx = 1280.0
+    cy = 224.0
+    output = "eDP-1"
+    rotation = -0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000003.settings]
+        background_opacity = 1.0
+        background_padding = 32
+        center_text = true
+        format = "{:%-I:%M %p}"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000004]
+    box_height = 128.0
+    box_width = 416.0
+    cx = 1760.0
+    cy = 304.0
+    output = "eDP-1"
+    rotation = 1.5707963705062866
+    type = "label"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000004.settings]
+        background_opacity = 1.0
+        background_padding = 16
+        description = "Spencer Thompson"
+        title = "OutRival"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000005]
+    box_height = 416.0
+    box_width = 256.0
+    cx = 2336.0
+    cy = 304.0
+    output = "eDP-1"
+    rotation = 0.0
+    type = "media_player"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000005.settings]
+        background_opacity = 1.0
+        background_padding = 16
+        hide_when_no_media = true
+        layout = "vertical"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000007]
+    box_height = 192.0
+    box_width = 320.0
+    cx = 2016.0
+    cy = 416.0
+    output = "eDP-1"
+    rotation = 0.0
+    type = "sysmon"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000007.settings]
+        background_opacity = 1.0
+        background_padding = 16
+        stat = "cpu_usage"
+        stat2 = "cpu_temp"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000008]
+    box_height = 192.0
+    box_width = 320.0
+    cx = 2016.0
+    cy = 192.0
+    output = "eDP-1"
+    rotation = 0.0
+    type = "volume"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000008.settings]
+        background_opacity = 1.0
+        background_padding = 16
+        device = "output"
+        show_device = true
+        track_color = "on_surface_variant"
+
+    [lockscreen_widgets.widget.lockscreen-widget-000000000000000a]
+    box_height = 416.0
+    box_width = 608.0
+    cx = 400.0
+    cy = 304.0
+    output = "eDP-1"
+    rotation = 0.0
+    type = "sticker"
+
+        [lockscreen_widgets.widget.lockscreen-widget-000000000000000a.settings]
+        background_opacity = 1.0
+        background_padding = 16
+        image_path = "/home/sthom/dl/me_and_maya_3by2_crop.jpg"
+        opacity = 1.0
+
+    [lockscreen_widgets.widget.lockscreen-widget-000000000000000b]
+    box_height = 128.0
+    box_width = 128.0
+    cx = 800.0
+    cy = 320.0
+    output = "eDP-1"
+    rotation = 0.0
+    type = "sysmon"
+
+        [lockscreen_widgets.widget.lockscreen-widget-000000000000000b.settings]
+        background_opacity = 1.0
+        background_padding = 16
+        display = "gauge"
+        gauge_layout = "vertical"
+        network_speed_compact = true
+        show_label = true
+        stat = "net_rx"
+        stat2 = "cpu_temp"
+
+    [lockscreen_widgets.widget.lockscreen-widget-000000000000000c]
+    box_height = 128.0
+    box_width = 128.0
+    cx = 800.0
+    cy = 160.0
+    output = "eDP-1"
+    rotation = 0.0
+    type = "sysmon"
+
+        [lockscreen_widgets.widget.lockscreen-widget-000000000000000c.settings]
+        background_opacity = 1.0
+        background_padding = 16
+        display = "gauge"
+        gauge_layout = "vertical"
+        network_speed_compact = true
+        show_label = true
+        stat = "net_tx"
+        stat2 = "cpu_temp"
+
+    [lockscreen_widgets.widget.lockscreen-widget-000000000000000d]
+    box_height = 128.0
+    box_width = 480.0
+    cx = 1424.0
+    cy = 448.0
+    output = "eDP-1"
+    rotation = -0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget.lockscreen-widget-000000000000000d.settings]
+        background_opacity = 1.0
+        background_padding = 16
+        center_text = true
+        format = "{:%a %b %e}"
+
+    [lockscreen_widgets.widget.lockscreen-widget-000000000000000e]
+    box_height = 96.0
+    box_width = 128.0
+    cx = 800.0
+    cy = 464.0
+    output = "eDP-1"
+    rotation = -0.0
+    type = "sysmon"
+
+        [lockscreen_widgets.widget.lockscreen-widget-000000000000000e.settings]
+        background_opacity = 1.0
+        background_padding = 16
+        display = "gauge"
+        stat = "ram_pct"
+        stat2 = "cpu_temp"
 
 [nightlight]
-enabled = true
+enabled = false
 
 [notification]
 offset_x = 16
@@ -118,27 +394,42 @@ offset_y = 24
 position = "bottom_center"
 scale = 1.5000000149011612
 
+[plugin_settings."blackbartblues/audio-switcher"]
+audio-switcher_open_near_click = false
+
 [plugin_settings."noctalia/wallhaven"]
 api_key = "lCjrZb6GV0ENHexkuzrQIL8tAZqZBDIb"
 browser_placement = "floating"
 browser_position = "center"
 
 [plugins]
-enabled = [ "noctalia/wallhaven" ]
+enabled = [ "noctalia/wallhaven", "goodroot/noctwhspr", "blackbartblues/audio-switcher" ]
 
 [shell]
+app_icon_color = "primary"
 button_borders = false
 clipboard_history_max_entries = 10000
 font_family = "Berkeley Mono Variable"
+input_borders = false
+panel_anchor_bar = "Bottom"
 polkit_agent = true
+popup_borders = false
 screen_time_enabled = true
+time_format = "{:%-I:%M %p}"
 
     [shell.animation]
     speed = 2.0000000298023224
 
+    [shell.launcher.providers.emoji]
+    global = false
+
     [shell.panel]
     borders = false
+    clipboard_placement = "attached"
     control_center_position = "center"
+    floating_layer = "top"
+    list_item_background = true
+    transparency_mode = "glass"
 
     [shell.screen_corners]
     enabled = true
@@ -154,11 +445,15 @@ community_palette = "GitHub Dark"
 mode = "dark"
 pure_black_dark = true
 source = "wallpaper"
-wallpaper_scheme = "faithful"
+wallpaper_scheme = "vibrant"
 
     [theme.templates]
     builtin_ids = [ "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "qt" ]
     community_ids = [ "papirus-icons", "yazi", "zathura", "hyprtoolkit" ]
+
+        [theme.templates.user.noctwhspr_mic_osd]
+        input_path = "/home/sthom/.config/noctalia/templates/noctwhspr-mic-osd.css"
+        output_path = "/home/sthom/.config/hyprwhspr/theme/mic-osd.css"
 
 [wallpaper]
 directory = "/home/sthom/.wallpapers"
@@ -167,16 +462,16 @@ transition = [ "disc", "fade", "honeycomb", "wipe", "zoom" ]
 transition_on_startup = true
 
     [wallpaper.default]
-    path = "/home/sthom/.wallpapers/wallhaven-1kv693.jpg"
+    path = "/home/sthom/.wallpapers/wallhaven-vpqle3_5120x2400.png"
 
     [wallpaper.last]
-    path = "/home/sthom/.wallpapers/wallhaven-1kv693.jpg"
+    path = "/home/sthom/.wallpapers/wallhaven-vpqle3_5120x2400.png"
 
     [wallpaper.monitors.HDMI-A-1]
-    path = "/home/sthom/.wallpapers/wallhaven-1kv693.jpg"
+    path = "/home/sthom/.wallpapers/wallhaven-vpqle3_5120x2400.png"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/sthom/.wallpapers/wallhaven-1kv693.jpg"
+    path = "/home/sthom/.wallpapers/wallhaven-vpqle3_5120x2400.png"
 
 [weather]
 unit = "imperial"
@@ -190,11 +485,19 @@ display_mode = "graphic"
 scale = 0.69999999999999996
 show_label = false
 
+[widget.bluetooth]
+show_label = true
+
 [widget.clock]
 anchor = true
+format = "{:%-I:%M %p}"
 
 [widget.control-center]
-glyph = "pyramid"
+color = "primary"
+glyph = "cube"
+
+[widget.cpu]
+show_value = false
 
 [widget.media]
 hide_when_no_media = true
@@ -211,16 +514,28 @@ network_speed_compact = true
 [widget.network_tx]
 enabled = false
 
+[widget.ram]
+show_value = false
+
 [widget.spacer_2]
 enabled = false
 length = 40
 type = "spacer"
 
+[widget.status]
+type = "goodroot/noctwhspr:status"
+
 [widget.sysmon]
 enabled = false
 
 [widget.temp]
-show_label = false
+show_value = false
+
+[widget.tray]
+drawer = true
+
+[widget.volume]
+enabled = false
 
 [widget.wallhaven]
 type = "noctalia/wallhaven:wallhaven"
@@ -228,11 +543,15 @@ type = "noctalia/wallhaven:wallhaven"
 [widget.wallpaper]
 glyph = "photo-sensor-2"
 
+[widget.widget]
+type = "blackbartblues/audio-switcher:widget"
+
 [widget.workspaces]
+active_pill_size = 2.5
 anchor = true
-display = "none"
 empty_color = "tertiary"
+focused_output_only = true
 font_weight = 800
-minimal = true
 pill_scale = 0.5
 scale = 1.5
+show_labels = false

@@ -111,9 +111,9 @@ in the side columns while the third column remains full-height.
 marked as game content, allowing `render.direct_scanout = 2` to attempt direct scanout whenever compositor conditions
 permit it. Direct scanout can reduce compositor work and latency by presenting an eligible fullscreen game directly.
 
-While the Steam workspace is active on any monitor, performance mode disables animations, blur, motion blur, shadows,
-glow, and rounding. Leaving the workspace restores the normal config when automation enabled the mode; `Super+Shift+G`
-remains the manual performance-mode toggle.
+While the Steam workspace is visible and occupied on any monitor, performance mode disables animations, blur, motion
+blur, shadows, glow, and rounding. Leaving or emptying the workspace restores the settings captured when automation
+enabled the mode. `Super+Shift+G` remains the manual toggle and can suppress automation for the current Steam session.
 
 ## Device Profiles
 
@@ -302,7 +302,11 @@ They are not the source of truth for the active Lua config.
 Useful checks after editing:
 
 ```sh
+lua tests/binds.lua
+lua tests/gestures.lua
 lua tests/layouts.lua
+lua tests/lid.lua
+lua tests/rules.lua
 lua tests/workspace_routing.lua
 luac -p hyprland.lua modules/*.lua device/*.lua
 lua-language-server --check=. --checklevel=Error --check_format=pretty --logpath=/tmp/hypr-lua-language-server
