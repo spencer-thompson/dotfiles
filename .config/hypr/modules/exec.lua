@@ -29,6 +29,8 @@ end
 
 M.once = {
 	"noctalia",
+	"bash ~/.config/hypr/plugins/brightness-scroll/load.sh",
+	"/usr/bin/flock --nonblock /run/user/1000/linux-magic-touch.lock /home/sthom/projects/linux-magic-touch/target/release/linux-magic-touch --config /home/sthom/projects/linux-magic-touch/config/speed-adaptive.toml --live",
 	"~/.config/hypr/scripts/weather_notification.sh",
 	"~/.config/hypr/scripts/updates_notification.sh",
 }

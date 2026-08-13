@@ -330,8 +330,6 @@ bind(
 -- Equal-column layout controls
 bind(mod .. " + Tab", hl.dsp.layout("rollnext"), "Roll windows right")
 bind("SHIFT + " .. mod .. " + Tab", hl.dsp.layout("rollprev"), "Roll windows left")
-bind(mod .. " + mouse_down", hl.dsp.layout("mfact +0.01"), "Widen layout column")
-bind(mod .. " + mouse_up", hl.dsp.layout("mfact -0.01"), "Narrow layout column")
 bind(mod .. " + bracketleft", hl.dsp.layout("mfact -0.01"), "Narrow layout column", { repeating = true })
 bind(mod .. " + bracketright", hl.dsp.layout("mfact +0.01"), "Widen layout column", { repeating = true })
 bind("SHIFT + " .. mod .. " + h", swap_or_snap("left"), "Move window left")

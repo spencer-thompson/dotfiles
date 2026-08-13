@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/ast-grep/ast-grep/main/schemas/rule.json
+
+id: private-helper-functions
+language: Python
+severity: warning
+message: Private helper may add unnecessary indirection
+note: |
+  Prefer keeping single-use straightforward logic at the call site.
+  Keep helpers that centralize reuse, isolate complexity or effects,
+  or encode a meaningful invariant.
+rule:
+  any:
+    - kind: function_definition
+      has:
+        field: name
+        kind: identifier
+        regex: "^_[^_]"

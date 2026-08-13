@@ -57,9 +57,9 @@ return {
 		},
 		{
 			output = home_external_monitor,
-			mode = "5120x2160@60",
-			position = "2560x0",
-			scale = 1.5,
+			mode = "5120x2160@179.99",
+			position = "-640x-2160",
+			scale = 1,
 		},
 	},
 
@@ -71,12 +71,12 @@ return {
 		},
 		{
 			name = "apple-inc.-magic-trackpad",
-			sensitivity = 0.5,
+			sensitivity = 0.6,
 			clickfinger_behavior = true,
 		},
 		{
 			name = "apple-inc.-magic-trackpad-1",
-			sensitivity = 0.5,
+			sensitivity = 0.6,
 			clickfinger_behavior = true,
 		},
 	},

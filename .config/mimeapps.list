@@ -53,4 +53,4 @@ text/html=nvim.desktop
 text/x-csrc=nvim.desktop
 x-scheme-handler/slack=slack.desktop
 x-scheme-handler/claude-cli=claude-code-url-handler.desktop
-x-scheme-handler/codex=codex-desktop.desktop
+x-scheme-handler/codex=chatgpt.desktop

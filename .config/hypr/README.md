@@ -1,9 +1,7 @@
 # Hyprland Lua Config
 
-This directory is the Lua-based Hyprland config for these dotfiles.
-
-Hyprland starts from `hyprland.lua`. The old `.conf` files are still here as legacy/reference material, but the active
-compositor config is the Lua path.
+This directory is the Lua-based Hyprland config for these dotfiles. Hyprland starts from `hyprland.lua`, and the Lua
+files here are the source of truth.
 
 ## Load Order
 
@@ -83,10 +81,15 @@ labels so Hyprland can expose readable descriptions.
 
 `modules/workspace_routing.lua`
 : Routes profile-managed workspaces to the first connected preferred monitor when monitors appear, disappear, or the
-  config reloads, and when those workspaces are created later.
+  config reloads, and when those workspaces are created later. Workspaces not listed by the profile keep their workspace
+  rules and follow Hyprland's normal monitor migration behavior.
 
 `modules/gestures.lua`
 : Registers touch gestures with `hl.gesture(...)`.
+
+`plugins/brightness-scroll/`
+: Builds and loads an ABI-matched Hyprland plugin that turns Super + two-finger vertical motion into live 1% Noctalia
+  brightness updates on every display. Unmodified two-finger scrolling remains available to applications.
 
 `modules/rules.lua`
 : Registers shared layer, window, and workspace rules. It receives the loaded
@@ -155,7 +158,9 @@ Supported profile fields:
 - `binds`
 
 `workspace_routing` accepts ordered `monitors` and a list of `workspaces`. Managed workspaces follow the first connected
-preferred monitor. Without one, Hyprland leaves them on the remaining or focused monitor.
+preferred monitor. Without one, Hyprland leaves them on the remaining or focused monitor. This complements explicit
+workspace rules instead of replacing them; for example, a laptop profile can keep workspace 1 on its internal panel
+while routing workspaces 2 through 10 to an external display.
 
 ## Lid And Clamshell Behavior
 
@@ -248,9 +253,15 @@ local laptop_monitor = "desc:Samsung Display Corp. 0x4165"
 The current `outrival` profile uses real `desc:` selectors for its laptop panel and external displays. Other device
 profiles may still use port names until their monitor descriptions are captured while connected.
 
-For its main monitor, `outrival` selects the connected external display in this order: work display, home display, then
-the laptop panel as a fallback. Numeric workspaces 1 through 10 use the same external-display priority at runtime and
-stay on the laptop when neither external is connected.
+For its main monitor, `outrival` selects the connected external display in this order: work DisplayPort, work HDMI, home
+display, then the laptop panel as a fallback. Its workspace placement deliberately follows the lid and monitor state:
+
+- Without an external display, all workspaces stay on the laptop panel.
+- With an external display and the lid open, workspace 1 stays on the laptop panel while workspaces 2 through 10 route
+  to the preferred external display.
+- Closing the lid with an external display disables the laptop panel, so workspace 1 migrates to the external display
+  and all workspaces are external.
+- Reopening the lid restores the laptop panel and workspace 1; workspaces 2 through 10 remain external.
 
 ## Adding A New Device
 
@@ -287,22 +298,13 @@ with `pcall(require, "noctalia")` after the tracked config is applied.
 When present, the generated theme overrides the fallback border and group colors. Noctalia rewrites it when the theme
 changes. When absent, Hyprland keeps the tracked fallback colors.
 
-## Legacy Files
-
-The `.conf` files are retained as references while the migration settles:
-
-- `hyprland.conf`
-- `modules/*.conf`
-- `device/*.conf`
-
-They are not the source of truth for the active Lua config.
-
 ## Validation
 
 Useful checks after editing:
 
 ```sh
 lua tests/binds.lua
+lua tests/exec.lua
 lua tests/gestures.lua
 lua tests/layouts.lua
 lua tests/lid.lua
@@ -310,6 +312,7 @@ lua tests/rules.lua
 lua tests/workspace_routing.lua
 luac -p hyprland.lua modules/*.lua device/*.lua
 lua-language-server --check=. --checklevel=Error --check_format=pretty --logpath=/tmp/hypr-lua-language-server
+bash plugins/brightness-scroll/load.sh --build-only
 hyprctl reload
 hyprctl configerrors
 ```

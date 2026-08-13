@@ -98,6 +98,9 @@ require("modules.binds")
 config_updates = {}
 angle_updates = {}
 
+assert(not binds["SUPER + mouse_up"], "reserved Super-modified touchpad motion for the brightness plugin")
+assert(not binds["SUPER + mouse_down"], "reserved Super-modified touchpad motion for the brightness plugin")
+
 local toggle = assert(binds["SUPER + SHIFT + G"], "registered the performance-mode bind").action
 for _, event in ipairs({
 	"workspace.active",

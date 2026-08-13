@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/ast-grep/ast-grep/main/schemas/rule.json
+
+id: private-constants
+language: Python
+severity: warning
+message: Private constants are ugly
+note: |
+  Remove private constants unless they truly need to be genuinely private.
+rule:
+  any:
+    - kind: assignment
+      has:
+        field: name
+        kind: identifier
+        regex: "^_[A-Z][A-Z0-9_]*$"
