@@ -1,0 +1,11 @@
+# Packages and generated configuration installed by `vale sync`.
+/styles/*
+!/styles/.gitkeep
+
+# Keep locally authored rules and vocabularies available for future profiles.
+!/styles/Personal/
+!/styles/Personal/**
+!/styles/Procedural/
+!/styles/Procedural/**
+!/styles/config/
+!/styles/config/**

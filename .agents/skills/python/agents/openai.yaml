@@ -1,0 +1,4 @@
+interface:
+  display_name: "Python"
+  short_description: "Python with uv, Ruff, and ty by default"
+  default_prompt: "Use $python to write clear, Pythonic code, preserving declared repository tooling and otherwise using uv, Ruff, and ty."

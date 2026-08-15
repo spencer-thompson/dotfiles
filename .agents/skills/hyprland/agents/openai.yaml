@@ -1,0 +1,7 @@
+interface:
+  display_name: "Hyprland"
+  short_description: "Precise Hyprland inspection and control"
+  default_prompt: "Use $hyprland to inspect and interact with my desktop while preserving the active workspace and focus whenever possible."
+
+policy:
+  allow_implicit_invocation: true
