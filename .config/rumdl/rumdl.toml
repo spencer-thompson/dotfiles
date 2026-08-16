@@ -1,5 +1,6 @@
 [global]
 line-length = 120
+disable = ["MD041"]
 respect-gitignore = true
 exclude = [
   ".git",
@@ -26,10 +27,12 @@ indent = 2
 [MD013]
 line-length = 120
 code-blocks = false
+code-spans = false
 tables = false
 ignore-link-urls = true
 reflow = true
-reflow-mode = "normalize"
+reflow-mode = "default"
+reflow-length-exemptions = true
 
 [MD026]
 punctuation = ".,;:!"

@@ -1,6 +1,8 @@
 ---
 name: python
-description: "Use when editing, writing, or validating Python code, tests, packaging, pyproject.toml, Python tooling, or quality checks. Preserve an explicitly configured repository toolchain; otherwise default to uv, Ruff, and ty."
+description: >-
+  Use when editing, writing, or validating Python code, tests, packaging,
+  pyproject.toml, Python tooling, or quality checks.
 ---
 
 # Python

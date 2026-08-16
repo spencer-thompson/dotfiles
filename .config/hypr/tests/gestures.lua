@@ -62,7 +62,7 @@ local function reset_effects()
 	prepared_window = nil
 end
 
-assert(#gestures == 11, "registered the expected gesture map")
+assert(#gestures == 12, "registered the expected gesture map")
 
 find_gesture(3, "left").action()
 assert(dispatches[1].kind == "layout" and dispatches[1].message == "rollprev", "rolled the tape left")
@@ -101,8 +101,11 @@ assert(move.action == "move", "mapped Super plus four-finger swipe to native win
 local resize = find_gesture(4, "swipe", "SUPER SHIFT")
 assert(resize.action == "resize", "mapped Super+Shift plus four-finger swipe to native window resizing")
 
-local pinch = find_gesture(4, "pinch", "SUPER")
-assert(type(pinch.action) == "table", "registered centered pinch resize as a live gesture")
+local centered_pinch = find_gesture(4, "pinch", "SUPER")
+assert(type(centered_pinch.action) == "table", "registered centered pinch resize as a live gesture")
+
+local twist_pinch = find_gesture(4, "pinch")
+assert(type(twist_pinch.action) == "table", "registered twist pinch resize as a live gesture")
 
 local function assert_geometry(width, height, x, y, message, offset)
 	offset = offset or 0
@@ -116,38 +119,53 @@ local function assert_geometry(width, height, x, y, message, offset)
 	assert(move_window.spec.x == x and move_window.spec.y == y, message .. " used the expected position")
 end
 
-local function begin_resize()
+local function begin_resize(pinch)
 	active_window.floating = true
 	reset_effects()
 	pinch.action.start({ scale = 1 })
 end
 
-local function update_resize(scale, delta_x, delta_y)
+local function update_resize(pinch, scale, delta_x, delta_y, rotation)
 	pinch.action.update({
 		scale = scale,
 		delta = { x = delta_x, y = delta_y },
+		rotation = rotation or 0,
 	})
 end
 
-begin_resize()
-update_resize(1, 0, 0)
+begin_resize(centered_pinch)
+update_resize(centered_pinch, 1, 0, 0)
 assert(#dispatches == 0, "ignored the pinch's original geometry")
 
-update_resize(1.25, 99, -99)
+update_resize(centered_pinch, 1.25, 99, -99)
 assert_geometry(1000, 750, 0, 125, "centered pinch")
 
-update_resize(1.2501, -99, 99)
+update_resize(centered_pinch, 1.2501, -99, 99)
 assert(#dispatches == 2, "ignored a pinch update with unchanged rounded geometry")
 
-pinch.action.finish({ cancelled = true })
+centered_pinch.action.finish({ cancelled = true })
 assert(dispatches[3].spec.x == 800 and dispatches[3].spec.y == 600, "restored the original size after cancellation")
 assert(dispatches[4].spec.x == 100 and dispatches[4].spec.y == 200, "restored the original position after cancellation")
 
+begin_resize(twist_pinch)
+update_resize(twist_pinch, 1.2, 20, -10, 0.5)
+assert_geometry(1000, 750, 28, 111, "amplified pinch inside rotation dead zone")
+
+update_resize(twist_pinch, 1.4, -5, 30, 10.5)
+assert_geometry(1440, 720, -199, 168, "clockwise twist widened and shortened", 2)
+
+update_resize(twist_pinch, 1.4, 0, 0, -22)
+assert_geometry(960, 1080, 41, -12, "counterclockwise twist narrowed and lengthened", 4)
+
+twist_pinch.action.finish({ cancelled = true })
+assert(dispatches[7].spec.x == 800 and dispatches[7].spec.y == 600, "restored twist pinch size after cancellation")
+assert(dispatches[8].spec.x == 100 and dispatches[8].spec.y == 200, "restored twist pinch position after cancellation")
+
 active_window.floating = false
 reset_effects()
-pinch.action.start({ scale = 1.1 })
-update_resize(1.25, 8, 0)
-pinch.action.finish({ cancelled = false })
+twist_pinch.action.start({ scale = 1.1 })
+update_resize(twist_pinch, 1.25, 8, 0)
+twist_pinch.action.finish({ cancelled = false })
 assert(#dispatches == 0, "left tiled windows unchanged during pinch resize")
 
 print("gesture tests passed")

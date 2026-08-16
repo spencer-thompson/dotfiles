@@ -1,11 +1,8 @@
 ---
 name: hyprland
 description: >-
-  Observe and control a live Hyprland desktop with visual inspection,
-  off-workspace stable-ID capture, targeted shortcuts, hyprctl state and Lua
-  dispatchers, event-driven waits, and Wayland input tools. Use when the user
-  asks to inspect or interact with screens, windows, workspaces, keyboard
-  input, pointer input, or local desktop state.
+  Observe and control a live Hyprland desktop. 
+  Use when the user asks to inspect or interact with windows or workspaces.
 ---
 
 # Hyprland
