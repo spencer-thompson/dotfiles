@@ -26,6 +26,7 @@ order = [ "Top", "Bottom" ]
 
     [bar.Top]
     center = [ "control-center", "battery", "clock", "network", "network_rx", "network_tx", "sysmon", "status" ]
+    contact_shadow = true
     end = [ "tray", "widget", "bluetooth", "volume", "brightness", "ram", "cpu", "temp", "spacer_2", "session" ]
     font_family = "Berkeley Mono Variable"
     font_weight = 800
@@ -45,7 +46,7 @@ enable_ddcutil = true
 sync_all_monitors = true
 
 [control_center]
-width = 800
+width = 1000
 
 [desktop_widgets]
 enabled = false
@@ -386,9 +387,13 @@ widget_order = [
 enabled = false
 
 [notification]
+background_opacity = 0.65999998524785042
+border = false
 offset_x = 16
+scale = 1.1000000089406967
 
 [osd]
+background_opacity = 0.65999998524785042
 border = false
 offset_y = 24
 position = "bottom_center"
@@ -408,6 +413,7 @@ enabled = [ "noctalia/wallhaven", "goodroot/noctwhspr", "blackbartblues/audio-sw
 [shell]
 app_icon_color = "primary"
 button_borders = false
+card_borders = false
 clipboard_history_max_entries = 10000
 font_family = "Berkeley Mono Variable"
 input_borders = false
@@ -422,14 +428,15 @@ time_format = "{:%-I:%M %p}"
 
     [shell.launcher.providers.emoji]
     global = false
+    prefix = "e"
 
     [shell.panel]
     borders = false
-    clipboard_placement = "attached"
+    clipboard_placement = "floating"
+    control_center_placement = "floating"
     control_center_position = "center"
     floating_layer = "top"
     list_item_background = true
-    transparency_mode = "glass"
 
     [shell.screen_corners]
     enabled = true
@@ -448,7 +455,7 @@ source = "wallpaper"
 wallpaper_scheme = "vibrant"
 
     [theme.templates]
-    builtin_ids = [ "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "qt" ]
+    builtin_ids = [ "gtk3", "gtk4", "kcolorscheme", "qt" ]
     community_ids = [ "papirus-icons", "yazi", "zathura", "hyprtoolkit" ]
 
         [theme.templates.user.noctwhspr_mic_osd]
@@ -459,6 +466,7 @@ wallpaper_scheme = "vibrant"
 directory = "/home/sthom/.wallpapers"
 fill_color = "surface"
 transition = [ "disc", "fade", "honeycomb", "wipe", "zoom" ]
+transition_duration = 3000
 transition_on_startup = true
 
     [wallpaper.default]
@@ -481,7 +489,6 @@ bands = 128
 width = 400
 
 [widget.battery]
-display_mode = "graphic"
 scale = 0.69999999999999996
 show_label = false
 
@@ -535,7 +542,7 @@ show_value = false
 drawer = true
 
 [widget.volume]
-enabled = false
+enabled = true
 
 [widget.wallhaven]
 type = "noctalia/wallhaven:wallhaven"
@@ -544,6 +551,7 @@ type = "noctalia/wallhaven:wallhaven"
 glyph = "photo-sensor-2"
 
 [widget.widget]
+enabled = false
 type = "blackbartblues/audio-switcher:widget"
 
 [widget.workspaces]
