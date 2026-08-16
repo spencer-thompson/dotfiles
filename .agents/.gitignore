@@ -1,3 +1,5 @@
 generated-videos
 .ruff_cache
 .rumdl_cache
+__pycache__/
+*.py[cod]

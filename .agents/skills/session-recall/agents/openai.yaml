@@ -1,0 +1,7 @@
+interface:
+  display_name: "Session Recall"
+  short_description: "Review recent Codex sessions for insight"
+  default_prompt: "Use $session-recall to review recent sessions and surface work, patterns, and useful improvements."
+
+policy:
+  allow_implicit_invocation: false

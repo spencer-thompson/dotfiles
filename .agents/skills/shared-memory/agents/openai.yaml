@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shared Memory"
+  short_description: "Read and maintain shared Codex memory"
+  default_prompt: "Use $shared-memory to read or update the smallest useful memory target without creating a transcript."

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Simplify"
+  short_description: "Make code clearer with less machinery"
+  default_prompt: "Use $simplify to clean up this code while preserving behavior and verifying the result."
+
+policy:
+  allow_implicit_invocation: true
