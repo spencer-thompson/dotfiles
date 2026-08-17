@@ -1,7 +1,8 @@
 # Hyprctl and Lua Reference
 
-Read this reference completely before using Lua dispatchers, diagnosing Hyprctl failures, discovering dispatcher names,
-or waiting on compositor events. Target Hyprland 0.55+ and its Lua dispatcher API.
+Read this reference completely before running any `hyprctl dispatch`, `hyprctl eval`, or `hyprctl repl` command,
+diagnosing Hyprctl failures, discovering dispatcher names, or waiting on compositor events. Target Hyprland 0.55+ and
+its Lua dispatcher API.
 
 ## Contents
 
@@ -34,6 +35,9 @@ resize are under `hl.dsp.window`.
 - `hyprctl eval '...'` executes arbitrary Lua. Wrap a dispatcher with `hl.dispatch(hl.dsp...(...))`; evaluating only the
   constructor does not dispatch it.
 - `hyprctl repl '...'` evaluates Lua and prints returned values. Keep it read-only unless mutation is intended.
+
+Do not use legacy forms such as `hyprctl dispatch exec ...`. Do not use config-time `hl.exec_cmd(...)` for runtime IPC;
+use the `hl.dsp.exec_cmd(...)` dispatcher.
 
 Keep REPL snippets on one line. Each interactive line is a separate IPC request: locals do not cross requests, although
 globals can persist in the configuration Lua state. The compositor watchdog is short, so never sleep, block, perform
@@ -91,8 +95,15 @@ hyprctl dispatch "hl.dsp.window.move({workspace=\"3\",follow=false,window=\"${hy
 hyprctl dispatch "hl.dsp.window.resize({x=1200,y=800,window=\"${hyprland_window_selector}\"})"
 ```
 
-For quiet launches, use `exec_cmd` with `no_initial_focus = true` and a workspace or monitor suffixed with `silent`.
-Verify the result because process forking can prevent rules from matching.
+For a runtime process launch, use the dispatcher namespace:
+
+```bash
+hyprctl dispatch 'hl.dsp.exec_cmd([[/absolute/path/to/program --argument value]])'
+```
+
+Long-bracket quoting keeps the command a single Lua string. Add shell indirection only when the command actually needs
+shell features such as redirection. Verify both the dispatch result and the expected process or application state;
+successful IPC does not prove the launched process stayed healthy.
 
 ## Wait for compositor events
 

@@ -24,8 +24,9 @@ Run `hyprctl -j` reads as standalone tool calls, then parse their returned JSON.
 `Couldn't set socket timeout (2)`, rerun the standalone `hyprctl` call with the required approval instead of changing
 the filter.
 
-Before using Lua dispatchers, diagnosing Hyprctl failures, discovering dispatcher names, or waiting on compositor
-events, read [references/hyprctl-lua.md](references/hyprctl-lua.md) completely.
+Before running any `hyprctl dispatch`, `hyprctl eval`, or `hyprctl repl` command—or diagnosing Hyprctl failures,
+discovering dispatcher names, or waiting on compositor events—read
+[references/hyprctl-lua.md](references/hyprctl-lua.md) completely. Do not try legacy dispatcher syntax first.
 
 ## Follow one workflow
 
@@ -86,8 +87,13 @@ If foreign-toplevel capture is unavailable, explain the limitation instead of re
 
 ## Handle disruptive operations
 
-Treat focus or workspace changes, `slurp`, `wtype`, pointer movement, clicks, and ordinary launches as disruptive.
-Perform them only when explicitly requested or after explaining why they are unavoidable and obtaining approval.
+Treat focus or workspace changes, `slurp`, `wtype`, pointer movement, clicks, and visible launches that may focus or
+reveal a window as disruptive. Perform them only when explicitly requested or after explaining why they are unavoidable
+and obtaining approval.
+
+A headless or background process launch with no expected compositor-visible effect is not disruptive on that fact alone.
+It still requires normal authorization for its effects and outcome verification, but not desktop start/completion
+notifications.
 
 Immediately before disruption, notify the user without exposing task data or window titles:
 

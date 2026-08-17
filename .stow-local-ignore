@@ -9,4 +9,11 @@ ricing-todo.md
 (^|/)\.agents/NOTES\.md$
 ^/\.local/bin/(claude|codex|hermes|posting)$
 
+# Generated caches and local scratch files
+(^|/)\.rumdl_cache(/|$)
+(^|/)__pycache__(/|$)
+(^|/)[^/]+\.py[co]$
+(^|/)[^/]+\.log$
+(^|/)[^/]+\.bak[0-9]*$
+
 ^/README.*

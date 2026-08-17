@@ -134,8 +134,6 @@ function M.setup(opts)
 	window("discord", discord)
 	window("^chromium$", { no_initial_focus = true })
 
-	layer("^(dms)$", { no_anim = true })
-
 	hl.layer_rule({
 		name = "noctalia",
 		match = {
@@ -152,17 +150,6 @@ function M.setup(opts)
 		match = { class = "dev.noctalia.Noctalia" },
 		float = true,
 		size = { 1080, 1280 },
-	})
-
-	hl.window_rule({
-		name = "dms-settings",
-		match = {
-			class = "^com\\.danklinux\\.dms$",
-			title = "^Settings$",
-		},
-		center = true,
-		float = true,
-		size = "950 1400",
 	})
 
 	window("org.quickshell", {

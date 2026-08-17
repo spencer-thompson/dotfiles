@@ -11,7 +11,6 @@ client_id.env
 .config/aichat/rags/*
 .config/yazi/flavors/
 .config/yazi/plugins/
-.config/hypr/dms/
 .config/kitty/dank-tabs.conf
 .config/kitty/dank-theme.conf
 .config/ghostty/themes/dankcolors
@@ -38,6 +37,7 @@ client_id.env
 
 .local/bin/claude
 .local/bin/codex
+.local/bin/codeql
 .local/bin/hermes
 .local/bin/posting
 .local/bin/f2py
