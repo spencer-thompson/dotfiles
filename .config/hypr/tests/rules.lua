@@ -53,8 +53,11 @@ local quickshell = matching(window_rules, "class", "org.quickshell")
 assert(#quickshell == 1, "registered one Quickshell window rule")
 assert(quickshell[1].center and quickshell[1].float and quickshell[1].size == "900 1100", "kept all Quickshell effects")
 
-assert(#layer_rules == 3, "registered the expected consolidated layer rules")
-assert(#window_rules == 16, "registered the expected consolidated window rules")
+assert(#matching(layer_rules, "namespace", "^(dms)$") == 0, "kept retired DMS layer rules removed")
+assert(#matching(window_rules, "class", "^com\\.danklinux\\.dms$") == 0, "kept retired DMS window rules removed")
+
+assert(#layer_rules == 2, "registered the expected consolidated layer rules")
+assert(#window_rules == 15, "registered the expected consolidated window rules")
 assert(#workspace_rules == 6, "registered the expected consolidated workspace rules")
 
 print("rule tests passed")
