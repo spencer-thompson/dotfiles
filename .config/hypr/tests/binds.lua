@@ -4,6 +4,9 @@ local event_handlers = {}
 local executed_commands = {}
 local angle_updates = {}
 local monitors = {}
+local dispatched = {}
+local active_window = nil
+local windows = {}
 
 local config_values = {
 	["animations.enabled"] = true,
@@ -55,7 +58,9 @@ _G.hl = {
 		apply_config(spec)
 	end,
 	curve = function() end,
-	dispatch = function() end,
+	dispatch = function(action)
+		dispatched[#dispatched + 1] = action
+	end,
 	dsp = {
 		exec_cmd = dispatcher("exec"),
 		focus = dispatcher("focus"),
@@ -64,6 +69,7 @@ _G.hl = {
 		window = {
 			center = dispatcher("center"),
 			close = dispatcher("close"),
+			cycle_next = dispatcher("cycle-next"),
 			drag = dispatcher("drag"),
 			float = dispatcher("float"),
 			fullscreen = dispatcher("fullscreen"),
@@ -80,13 +86,19 @@ _G.hl = {
 		executed_commands[#executed_commands + 1] = command
 	end,
 	get_active_window = function()
-		return nil
+		return active_window
 	end,
 	get_config = function(key)
 		return config_values[key]
 	end,
 	get_monitors = function()
 		return monitors
+	end,
+	get_windows = function(filters)
+		assert(filters.floating == not active_window.floating, "queried only the opposite focus layer")
+		assert(filters.mapped == true, "queried only mapped windows")
+		assert(filters.workspace == active_window.workspace, "queried the active workspace")
+		return windows
 	end,
 	on = function(event, callback)
 		event_handlers[event] = callback
@@ -100,6 +112,71 @@ angle_updates = {}
 
 assert(not binds["SUPER + mouse_up"], "reserved Super-modified touchpad motion for the brightness plugin")
 assert(not binds["SUPER + mouse_down"], "reserved Super-modified touchpad motion for the brightness plugin")
+
+local tab = assert(binds["SUPER + Tab"], "registered the context-sensitive Tab bind").action
+local shift_tab = assert(binds["SHIFT + SUPER + Tab"], "registered the focus-layer toggle").action
+local workspace = { id = 3 }
+
+active_window = { floating = false, workspace = workspace }
+tab()
+assert(dispatched[#dispatched].kind == "layout", "rolled the tiled layout with Super+Tab")
+assert(dispatched[#dispatched].spec == "rollnext", "rolled the tiled layout forward")
+
+active_window = {
+	floating = true,
+	workspace = workspace,
+	at = { x = 100, y = 100 },
+	size = { x = 100, y = 100 },
+}
+tab()
+assert(dispatched[#dispatched].kind == "cycle-next", "cycled floating windows with Super+Tab")
+assert(dispatched[#dispatched].spec.floating == true, "limited the cycle to floating windows")
+
+local far_tiled = {
+	floating = false,
+	visible = true,
+	at = { x = 500, y = 500 },
+	size = { x = 100, y = 100 },
+}
+local hidden_tiled = {
+	floating = false,
+	visible = false,
+	at = { x = 100, y = 100 },
+	size = { x = 100, y = 100 },
+}
+local near_tiled = {
+	floating = false,
+	visible = true,
+	at = { x = 125, y = 125 },
+	size = { x = 100, y = 100 },
+}
+windows = { far_tiled, hidden_tiled, near_tiled }
+shift_tab()
+assert(dispatched[#dispatched].kind == "focus", "focused a tiled window with Super+Shift+Tab")
+assert(dispatched[#dispatched].spec.window == near_tiled, "focused the nearest visible tiled window")
+
+local far_floating = {
+	floating = true,
+	visible = true,
+	at = { x = 600, y = 600 },
+	size = { x = 100, y = 100 },
+}
+local near_floating = {
+	floating = true,
+	visible = true,
+	at = { x = 175, y = 175 },
+	size = { x = 100, y = 100 },
+}
+active_window = {
+	floating = false,
+	workspace = workspace,
+	at = { x = 100, y = 100 },
+	size = { x = 100, y = 100 },
+}
+windows = { far_floating, near_floating }
+shift_tab()
+assert(dispatched[#dispatched].kind == "focus", "focused a floating window with Super+Shift+Tab")
+assert(dispatched[#dispatched].spec.window == near_floating, "focused the nearest visible floating window")
 
 local toggle = assert(binds["SUPER + SHIFT + G"], "registered the performance-mode bind").action
 for _, event in ipairs({

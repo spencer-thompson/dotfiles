@@ -76,6 +76,63 @@ local function toggle_floating()
 	end
 end
 
+local function cycle_floating_or_roll()
+	local window = hl.get_active_window()
+
+	if not window then
+		return
+	end
+
+	if window.floating then
+		hl.dispatch(hl.dsp.window.cycle_next({ floating = true }))
+	else
+		hl.dispatch(hl.dsp.layout("rollnext"))
+	end
+end
+
+local function squared_distance_to_window(x, y, window)
+	local left = window.at.x
+	local right = left + window.size.x
+	local top = window.at.y
+	local bottom = top + window.size.y
+	local dx = math.max(left - x, 0, x - right)
+	local dy = math.max(top - y, 0, y - bottom)
+
+	return dx * dx + dy * dy
+end
+
+local function focus_nearest_opposite_window()
+	local window = hl.get_active_window()
+
+	if not window or not window.workspace then
+		return
+	end
+
+	local center_x = window.at.x + window.size.x / 2
+	local center_y = window.at.y + window.size.y / 2
+	local nearest = nil
+	local nearest_distance = math.huge
+
+	for _, candidate in ipairs(hl.get_windows({
+		floating = not window.floating,
+		mapped = true,
+		workspace = window.workspace,
+	})) do
+		if candidate.visible then
+			local distance = squared_distance_to_window(center_x, center_y, candidate)
+
+			if distance < nearest_distance then
+				nearest = candidate
+				nearest_distance = distance
+			end
+		end
+	end
+
+	if nearest then
+		hl.dispatch(hl.dsp.focus({ window = nearest }))
+	end
+end
+
 local function swap_or_snap(direction)
 	return function()
 		local window = hl.get_active_window()
@@ -328,8 +385,8 @@ bind(
 )
 
 -- Equal-column layout controls
-bind(mod .. " + Tab", hl.dsp.layout("rollnext"), "Roll windows right")
-bind("SHIFT + " .. mod .. " + Tab", hl.dsp.layout("rollprev"), "Roll windows left")
+bind(mod .. " + Tab", cycle_floating_or_roll, "Cycle floating or roll right")
+bind("SHIFT + " .. mod .. " + Tab", focus_nearest_opposite_window, "Toggle focus layer")
 bind(mod .. " + bracketleft", hl.dsp.layout("mfact -0.01"), "Narrow layout column", { repeating = true })
 bind(mod .. " + bracketright", hl.dsp.layout("mfact +0.01"), "Widen layout column", { repeating = true })
 bind("SHIFT + " .. mod .. " + h", swap_or_snap("left"), "Move window left")

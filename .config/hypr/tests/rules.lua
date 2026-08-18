@@ -49,6 +49,13 @@ local discord = matching(window_rules, "class", "discord")
 assert(#discord == 1, "registered one Discord window rule")
 assert(discord[1].monitor == "HDMI-A-1" and discord[1].no_initial_focus, "kept all Discord effects")
 
+local operator = matching(window_rules, "class", "^outrival-operator$")
+assert(#operator == 1, "registered one OutRival Operator window rule")
+assert(operator[1].float and operator[1].no_initial_focus, "kept Operator floating without initial focus")
+assert(operator[1].no_blur, "disabled blur behind Operator's Wayland surface")
+assert(operator[1].focus_on_activate == false, "prevented Operator activation requests from taking focus")
+assert(operator[1].suppress_event == "maximize", "suppressed Operator maximize requests")
+
 local quickshell = matching(window_rules, "class", "org.quickshell")
 assert(#quickshell == 1, "registered one Quickshell window rule")
 assert(quickshell[1].center and quickshell[1].float and quickshell[1].size == "900 1100", "kept all Quickshell effects")
@@ -57,7 +64,7 @@ assert(#matching(layer_rules, "namespace", "^(dms)$") == 0, "kept retired DMS la
 assert(#matching(window_rules, "class", "^com\\.danklinux\\.dms$") == 0, "kept retired DMS window rules removed")
 
 assert(#layer_rules == 2, "registered the expected consolidated layer rules")
-assert(#window_rules == 15, "registered the expected consolidated window rules")
+assert(#window_rules == 16, "registered the expected consolidated window rules")
 assert(#workspace_rules == 6, "registered the expected consolidated workspace rules")
 
 print("rule tests passed")

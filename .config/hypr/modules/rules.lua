@@ -134,6 +134,16 @@ function M.setup(opts)
 	window("discord", discord)
 	window("^chromium$", { no_initial_focus = true })
 
+	hl.window_rule({
+		name = "outrival-operator",
+		match = { class = "^outrival-operator$" },
+		float = true,
+		no_blur = true,
+		no_initial_focus = true,
+		focus_on_activate = false,
+		suppress_event = "maximize",
+	})
+
 	hl.layer_rule({
 		name = "noctalia",
 		match = {
