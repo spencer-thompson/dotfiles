@@ -756,6 +756,70 @@ class InspectorTests(unittest.TestCase):
             ["1", "2026-08-10T10:01:00Z", "True", "{}", "True", "1", "1"],
         )
 
+    def test_summary_requires_tools_inside_the_requested_range(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            paths = []
+            for session_id, records in (
+                (
+                    "matching",
+                    [
+                        ("2026-08-10T10:01:00Z", "spawn_agent"),
+                        ("2026-08-10T10:02:00Z", "exec"),
+                    ],
+                ),
+                ("missing", [("2026-08-10T10:01:00Z", "exec")]),
+                ("outside", [("2026-08-10T09:01:00Z", "spawn_agent")]),
+            ):
+                path = Path(directory) / f"{session_id}.jsonl"
+                session_records: list[dict[str, object]] = [
+                    {
+                        "timestamp": "2026-08-10T09:00:00Z",
+                        "type": "session_meta",
+                        "payload": {"id": session_id},
+                    }
+                ]
+                for index, (timestamp, tool) in enumerate(records):
+                    session_records.append(
+                        {
+                            "timestamp": timestamp,
+                            "type": "response_item",
+                            "payload": {
+                                "type": "custom_tool_call",
+                                "name": tool,
+                                "call_id": f"{session_id}-{index}",
+                                "input": "{}",
+                            },
+                        }
+                    )
+                self._write(path, session_records)
+                paths.append(path)
+
+            output = StringIO()
+            with (
+                patch.object(
+                    sys,
+                    "argv",
+                    [
+                        "inspect_sessions.py",
+                        "summary",
+                        *(str(path) for path in paths),
+                        "--since",
+                        "2026-08-10T10:00:00Z",
+                        "--require-tool",
+                        "spawn_agent",
+                        "--require-tool",
+                        "exec",
+                        "--fields",
+                        "session_id,tools",
+                    ],
+                ),
+                redirect_stdout(output),
+            ):
+                self.assertEqual(inspect_sessions.main(), 0)
+
+        rows = [json.loads(line) for line in output.getvalue().splitlines()]
+        self.assertEqual(rows, [{"session_id": "matching", "tools": {"exec": 1, "spawn_agent": 1}}])
+
     def test_compact_summary_limits_counters_without_changing_totals(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "session.jsonl"

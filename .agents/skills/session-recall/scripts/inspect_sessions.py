@@ -873,6 +873,13 @@ def _arguments() -> argparse.Namespace:
     summary_parser.add_argument("--aggregate", action="store_true", help="Emit one aggregate record")
     summary_parser.add_argument("--sort", choices=tuple(SUMMARY_SORT_FIELDS), default="activity")
     summary_parser.add_argument("--limit", type=int, default=0, help="Maximum summaries after sorting; 0 means all")
+    summary_parser.add_argument(
+        "--require-tool",
+        action="append",
+        default=[],
+        metavar="TOOL",
+        help="Keep rollouts that used this tool in range; repeat to require every named tool",
+    )
     summary_parser.add_argument("--format", choices=("jsonl", "tsv"), default="jsonl")
     projection = summary_parser.add_mutually_exclusive_group()
     projection.add_argument("--fields", metavar="FIELD,...", help="Select and order output fields")
@@ -944,6 +951,8 @@ def main() -> int:
         summarize_rollout(path, since=args.since, until=args.until, seen=seen)
         for path in sorted(paths, key=_rollout_identity)
     ]
+    if args.require_tool:
+        rows = [row for row in rows if all(row["_tools"][tool] for tool in args.require_tool)]
     rows.sort(key=lambda row: _summary_sort_value(row, args.sort), reverse=True)
     if args.limit:
         rows = rows[: args.limit]

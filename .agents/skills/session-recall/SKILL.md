@@ -23,14 +23,15 @@ rollout evidence, and report what happened, what remains open, and what may dese
 1. Define the smallest useful scope. Honor an explicit range. Otherwise begin with the current day and relevant project,
    cwd, user-assigned name, or task; expand only as needed.
 
-2. Capture one timezone-aware `review_cutoff` before discovery. Resolve relative dates in the user's timezone and keep
-   the cutoff immutable while reviewing live threads.
+2. Capture one timezone-aware `review_cutoff` before discovery. Resolve the range start and relative dates in the
+   user's timezone, then keep the start and cutoff immutable while reviewing live threads.
 
 3. Discover and rank threads through SQLite. Prefer compact output for ordinary discovery:
 
    ```bash
    python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py list \
-     --days 3 --archived all --top-level-only --sort recency --limit 40 --compact
+     --since START_ISO --until REVIEW_CUTOFF_ISO \
+     --archived all --top-level-only --sort recency --limit 40 --compact
    ```
 
    Prefer these signals:
@@ -46,25 +47,29 @@ rollout evidence, and report what happened, what remains open, and what may dese
    reconstruct recency, families, project identity, or cumulative thread tokens.
 
 5. Use `show` for targeted evidence from one or more known thread IDs. Prefer `--metadata compact`; use
-   `--events-only` for batch event review when catalog metadata is already available.
+   `--events-only` for batch event review when catalog metadata is already available. For the final assistant response
+   from each selected thread, use `--kind assistant --tail 1` instead of loading every progress update.
 
 6. Inspect selected rollout paths only when SQLite cannot answer the question:
 
    ```bash
    python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py list \
+     --since START_ISO --until REVIEW_CUTOFF_ISO \
      --git-project OWNER/REPO --sort recency --limit 20 --format paths \
    | python3 ~/.agents/skills/session-recall/scripts/inspect_sessions.py summary \
      --paths-from-stdin --since START_ISO --until REVIEW_CUTOFF_ISO --aggregate --compact
    ```
 
    Use `summary` for exact-range message, turn, tool, token, duration, command, file-change, MCP, compaction, and replay
-   metrics. Use `events` for redacted, timestamped, line-numbered evidence and targeted text matching. Use
-   `--counter-limit` or `--fields` when a custom bounded summary is more useful than the compact preset. Preserve the
-   generated truncation, distinct-count, and omitted-count fields whenever limited counters are handed off or stored.
+   metrics. Use repeatable `--require-tool TOOL` to retain only rollouts that used every named tool inside the range.
+   Use `events` for redacted, timestamped, line-numbered evidence and targeted text matching. Use `--counter-limit` or
+   `--fields` when a custom bounded summary is more useful than the compact preset. Preserve the generated truncation,
+   distinct-count, and omitted-count fields whenever limited counters are handed off or stored.
 
 7. Interpret metrics carefully:
 
    - Catalog `cumulative_tokens` is cumulative thread workload and is ideal for fast ranking.
+   - Catalog `open_child_count` reflects stored spawn-edge status. It is not proof that a child agent is still running.
    - Inspector token fields are cumulative-counter deltas inside the requested event range.
    - `active_duration_ms` sums recorded task durations; it excludes idle wall-clock gaps.
    - Message count, activity events, tokens, tools, bytes, and duration describe different kinds of thread length.

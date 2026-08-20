@@ -38,12 +38,17 @@ Good cleanup often means removing:
 - Duplicate logic
 - Obsolete comments
 - Unneeded config
-- Overly defensive code that is not needed
+- Defensive code or design that protects no real boundary or failure mode
 
 Do not add abstractions just because two things look similar. Abstract only when the abstraction makes the code easier
 to understand and change.
 
 The best cleanup often has a negative diff.
+
+Challenge repeated validation, impossible-state branches, error-hiding fallbacks, and extension points built for
+hypothetical needs. Keep a defense only when it protects a reachable failure mode or real boundary, such as untrusted
+input, external systems, security, stored data, concurrency, or resource cleanup. Confirm that need from call sites,
+types, invariants, tests, or documented behavior.
 
 ### Inline weak helpers
 
@@ -127,7 +132,7 @@ If using subagents:
 ## Process
 
 1. Understand the target area(s).
-2. Find complexity hotspots.
+2. Find complexity hotspots, including needless defenses and speculative design.
 3. Delete dead/redundant code.
 4. Inline weak helpers.
 5. Simplify control flow.

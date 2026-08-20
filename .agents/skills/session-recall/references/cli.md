@@ -11,14 +11,17 @@ detailed workload evidence is required.
 
 ```bash
 python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py list \
-  --days 3 --top-level-only --sort recency --limit 40 --compact
+  --since START_ISO --until REVIEW_CUTOFF_ISO \
+  --top-level-only --sort recency --limit 40 --compact
 ```
 
 Filtering and ranking run before output projection. `--sort` accepts `recency`, `updated`, `created`, or
 `tokens`. `--top-by-tokens N` aliases `--sort tokens --limit N`; `--min-tokens N` filters first.
 
-Discovery filters include `--query`, `--cwd`, `--source`, `--model`, `--reasoning-effort`, `--git-project`,
-`--git-branch`, `--named-only`, `--archived`, `--top-level-only`, and repeatable `--exclude-thread`.
+Discovery filters include `--since`, `--until`, `--query`, `--cwd`, `--source`, `--model`, `--reasoning-effort`,
+`--git-project`, `--git-branch`, `--named-only`, `--archived`, `--top-level-only`, and repeatable `--exclude-thread`.
+Use the same exact start and cutoff for catalog discovery and rollout inspection so out-of-range rollouts are never
+selected merely to produce empty summaries.
 
 Use `--fields FIELD,...` to select and order TSV or JSONL fields. Unknown, empty, or duplicate fields fail. Use
 `--compact` for this preset:
@@ -41,6 +44,10 @@ family_size,direct_child_count,open_child_count,family_cumulative_tokens,catalog
 Catalog token values are cumulative workloads. The SQLite column remains `tokens_used`; public output uses
 `cumulative_tokens` and `family_cumulative_tokens`.
 
+`open_child_count` counts direct children whose stored `thread_spawn_edges.status` is `open`. It is catalog metadata,
+not a live process check, and it may remain open after a child has returned a final response. Use rollout events or the
+agent-management tools when actual execution status matters.
+
 ### Thread Families And Statistics
 
 Use `--root-thread-id ROOT` for a known root, `--family THREAD` for any family member, and `--children THREAD` for
@@ -49,6 +56,15 @@ direct children. Family navigation disables the implicit three-day window unless
 `stats` accepts catalog filters and groups by `archive`, `family`, `git-branch`, `git-project`, `model`,
 `month`, or `reasoning-effort`. It reports `cumulative_tokens` plus average, median, p90, and maximum cumulative
 token fields. Formats are JSON, JSONL, and TSV.
+
+Aggregate exact-range workload for one family without reconstructing it from rollout files manually:
+
+```bash
+python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py list \
+  --family THREAD_ID --format paths \
+| python3 ~/.agents/skills/session-recall/scripts/inspect_sessions.py summary \
+  --paths-from-stdin --since START_ISO --until REVIEW_CUTOFF_ISO --aggregate --compact
+```
 
 ### Show Selected Threads
 
@@ -60,6 +76,13 @@ python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py show THREAD_
 `show` accepts multiple IDs, removes duplicate IDs while preserving requested order, validates every ID and rollout
 before output, and applies `--tail` independently per thread. Event filters include `--kind`, `--since`, `--until`,
 `--match`, `--ignore-case`, and `--max-chars`.
+
+Fetch only the final assistant response from each selected thread:
+
+```bash
+python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py show THREAD_ID ... \
+  --events-only --kind assistant --tail 1 --until REVIEW_CUTOFF_ISO --format jsonl
+```
 
 Metadata modes are:
 
@@ -103,6 +126,20 @@ python3 ~/.agents/skills/session-recall/scripts/inspect_sessions.py summary ROLL
 
 Summary mode computes range-scoped message, activity, turn, duration, token-delta, tool, command, file-change, MCP,
 compaction, replay, media, model, effort, malformed-line, and rollout-size metrics.
+
+Repeatable `--require-tool TOOL` retains only rollouts that used every named tool inside the requested range. Filtering
+happens before sorting, limiting, aggregation, counter projection, and output formatting. It uses the complete internal
+tool counter, so `--counter-limit` cannot hide or alter a match.
+
+Find top-level sessions that used `spawn_agent` without rendering unrelated summaries:
+
+```bash
+python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py list \
+  --since START_ISO --until REVIEW_CUTOFF_ISO --top-level-only --format paths \
+| python3 ~/.agents/skills/session-recall/scripts/inspect_sessions.py summary \
+  --paths-from-stdin --since START_ISO --until REVIEW_CUTOFF_ISO \
+  --require-tool spawn_agent --fields session_id,first_event_at,last_event_at,tools
+```
 
 Use `--fields FIELD,...` to select and order output fields. Use `--compact` for a bounded overview that retains
 identity, event bounds, completeness indicators, workload totals, failure counts, models, efforts, and top counters.

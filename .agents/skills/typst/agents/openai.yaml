@@ -1,0 +1,4 @@
+interface:
+  display_name: "Typst"
+  short_description: "Concise Typst syntax and document reference"
+  default_prompt: "Use $typst to create a polished Typst document."
