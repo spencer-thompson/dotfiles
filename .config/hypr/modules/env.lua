@@ -27,7 +27,7 @@ end
 local env = {
 	{ "HYPRCURSOR_THEME", "HyprBibataModernClassicSVG" },
 	{ "HYPRCURSOR_SIZE", "24" },
-	{ "XCURSOR_THEME", "HyprBibataModernClassicSVG" },
+	{ "XCURSOR_THEME", "Bibata-Modern-Classic" },
 	{ "XCURSOR_SIZE", "24" },
 
 	{ "XDG_SESSION_TYPE", "wayland" },
