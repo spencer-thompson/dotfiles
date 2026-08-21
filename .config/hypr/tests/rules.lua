@@ -52,6 +52,8 @@ assert(discord[1].monitor == "HDMI-A-1" and discord[1].no_initial_focus, "kept a
 local operator = matching(window_rules, "class", "^outrival-operator$")
 assert(#operator == 1, "registered one OutRival Operator window rule")
 assert(operator[1].float and operator[1].no_initial_focus, "kept Operator floating without initial focus")
+assert(operator[1].center and operator[1].size == "1920 1080", "centered Operator at 1920 by 1080")
+assert(operator[1].border_size == 2 and operator[1].border_color == "rgb(ff0000)", "gave Operator a red 2px border")
 assert(operator[1].no_blur, "disabled blur behind Operator's Wayland surface")
 assert(operator[1].focus_on_activate == false, "prevented Operator activation requests from taking focus")
 assert(operator[1].suppress_event == "maximize", "suppressed Operator maximize requests")
