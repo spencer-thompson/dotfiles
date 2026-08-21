@@ -43,7 +43,7 @@ does not exist, inspect a repository-root `CONTEXT.md` only as a legacy candidat
 rather than repository documentation. Never create a new repository-root `CONTEXT.md` for Codex memory.
 
 Keep project pages focused on the current goal, binding decisions and constraints, blockers, next actions, and useful
-references. Target 80 lines or fewer. Replace stale state instead of appending history.
+references. Target 100 lines or fewer. Replace stale state instead of appending history.
 
 Move completed work and detailed history to the dated journal or its authoritative source system, such as Git, Linear,
 deployment records, or project documentation. Keep only the completed outcome when it still constrains active work, and

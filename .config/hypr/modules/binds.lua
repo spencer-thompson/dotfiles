@@ -297,7 +297,7 @@ bind(
 	exec([[fish -c 'grim -g "$(slurp)" - | mocr | wl-copy && notify-send "Finished"']]),
 	"OCR selection"
 )
-bind(mod .. " + SHIFT + D", hl.dsp.focus({ workspace = "name:discord" }), "Discord workspace")
+bind(mod .. " + SHIFT + D", exec("noctalia msg notification-dnd-toggle"), "Toggle do not disturb")
 bind(mod .. " + comma", adjust_gaps(2), "Increase Gaps", { repeating = true })
 bind(mod .. " + period", adjust_gaps(-2), "Decrease Gaps", { repeating = true })
 

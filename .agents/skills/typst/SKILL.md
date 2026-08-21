@@ -6,76 +6,57 @@ description: Create, edit, debug, and polish Typst documents and templates. Use 
 
 # Typst
 
-Use simple markup for prose. Put broad styles in top-level `set` rules and keep `show` rules small. Move repeated styles
-into a template.
-
-Official docs to open when deeper detail is needed:
-[Overview](https://typst.app/docs/),
-[Syntax](https://typst.app/docs/reference/syntax/),
-[Styling](https://typst.app/docs/reference/styling/),
-[Scripting](https://typst.app/docs/reference/scripting/),
-[Context](https://typst.app/docs/reference/context/),
-[Reference](https://typst.app/docs/reference/),
-[Page setup](https://typst.app/docs/guides/page-setup/),
-[Table guide](https://typst.app/docs/guides/table-guide/),
-[Accessibility](https://typst.app/docs/guides/accessibility/),
-[Changelog](https://typst.app/docs/changelog/),
-[Tinymist](https://myriad-dreamin.github.io/tinymist/).
+Use semantic markup and a small visual system. Put document-wide styles in top-level `set` rules, keep `show` rules
+focused, and create components only for repeated visual relationships.
 
 ## Workflow
 
-1. Identify the output format, paper size, audience, assets, bibliography, and existing templates.
-2. Inspect existing `.typ` files before editing. Preserve local template style, imports, labels, and package versions.
-3. Put document-wide defaults at the top: `#set page(...)`, `#set text(...)`, `#set par(...)`, `#set heading(...)`.
-4. Use headings, figures, tables, references, bibliographies, and outlines for structure. Style them globally with
-   `set` and `show` rules.
-5. Use Tinymist for diagnostics, completion, references, preview, export, and formatting when available. Format the
-   `.typ` files before the final check.
-6. Compile the document to a PDF in a unique `/tmp` directory. Rasterize every page and inspect the images. Check type
-   scale, spacing, alignment, page balance, hierarchy, color, clipped content, awkward breaks, widows, and orphans.
-7. Fix anything that looks dated, crowded, inconsistent, or accidental. Render and inspect again. Stop when the PDF is
-   modern, polished, and free of visible layout problems.
-8. If Typst is unavailable, check the syntax by hand and tell the user that neither compilation nor visual review ran.
+1. Inspect the request, existing `.typ` files, output format, audience, page size, length constraints, templates, and
+   assets. Preserve intentional structure, imports, labels, and package versions.
+2. For a net-new document, redesign, or visual-polish task, read
+   [`references/document-design.md`](references/document-design.md). Plan the pages and establish the grid, type roles,
+   spacing, color roles, and recurring page anatomy before composing sections.
+3. Build with semantic headings, figures, tables, references, and outlines. Use top-level defaults and reuse alignment
+   points and components. Edit or rearrange content before shrinking type or line spacing.
+4. When showing a working document in Zathura, run `typst watch input.typ output.pdf` alongside it and open that same
+   PDF. Keep the watcher active during the editing session so Zathura reloads successful builds, then stop it when done.
+5. Format and lint with Tinymist when available. For substantial documents, run the review helper, which compiles into
+   `/tmp` and creates page images, a contact sheet, and PDF metadata:
 
-## Render and inspect
+   ```bash
+   scripts/render-review.sh path/to/document.typ
+   ```
 
-Keep review files out of the project. A typical CLI pass is:
+6. Inspect the contact sheet, then every page at readable size. Fix hierarchy, density, spacing, alignment, wrapping,
+   clipping, page balance, and asset problems. Rerender the whole document after shared-style or page-flow changes, then
+   compile the requested output.
 
-```bash
-review_dir="$(mktemp -d /tmp/typst-review.XXXXXX)"
-typst compile path/to/file.typ "$review_dir/output.pdf"
-pdftoppm -png -r 144 "$review_dir/output.pdf" "$review_dir/page"
-```
+## Common gotchas
 
-Open every generated `page-*.png` with the available image viewer. Inspect the pages at a readable size and as a set so
-you catch both local defects and inconsistent rhythm across pages. For a long document, inspect every page for overflow
-and broken layout. Study the title page, first content page, dense pages, pages with figures or tables, and the final
-page more closely.
+- A successful compile does not mean the document looks good. Visual review is required for substantial output.
+- Silent font fallback changes layout. Confirm the intended fonts and verify final embedding with `pdffonts`.
+- Keep asset paths relative and durable. Preserve aspect ratios and use sufficient resolution.
+- Use tables for tabular data and grids for layout. Keep headings semantic and add alt text to meaningful figures.
+- `set` and `show` rules are ordered and scoped. Rebuilt headings should remain blocks so they stay with following text.
+- Shared style changes can reflow distant pages. Review the entire document after them.
+- If Typst is unavailable, check syntax by hand and state that compilation and visual review did not run.
 
-Use another PDF rasterizer when `pdftoppm` is missing. Do not skip visual review because the PDF compiled without
-errors.
+## Checks
 
-## Tinymist LSP and formatter
-
-Prefer Tinymist as the Typst language server. Check it with `tinymist --version`; start the server with `tinymist lsp`.
-Enable format-on-save in the editor or run the editor's LSP format action before handing back a document.
-
-Tinymist formatting runs through the editor or LSP. Set `tinymist.formatterMode` to `"typstyle"`, `"typstfmt"`, or
-`"disable"`. The default is `"typstyle"`; use it unless the project standardizes on `"typstfmt"`.
-
-Useful checks:
+Use the project formatter when configured. Do not invent one. Useful checks:
 
 ```bash
-tinymist --version
-tinymist lsp --help
 tinymist lint path/to/file.typ
 typst compile path/to/file.typ path/to/file.pdf
+pdfinfo path/to/file.pdf
+pdffonts path/to/file.pdf
 ```
 
-Do not invent a formatter. If Tinymist or LSP formatting is unavailable, use the formatter configured by the project.
-Otherwise, report that formatting did not run.
+## References
 
-## Syntax reference
-
-Read [`references/syntax.md`](references/syntax.md) for Typst syntax, set and show rules, document patterns, figures,
-tables, math, bibliographies, `context`, modern document styling, and common pitfalls.
+- Read [`references/syntax.md`](references/syntax.md) for syntax, document patterns, tables, figures, math, citations,
+  `context`, and debugging.
+- Read [`references/document-design.md`](references/document-design.md) for net-new documents, redesigns, templates, or
+  visual-polish work.
+- Use the official [Typst reference](https://typst.app/docs/reference/) and
+  [Tinymist documentation](https://myriad-dreamin.github.io/tinymist/) when local guidance is insufficient.
