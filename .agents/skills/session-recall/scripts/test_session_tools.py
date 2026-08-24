@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import json
+import re
 import sqlite3
 import sys
 import tempfile
 import unittest
-from contextlib import closing, redirect_stdout
+from contextlib import closing, redirect_stderr, redirect_stdout
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
@@ -398,13 +399,69 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(len(compact_name), catalog_sessions.SHOW_COMPACT_TITLE_CHARS)
         self.assertTrue(compact_name.endswith("…"))
 
+    def test_show_matches_raw_tool_input_without_exposing_it(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            database = root / "state.sqlite"
+            rollout = root / "session.jsonl"
+            self._create_catalog(database)
+            rollout.write_text(
+                json.dumps(
+                    {
+                        "timestamp": "2026-08-10T10:00:00Z",
+                        "type": "response_item",
+                        "payload": {
+                            "type": "custom_tool_call",
+                            "name": "exec",
+                            "call_id": "call",
+                            "input": (
+                                "const results = await Promise.allSettled([secret]); "
+                                "token=sk-abcdefghijklmnopqrstuvwxyz"
+                            ),
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            self._insert_thread(database, thread_id="thread", title="Thread", rollout_path=str(rollout))
+
+            output = StringIO()
+            with (
+                patch.object(
+                    sys,
+                    "argv",
+                    [
+                        "catalog_sessions.py",
+                        "show",
+                        "thread",
+                        "--db",
+                        str(database),
+                        "--events-only",
+                        "--input-match",
+                        r"Promise\.allSettled",
+                        "--format",
+                        "json",
+                    ],
+                ),
+                redirect_stdout(output),
+            ):
+                self.assertEqual(catalog_sessions.main(), 0)
+
+        event = json.loads(output.getvalue())["events"][0]
+        self.assertEqual(event["tool"], "exec")
+        self.assertNotIn("input", event)
+        self.assertIn("Promise.allSettled", event["input_preview"])
+        self.assertIn("[REDACTED]", event["input_preview"])
+        self.assertNotIn("sk-abcdefghijklmnopqrstuvwxyz", event["input_preview"])
+
 
 class InspectorTests(unittest.TestCase):
     def _write(self, path: Path, records: list[dict[str, object]]) -> None:
         path.write_text("".join(f"{json.dumps(record)}\n" for record in records), encoding="utf-8")
 
     def test_events_are_range_scoped_redacted_and_optionally_raw(self) -> None:
-        records = [
+        records: list[dict[str, object]] = [
             {
                 "timestamp": "2026-08-10T10:00:00Z",
                 "type": "session_meta",
@@ -442,7 +499,49 @@ class InspectorTests(unittest.TestCase):
                     "type": "custom_tool_call",
                     "name": "exec",
                     "call_id": "call",
-                    "input": {"cmd": "echo secret"},
+                    "input": {
+                        "cmd": "echo token=sk-abcdefghijklmnopqrstuvwxyz and keep reading",
+                        "password": "ordinary-value",
+                    },
+                },
+            },
+            {
+                "timestamp": "2026-08-10T11:04:00Z",
+                "type": "response_item",
+                "payload": {
+                    "type": "custom_tool_call_output",
+                    "call_id": "call",
+                    "output": "authorization=sk-abcdefghijklmnopqrstuvwxyz complete",
+                },
+            },
+            {
+                "timestamp": "2026-08-10T11:05:00Z",
+                "type": "event_msg",
+                "payload": {
+                    "type": "item_completed",
+                    "item": {
+                        "type": "CommandExecution",
+                        "id": "command",
+                        "command": "echo token=sk-abcdefghijklmnopqrstuvwxyz",
+                        "status": "completed",
+                        "exit_code": 0,
+                    },
+                },
+            },
+            {
+                "timestamp": "2026-08-10T11:06:00Z",
+                "type": "event_msg",
+                "payload": {
+                    "type": "item_completed",
+                    "item": {
+                        "type": "McpToolCall",
+                        "id": "mcp",
+                        "server": "test",
+                        "tool": "lookup",
+                        "arguments": {"token": "sk-abcdefghijklmnopqrstuvwxyz"},
+                        "result": {"authorization": "sk-abcdefghijklmnopqrstuvwxyz"},
+                        "status": "completed",
+                    },
                 },
             },
         ]
@@ -451,12 +550,102 @@ class InspectorTests(unittest.TestCase):
             self._write(path, records)
             safe = extract_events([path], since="2026-08-10T11:00:00Z")
             raw = extract_events([path], since="2026-08-10T11:00:00Z", redact=False)
+            metadata = extract_events([path], since="2026-08-10T11:00:00Z", metadata_only=True)
+            bounded = extract_events(
+                [path],
+                kinds={"tool"},
+                since="2026-08-10T11:00:00Z",
+                max_chars=30,
+            )
+            matched = extract_events(
+                [path],
+                since="2026-08-10T11:00:00Z",
+                input_patterns=[re.compile("keep reading")],
+            )
 
-        self.assertEqual([event["kind"] for event in safe], ["user", "tool"])
+        self.assertEqual(
+            [event["kind"] for event in safe],
+            ["user", "tool", "tool_output", "command", "mcp"],
+        )
         self.assertEqual(safe[0]["preview"], "Use token=[REDACTED]")
         self.assertNotIn("input", safe[1])
+        self.assertIn("[REDACTED]", safe[1]["input_preview"])
+        self.assertNotIn("ordinary-value", safe[1]["input_preview"])
+        self.assertIn("[REDACTED]", safe[2]["output_preview"])
+        self.assertIn("[REDACTED]", safe[3]["command_preview"])
+        self.assertIn("[REDACTED]", safe[4]["arguments_preview"])
+        self.assertIn("[REDACTED]", safe[4]["result_preview"])
         self.assertIn("sk-abcdefghijklmnopqrstuvwxyz", raw[0]["preview"])
-        self.assertEqual(raw[1]["input"], {"cmd": "echo secret"})
+        self.assertEqual(
+            raw[1]["input"],
+            {
+                "cmd": "echo token=sk-abcdefghijklmnopqrstuvwxyz and keep reading",
+                "password": "ordinary-value",
+            },
+        )
+        self.assertEqual(raw[2]["output"], "authorization=sk-abcdefghijklmnopqrstuvwxyz complete")
+        self.assertEqual(raw[3]["command"], "echo token=sk-abcdefghijklmnopqrstuvwxyz")
+        self.assertEqual(raw[4]["arguments"], {"token": "sk-abcdefghijklmnopqrstuvwxyz"})
+        self.assertEqual(raw[4]["result"], {"authorization": "sk-abcdefghijklmnopqrstuvwxyz"})
+        self.assertNotIn("input_preview", metadata[1])
+        self.assertNotIn("output_preview", metadata[2])
+        self.assertNotIn("command_preview", metadata[3])
+        self.assertNotIn("arguments_preview", metadata[4])
+        self.assertNotIn("result_preview", metadata[4])
+        self.assertEqual(len(bounded[0]["input_preview"]), 30)
+        self.assertTrue(bounded[0]["input_preview"].endswith("…"))
+        self.assertEqual([event["kind"] for event in matched], ["tool"])
+        self.assertNotIn("input", matched[0])
+        self.assertIn("input_preview", matched[0])
+
+    def test_events_cli_switches_between_raw_and_metadata_only(self) -> None:
+        records: list[dict[str, object]] = [
+            {"timestamp": "2026-08-10T10:00:00Z", "type": "session_meta", "payload": {"id": "session"}},
+            {
+                "timestamp": "2026-08-10T10:01:00Z",
+                "type": "response_item",
+                "payload": {
+                    "type": "custom_tool_call",
+                    "name": "exec",
+                    "call_id": "call",
+                    "input": {"token": "sk-abcdefghijklmnopqrstuvwxyz"},
+                },
+            },
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "session.jsonl"
+            self._write(path, records)
+            raw_output = StringIO()
+            with (
+                patch.object(sys, "argv", ["inspect_sessions.py", "events", str(path), "--raw"]),
+                redirect_stdout(raw_output),
+            ):
+                self.assertEqual(inspect_sessions.main(), 0)
+            metadata_output = StringIO()
+            with (
+                patch.object(
+                    sys,
+                    "argv",
+                    ["inspect_sessions.py", "events", str(path), "--metadata-only"],
+                ),
+                redirect_stdout(metadata_output),
+            ):
+                self.assertEqual(inspect_sessions.main(), 0)
+
+        raw_event = json.loads(raw_output.getvalue())
+        metadata_event = json.loads(metadata_output.getvalue())
+        self.assertEqual(raw_event["input"], {"token": "sk-abcdefghijklmnopqrstuvwxyz"})
+        self.assertNotIn("input", metadata_event)
+        self.assertNotIn("input_preview", metadata_event)
+        for removed_flag in ("--unredacted", "--no-redact"):
+            with (
+                self.subTest(removed_flag=removed_flag),
+                patch.object(sys, "argv", ["inspect_sessions.py", "events", str(path), removed_flag]),
+                redirect_stderr(StringIO()),
+                self.assertRaises(SystemExit) as error,
+            ):
+                inspect_sessions.main()
+            self.assertEqual(error.exception.code, 2)
 
     def test_summary_collects_current_metrics_and_token_delta(self) -> None:
         records: list[dict[str, object]] = [
@@ -486,6 +675,16 @@ class InspectorTests(unittest.TestCase):
                 "timestamp": "2026-08-10T10:03:00Z",
                 "type": "response_item",
                 "payload": {"type": "custom_tool_call", "name": "exec", "call_id": "tool1", "input": "{}"},
+            },
+            {
+                "timestamp": "2026-08-10T10:03:30Z",
+                "type": "response_item",
+                "payload": {
+                    "type": "function_call",
+                    "name": "exec_command",
+                    "call_id": "tool2",
+                    "arguments": "{}",
+                },
             },
             {
                 "timestamp": "2026-08-10T10:04:00Z",
@@ -598,7 +797,9 @@ class InspectorTests(unittest.TestCase):
             )
 
         self.assertEqual(row["visible_messages"], 2)
-        self.assertEqual(row["tool_calls"], 1)
+        self.assertEqual(row["tool_calls"], 2)
+        self.assertEqual(row["custom_tool_calls"], 1)
+        self.assertEqual(row["function_tool_calls"], 1)
         self.assertEqual(row["completed_turns"], 1)
         self.assertEqual(row["aborted_turns"], 1)
         self.assertEqual(row["active_duration_ms"], 1500)
@@ -624,6 +825,102 @@ class InspectorTests(unittest.TestCase):
         self.assertEqual(row["audio_inputs"], 1)
         self.assertEqual(row["models"], "gpt-test")
         self.assertEqual(row["reasoning_efforts"], "high")
+
+    def test_summary_measures_execution_overlap_and_failure_isolation(self) -> None:
+        def completed_item(
+            item: dict[str, object],
+            *,
+            timestamp: str,
+            started_at_ms: int,
+            completed_at_ms: int,
+        ) -> dict[str, object]:
+            return {
+                "timestamp": timestamp,
+                "type": "event_msg",
+                "payload": {
+                    "type": "item_completed",
+                    "started_at_ms": started_at_ms,
+                    "completed_at_ms": completed_at_ms,
+                    "item": item,
+                },
+            }
+
+        records: list[dict[str, object]] = [
+            {"timestamp": "2026-08-10T10:00:00Z", "type": "session_meta", "payload": {"id": "session"}},
+            completed_item(
+                {
+                    "type": "CommandExecution",
+                    "id": "command",
+                    "command": "git status",
+                    "exit_code": 0,
+                    "status": "completed",
+                },
+                timestamp="2026-08-10T10:01:00Z",
+                started_at_ms=1_000,
+                completed_at_ms=1_100,
+            ),
+            completed_item(
+                {
+                    "type": "McpToolCall",
+                    "id": "mcp",
+                    "server": "drive",
+                    "tool": "search",
+                    "status": "failed",
+                },
+                timestamp="2026-08-10T10:01:01Z",
+                started_at_ms=1_020,
+                completed_at_ms=1_070,
+            ),
+            completed_item(
+                {"type": "ImageView", "id": "image", "status": "completed"},
+                timestamp="2026-08-10T10:01:02Z",
+                started_at_ms=1_030,
+                completed_at_ms=1_060,
+            ),
+            completed_item(
+                {"type": "Extension", "id": "extension", "status": "completed"},
+                timestamp="2026-08-10T10:02:00Z",
+                started_at_ms=1_200,
+                completed_at_ms=1_240,
+            ),
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "session.jsonl"
+            self._write(path, records)
+            summary = summarize_rollout(path)
+            row = public_summary(summary)
+            aggregate = public_summary(aggregate_summaries([summary, summary]))
+
+        self.assertEqual(
+            {
+                key: row[key]
+                for key in (
+                    "execution_items",
+                    "parallel_groups",
+                    "parallel_execution_items",
+                    "max_concurrency",
+                    "execution_work_ms",
+                    "execution_wall_ms",
+                    "execution_overlap_ms",
+                    "failed_parallel_groups",
+                    "successful_siblings_in_failed_groups",
+                )
+            },
+            {
+                "execution_items": 4,
+                "parallel_groups": 1,
+                "parallel_execution_items": 3,
+                "max_concurrency": 3,
+                "execution_work_ms": 220,
+                "execution_wall_ms": 140,
+                "execution_overlap_ms": 80,
+                "failed_parallel_groups": 1,
+                "successful_siblings_in_failed_groups": 2,
+            },
+        )
+        self.assertEqual(aggregate["execution_items"], 8)
+        self.assertEqual(aggregate["execution_overlap_ms"], 160)
+        self.assertEqual(aggregate["max_concurrency"], 3)
 
     def test_marks_token_delta_incomplete_without_a_prior_snapshot(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -755,6 +1052,18 @@ class InspectorTests(unittest.TestCase):
             values.split("\t"),
             ["1", "2026-08-10T10:01:00Z", "True", "{}", "True", "1", "1"],
         )
+
+    def test_summary_lists_fields_and_suggests_near_matches(self) -> None:
+        output = StringIO()
+        with (
+            patch.object(sys, "argv", ["inspect_sessions.py", "summary", "--list-fields"]),
+            redirect_stdout(output),
+        ):
+            self.assertEqual(inspect_sessions.main(), 0)
+
+        self.assertEqual(output.getvalue().splitlines(), list(inspect_sessions.SUMMARY_FIELDS))
+        with self.assertRaisesRegex(ValueError, r"tool_failures -> .*mcp_failures"):
+            inspect_sessions._parse_fields("tool_failures", inspect_sessions.SUMMARY_FIELDS)
 
     def test_summary_requires_tools_inside_the_requested_range(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

@@ -12,8 +12,9 @@ rollout evidence, and report what happened, what remains open, and what may dese
 ## Safety And Evidence
 
 - Never modify, archive, delete, rename, pin, or compact session data unless the user explicitly asks.
-- Use redacted output by default. Use `--unredacted` only when raw messages, tool inputs, outputs, commands, or file
-  details are necessary; warn that it may expose secrets or personal data.
+- Default event output includes bounded, secret-redacted payload previews. Use `--metadata-only` when payload details
+  are unnecessary. Use `--raw` only when complete untouched payloads are necessary; warn that it may expose secrets,
+  personal data, or large outputs.
 - Treat encrypted reasoning as unavailable. Base conclusions on visible messages, safe metadata, work events, token
   records, compactions, and summaries.
 - Paraphrase findings and distinguish observations from inference.
@@ -48,7 +49,8 @@ rollout evidence, and report what happened, what remains open, and what may dese
 
 5. Use `show` for targeted evidence from one or more known thread IDs. Prefer `--metadata compact`; use
    `--events-only` for batch event review when catalog metadata is already available. For the final assistant response
-   from each selected thread, use `--kind assistant --tail 1` instead of loading every progress update.
+   from each selected thread, use `--kind assistant --tail 1` instead of loading every progress update. Use
+   `--input-match` to search complete tool inputs while keeping the default bounded previews.
 
 6. Inspect selected rollout paths only when SQLite cannot answer the question:
 
@@ -60,8 +62,9 @@ rollout evidence, and report what happened, what remains open, and what may dese
      --paths-from-stdin --since START_ISO --until REVIEW_CUTOFF_ISO --aggregate --compact
    ```
 
-   Use `summary` for exact-range message, turn, tool, token, duration, command, file-change, MCP, compaction, and replay
-   metrics. Use repeatable `--require-tool TOOL` to retain only rollouts that used every named tool inside the range.
+   Use `summary` for exact-range message, turn, tool, token, duration, execution overlap, command, file-change, MCP,
+   compaction, and replay metrics. Use repeatable `--require-tool TOOL` to retain only rollouts that used every named
+   tool inside the range.
    Use `events` for redacted, timestamped, line-numbered evidence and targeted text matching. Use `--counter-limit` or
    `--fields` when a custom bounded summary is more useful than the compact preset. Preserve the generated truncation,
    distinct-count, and omitted-count fields whenever limited counters are handed off or stored.

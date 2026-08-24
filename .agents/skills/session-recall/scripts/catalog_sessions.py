@@ -178,16 +178,24 @@ def _arguments() -> argparse.Namespace:
     show_parser.add_argument("--since")
     show_parser.add_argument("--until")
     show_parser.add_argument("--match", action="append", default=[], metavar="REGEX")
+    show_parser.add_argument(
+        "--input-match",
+        action="append",
+        default=[],
+        metavar="REGEX",
+        help="Match complete tool inputs before previewing",
+    )
     show_parser.add_argument("--ignore-case", action="store_true")
     show_parser.add_argument("--tail", type=int)
-    show_parser.add_argument("--max-chars", type=int, default=600, help="Maximum text characters; 0 means unlimited")
     show_parser.add_argument(
-        "--unredacted",
-        "--no-redact",
-        dest="unredacted",
-        action="store_true",
-        help="Disable secret redaction and include raw tool details; may expose sensitive data",
+        "--max-chars",
+        type=int,
+        default=600,
+        help="Maximum preview characters; 0 means unlimited",
     )
+    details = show_parser.add_mutually_exclusive_group()
+    details.add_argument("--raw", action="store_true", help="Emit complete unredacted payloads")
+    details.add_argument("--metadata-only", action="store_true", help="Omit tool payload previews")
     show_parser.add_argument("--metadata", choices=("full", "compact", "none"), default="full")
     show_parser.add_argument("--events-only", action="store_true", help="Alias for --metadata none")
     show_parser.add_argument("--format", choices=("markdown", "json", "jsonl"), default="markdown")
@@ -743,6 +751,7 @@ def main() -> int:
             parse_boundary(args.until, end=True)
         flags = re.IGNORECASE if args.ignore_case else 0
         patterns = [re.compile(pattern, flags) for pattern in args.match]
+        input_patterns = [re.compile(pattern, flags) for pattern in args.input_match]
     except (ValueError, re.error) as error:
         raise SystemExit(f"invalid event filter: {error}") from error
 
@@ -753,9 +762,11 @@ def main() -> int:
             kinds=set(args.kind or EVENT_KINDS),
             since=args.since,
             until=args.until,
-            max_chars=args.max_chars,
-            redact=not args.unredacted,
+            max_chars=0 if args.raw else args.max_chars,
+            redact=not args.raw,
+            metadata_only=args.metadata_only,
             patterns=patterns,
+            input_patterns=input_patterns,
         )
         if args.tail is not None:
             events = events[-args.tail :] if args.tail else []

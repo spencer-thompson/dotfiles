@@ -9,6 +9,7 @@ import shlex
 import sys
 from collections import Counter
 from datetime import date, datetime, time, timedelta
+from difflib import get_close_matches
 from pathlib import Path
 from typing import Any
 
@@ -34,8 +35,10 @@ SENSITIVE_TOKEN = re.compile(
     r"|\b(?:AKIA|ASIA)[A-Z0-9]{16}\b"
     r"|\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b"
 )
+SENSITIVE_KEY = re.compile(r"(?i)(api[ _-]?key|authorization|bearer|password|secret|token)")
 ENV_ASSIGNMENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
 EVENT_KINDS = ("user", "assistant", "tool", "tool_output", "command", "file_change", "mcp", "turn", "compaction")
+ADDITIONAL_EXECUTION_ITEM_TYPES = {"ImageView", "Extension"}
 TOKEN_FIELDS = (
     "input_tokens",
     "cached_input_tokens",
@@ -71,6 +74,8 @@ SUMMARY_FIELDS = (
     "assistant_messages",
     "visible_messages",
     "tool_calls",
+    "custom_tool_calls",
+    "function_tool_calls",
     "tools",
     "tools_truncated",
     "tools_distinct",
@@ -79,6 +84,15 @@ SUMMARY_FIELDS = (
     "aborted_turns",
     "active_duration_ms",
     "average_time_to_first_token_ms",
+    "execution_items",
+    "parallel_groups",
+    "parallel_execution_items",
+    "max_concurrency",
+    "execution_work_ms",
+    "execution_wall_ms",
+    "execution_overlap_ms",
+    "failed_parallel_groups",
+    "successful_siblings_in_failed_groups",
     "command_executions",
     "command_successes",
     "command_failures",
@@ -126,6 +140,8 @@ SUMMARY_COMPACT_FIELDS = (
     "token_snapshots_in_range",
     "token_delta_complete",
     "tool_calls",
+    "custom_tool_calls",
+    "function_tool_calls",
     "tools",
     "tools_truncated",
     "tools_distinct",
@@ -228,6 +244,31 @@ def _tool_input(payload: dict[str, Any]) -> Any:
     return payload["input"] if "input" in payload else payload.get("arguments")
 
 
+def _redact_detail(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {
+            key: "[REDACTED]" if SENSITIVE_KEY.search(str(key)) else _redact_detail(child)
+            for key, child in value.items()
+        }
+    if isinstance(value, list):
+        return [_redact_detail(child) for child in value]
+    if isinstance(value, str):
+        return render_text(value, max_chars=0)
+    return value
+
+
+def _detail_preview(value: Any, max_chars: int, *, redact: bool) -> str:
+    if redact and isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except json.JSONDecodeError:
+            pass
+    if redact:
+        value = _redact_detail(value)
+    text = value if isinstance(value, str) else json.dumps(value, ensure_ascii=False, sort_keys=True)
+    return render_text(text, max_chars, redact=redact)
+
+
 def _duration_ms(value: Any) -> int:
     if isinstance(value, (int, float)):
         return max(0, round(value))
@@ -238,6 +279,85 @@ def _duration_ms(value: Any) -> int:
     if not isinstance(seconds, (int, float)) or not isinstance(nanos, (int, float)):
         return 0
     return max(0, round(seconds * 1000 + nanos / 1_000_000))
+
+
+def _execution_interval(payload: dict[str, Any], item: dict[str, Any]) -> tuple[int, int, bool] | None:
+    started_at_ms = payload.get("started_at_ms")
+    completed_at_ms = payload.get("completed_at_ms")
+    if not isinstance(started_at_ms, (int, float)) or not isinstance(completed_at_ms, (int, float)):
+        return None
+    start = round(started_at_ms)
+    end = round(completed_at_ms)
+    if end < start:
+        return None
+    if end == start:
+        end += max(1, _duration_ms(item.get("duration")))
+    exit_code = item.get("exit_code")
+    status = str(item.get("status") or "").lower()
+    failed = isinstance(exit_code, int) and exit_code != 0 or status in {"failed", "error", "aborted"}
+    return start, end, failed
+
+
+def _execution_metrics(intervals: list[tuple[int, int, bool]]) -> dict[str, int]:
+    metrics = {
+        "execution_items": len(intervals),
+        "parallel_groups": 0,
+        "parallel_execution_items": 0,
+        "max_concurrency": 0,
+        "execution_work_ms": 0,
+        "execution_wall_ms": 0,
+        "execution_overlap_ms": 0,
+        "failed_parallel_groups": 0,
+        "successful_siblings_in_failed_groups": 0,
+    }
+    if not intervals:
+        return metrics
+
+    ordered = sorted(intervals)
+    metrics["execution_work_ms"] = sum(end - start for start, end, _failed in ordered)
+
+    union_start, union_end, _failed = ordered[0]
+    for start, end, _failed in ordered[1:]:
+        if start <= union_end:
+            union_end = max(union_end, end)
+        else:
+            metrics["execution_wall_ms"] += union_end - union_start
+            union_start, union_end = start, end
+    metrics["execution_wall_ms"] += union_end - union_start
+    metrics["execution_overlap_ms"] = metrics["execution_work_ms"] - metrics["execution_wall_ms"]
+
+    group_end = ordered[0][1]
+    group_size = 1
+    group_failures = int(ordered[0][2])
+
+    def record_group() -> None:
+        if group_size <= 1:
+            return
+        metrics["parallel_groups"] += 1
+        metrics["parallel_execution_items"] += group_size
+        if group_failures:
+            metrics["failed_parallel_groups"] += 1
+            metrics["successful_siblings_in_failed_groups"] += group_size - group_failures
+
+    for start, end, failed in ordered[1:]:
+        if start < group_end:
+            group_end = max(group_end, end)
+            group_size += 1
+            group_failures += int(failed)
+        else:
+            record_group()
+            group_end = end
+            group_size = 1
+            group_failures = int(failed)
+    record_group()
+
+    active = 0
+    for _timestamp_ms, delta in sorted(
+        [(start, 1) for start, _end, _failed in ordered] + [(end, -1) for _start, end, _failed in ordered]
+    ):
+        active += delta
+        metrics["max_concurrency"] = max(metrics["max_concurrency"], active)
+    return metrics
 
 
 def _command_family(command: Any) -> str:
@@ -310,6 +430,7 @@ def _normalized_event(
     *,
     max_chars: int,
     redact: bool,
+    metadata_only: bool,
 ) -> dict[str, Any] | None:
     payload = record.get("payload")
     if not isinstance(payload, dict):
@@ -337,13 +458,17 @@ def _normalized_event(
         if not isinstance(name, str) or not name:
             return None
         event = {**base, "kind": "tool", "tool": name, "_event_id": _stable_id(payload, "tool")}
-        if not redact:
+        if not metadata_only and redact:
+            event["input_preview"] = _detail_preview(_tool_input(payload), max_chars, redact=True)
+        elif not metadata_only:
             event["input"] = _tool_input(payload)
         return event
 
     if record_type == "response_item" and payload_type in {"custom_tool_call_output", "function_call_output"}:
         event = {**base, "kind": "tool_output", "_event_id": _stable_id(payload, "tool_output")}
-        if not redact:
+        if not metadata_only and redact:
+            event["output_preview"] = _detail_preview(payload.get("output"), max_chars, redact=True)
+        elif not metadata_only:
             event["output"] = payload.get("output")
         return event
 
@@ -386,7 +511,9 @@ def _normalized_event(
             "duration_ms": _duration_ms(item.get("duration")),
             "_event_id": _stable_id(item, "command"),
         }
-        if not redact:
+        if not metadata_only and redact:
+            event["command_preview"] = _detail_preview(command, max_chars, redact=True)
+        elif not metadata_only:
             event["command"] = command
         return event
     if item_type == "FileChange":
@@ -398,7 +525,9 @@ def _normalized_event(
             "status": item.get("status", ""),
             "_event_id": _stable_id(item, "file_change"),
         }
-        if not redact:
+        if not metadata_only and redact:
+            event["details_preview"] = _detail_preview(changes, max_chars, redact=True)
+        elif not metadata_only:
             event["details"] = changes
         return event
     if item_type == "McpToolCall":
@@ -413,7 +542,10 @@ def _normalized_event(
             "read_only": item.get("readOnlyHint"),
             "_event_id": _stable_id(item, "mcp"),
         }
-        if not redact:
+        if not metadata_only and redact:
+            event["arguments_preview"] = _detail_preview(item.get("arguments"), max_chars, redact=True)
+            event["result_preview"] = _detail_preview(item.get("result"), max_chars, redact=True)
+        elif not metadata_only:
             event["arguments"] = item.get("arguments")
             event["result"] = item.get("result")
         return event
@@ -428,7 +560,9 @@ def extract_events(
     until: str | None = None,
     max_chars: int = 600,
     redact: bool = True,
+    metadata_only: bool = False,
     patterns: list[re.Pattern[str]] | None = None,
+    input_patterns: list[re.Pattern[str]] | None = None,
     line_range: tuple[int | None, int | None] = (None, None),
     dedupe: bool = True,
 ) -> list[dict[str, Any]]:
@@ -458,7 +592,30 @@ def extract_events(
                     _timestamp(record.get("timestamp")), since_value, until_value
                 ):
                     continue
-                event = _normalized_event(path, line_number, record, max_chars=max_chars, redact=redact)
+                if input_patterns:
+                    payload = record.get("payload")
+                    if (
+                        record.get("type") != "response_item"
+                        or not isinstance(payload, dict)
+                        or payload.get("type") not in {"custom_tool_call", "function_call"}
+                    ):
+                        continue
+                    tool_input = _tool_input(payload)
+                    searchable_input = (
+                        tool_input
+                        if isinstance(tool_input, str)
+                        else json.dumps(tool_input, ensure_ascii=False, sort_keys=True)
+                    )
+                    if not any(pattern.search(searchable_input) for pattern in input_patterns):
+                        continue
+                event = _normalized_event(
+                    path,
+                    line_number,
+                    record,
+                    max_chars=max_chars,
+                    redact=redact,
+                    metadata_only=metadata_only,
+                )
                 if event is None or event["kind"] not in selected_kinds:
                     continue
                 event_id = str(event.pop("_event_id", ""))
@@ -523,10 +680,13 @@ def _empty_summary(path: Path) -> dict[str, Any]:
         "assistant_messages": 0,
         "visible_messages": 0,
         "tool_calls": 0,
+        "custom_tool_calls": 0,
+        "function_tool_calls": 0,
         "completed_turns": 0,
         "aborted_turns": 0,
         "active_duration_ms": 0,
         "average_time_to_first_token_ms": 0,
+        **_execution_metrics([]),
         "command_executions": 0,
         "command_successes": 0,
         "command_failures": 0,
@@ -552,6 +712,7 @@ def _empty_summary(path: Path) -> dict[str, Any]:
         "_efforts": set(),
         "_ttft_total_ms": 0,
         "_ttft_samples": 0,
+        "_execution_intervals": [],
     }
 
 
@@ -656,6 +817,7 @@ def summarize_rollout(
                 if not isinstance(name, str) or not name or not _mark(summary, payload, "tool", seen):
                     continue
                 summary["tool_calls"] += 1
+                summary["custom_tool_calls" if payload_type == "custom_tool_call" else "function_tool_calls"] += 1
                 summary["_tools"][name] += 1
                 _update_event_bounds(summary, timestamp_text)
                 continue
@@ -700,6 +862,9 @@ def summarize_rollout(
             item = payload["item"]
             item_type = item.get("type")
             if item_type == "CommandExecution" and _mark(summary, item, "command", seen):
+                interval = _execution_interval(payload, item)
+                if interval is not None:
+                    summary["_execution_intervals"].append(interval)
                 summary["command_executions"] += 1
                 summary["command_duration_ms"] += _duration_ms(item.get("duration"))
                 family = _command_family(item.get("command"))
@@ -717,6 +882,9 @@ def summarize_rollout(
                 summary["_files"].update(_paths_from_changes(item.get("changes")))
                 _update_event_bounds(summary, timestamp_text)
             elif item_type == "McpToolCall" and _mark(summary, item, "mcp", seen):
+                interval = _execution_interval(payload, item)
+                if interval is not None:
+                    summary["_execution_intervals"].append(interval)
                 summary["mcp_calls"] += 1
                 summary["mcp_duration_ms"] += _duration_ms(item.get("duration"))
                 label = "/".join(str(part) for part in (item.get("server"), item.get("tool")) if part)
@@ -724,6 +892,11 @@ def summarize_rollout(
                     summary["_mcp_tools"][label] += 1
                 if str(item.get("status") or "").lower() in {"failed", "error", "aborted"}:
                     summary["mcp_failures"] += 1
+                _update_event_bounds(summary, timestamp_text)
+            elif item_type in ADDITIONAL_EXECUTION_ITEM_TYPES and _mark(summary, item, str(item_type).lower(), seen):
+                interval = _execution_interval(payload, item)
+                if interval is not None:
+                    summary["_execution_intervals"].append(interval)
                 _update_event_bounds(summary, timestamp_text)
 
     if since_value is not None and not token_baseline_seen:
@@ -737,6 +910,7 @@ def summarize_rollout(
     summary["files_changed"] = len(summary["_files"])
     if summary["_ttft_samples"]:
         summary["average_time_to_first_token_ms"] = round(summary["_ttft_total_ms"] / summary["_ttft_samples"])
+    summary.update(_execution_metrics(summary["_execution_intervals"]))
     return summary
 
 
@@ -781,6 +955,7 @@ def aggregate_summaries(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "first_event_at",
         "last_event_at",
         "average_time_to_first_token_ms",
+        "max_concurrency",
         "model_context_window",
         "token_delta_complete",
     }
@@ -799,6 +974,7 @@ def aggregate_summaries(rows: list[dict[str, Any]]) -> dict[str, Any]:
         aggregate["_ttft_total_ms"] += row["_ttft_total_ms"]
         aggregate["_ttft_samples"] += row["_ttft_samples"]
     aggregate["files_changed"] = len(aggregate["_files"])
+    aggregate["max_concurrency"] = max((row["max_concurrency"] for row in rows), default=0)
     aggregate["token_delta_complete"] = all(row["token_delta_complete"] for row in rows)
     if aggregate["_ttft_samples"]:
         aggregate["average_time_to_first_token_ms"] = round(aggregate["_ttft_total_ms"] / aggregate["_ttft_samples"])
@@ -836,7 +1012,13 @@ def _parse_fields(value: str, available: tuple[str, ...]) -> tuple[str, ...]:
         raise ValueError(f"duplicate --fields: {', '.join(duplicates)}")
     unknown = sorted(set(fields) - set(available))
     if unknown:
-        raise ValueError(f"unknown --fields: {', '.join(unknown)}")
+        suggestions = []
+        for field in unknown:
+            matches = get_close_matches(field, available, n=3, cutoff=0.3)
+            if matches:
+                suggestions.append(f"{field} -> {', '.join(matches)}")
+        hint = f"; nearest fields: {'; '.join(suggestions)}" if suggestions else ""
+        raise ValueError(f"unknown --fields: {', '.join(unknown)}{hint}")
     return fields
 
 
@@ -856,17 +1038,25 @@ def _arguments() -> argparse.Namespace:
     _add_paths(events_parser)
     events_parser.add_argument("--kind", action="append", choices=EVENT_KINDS)
     events_parser.add_argument("--match", action="append", default=[], metavar="REGEX")
+    events_parser.add_argument(
+        "--input-match",
+        action="append",
+        default=[],
+        metavar="REGEX",
+        help="Match complete tool inputs before previewing",
+    )
     events_parser.add_argument("--ignore-case", action="store_true")
     events_parser.add_argument("--line-range", metavar="START:END")
     events_parser.add_argument("--tail", type=int)
-    events_parser.add_argument("--max-chars", type=int, default=600, help="Maximum text characters; 0 means unlimited")
     events_parser.add_argument(
-        "--unredacted",
-        "--no-redact",
-        dest="unredacted",
-        action="store_true",
-        help="Disable secret redaction and include raw tool details; may expose sensitive data",
+        "--max-chars",
+        type=int,
+        default=600,
+        help="Maximum preview characters; 0 means unlimited",
     )
+    details = events_parser.add_mutually_exclusive_group()
+    details.add_argument("--raw", action="store_true", help="Emit complete unredacted payloads")
+    details.add_argument("--metadata-only", action="store_true", help="Omit tool payload previews")
 
     summary_parser = subparsers.add_parser("summary", help="Emit metrics for selected rollout files")
     _add_paths(summary_parser)
@@ -884,6 +1074,7 @@ def _arguments() -> argparse.Namespace:
     projection = summary_parser.add_mutually_exclusive_group()
     projection.add_argument("--fields", metavar="FIELD,...", help="Select and order output fields")
     projection.add_argument("--compact", action="store_true", help="Use a trustworthy compact overview")
+    projection.add_argument("--list-fields", action="store_true", help="Print selectable fields and exit")
     summary_parser.add_argument(
         "--counter-limit",
         type=int,
@@ -893,7 +1084,9 @@ def _arguments() -> argparse.Namespace:
     )
     args = parser.parse_args()
     if args.command == "summary":
-        if args.fields:
+        if args.list_fields:
+            args.fields = ()
+        elif args.fields:
             try:
                 args.fields = _parse_fields(args.fields, SUMMARY_FIELDS)
             except ValueError as error:
@@ -909,6 +1102,9 @@ def _arguments() -> argparse.Namespace:
 
 def main() -> int:
     args = _arguments()
+    if args.command == "summary" and args.list_fields:
+        print("\n".join(SUMMARY_FIELDS))
+        return 0
     try:
         if args.since:
             parse_boundary(args.since, end=False)
@@ -924,6 +1120,7 @@ def main() -> int:
         try:
             flags = re.IGNORECASE if args.ignore_case else 0
             patterns = [re.compile(pattern, flags) for pattern in args.match]
+            input_patterns = [re.compile(pattern, flags) for pattern in args.input_match]
             line_range = parse_line_range(args.line_range)
         except (ValueError, re.error) as error:
             raise SystemExit(f"invalid event filter: {error}") from error
@@ -932,9 +1129,11 @@ def main() -> int:
             kinds=set(args.kind or EVENT_KINDS),
             since=args.since,
             until=args.until,
-            max_chars=args.max_chars,
-            redact=not args.unredacted,
+            max_chars=0 if args.raw else args.max_chars,
+            redact=not args.raw,
+            metadata_only=args.metadata_only,
             patterns=patterns,
+            input_patterns=input_patterns,
             line_range=line_range,
             dedupe=not args.no_dedupe,
         )

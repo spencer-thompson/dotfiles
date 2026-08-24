@@ -42,9 +42,8 @@ use `ast-grep outline <path>` to map their structure before broad reads.
 
 ## Code Mode
 
-In Code Mode, batch independent read-only tool calls within each bounded stage.
-Use `Promise.allSettled([...])` when partial results remain useful, and inspect every result.
-Use `Promise.all([...])` only when any failure should abort the batch.
+Batch independent read-only calls with `Promise.allSettled([...])` only when
+every tool is listed in `ALL_TOOLS`, then inspect every result.
 
-Keep dependent calls, waits and resumes, approval-sensitive actions, mutations, and adaptive investigations sequential.
-Do not split otherwise batchable inspections across separate Code Mode executions.
+Call unavailable tools directly. Keep waits, approvals, mutations, and adaptive
+investigations sequential.

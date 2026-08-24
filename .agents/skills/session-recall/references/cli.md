@@ -75,7 +75,7 @@ python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py show THREAD_
 
 `show` accepts multiple IDs, removes duplicate IDs while preserving requested order, validates every ID and rollout
 before output, and applies `--tail` independently per thread. Event filters include `--kind`, `--since`, `--until`,
-`--match`, `--ignore-case`, and `--max-chars`.
+`--match`, `--input-match`, `--ignore-case`, `--max-chars`, `--raw`, and `--metadata-only`.
 
 Fetch only the final assistant response from each selected thread:
 
@@ -114,8 +114,17 @@ python3 ~/.agents/skills/session-recall/scripts/inspect_sessions.py events ROLLO
 ```
 
 Events are timestamped, line-numbered JSONL. Stable IDs are deduplicated across selected rollouts unless
-`--no-dedupe` is supplied. Redaction is on by default. `--unredacted` and `--no-redact` expose raw details and may
-reveal credentials, private data, or large payloads.
+`--no-dedupe` is supplied.
+
+By default, messages and payload details are bounded by `--max-chars` and known secret patterns are replaced with
+`[REDACTED]`. Tool calls, outputs, commands, file changes, and MCP events expose string previews rather than their raw
+structured values. Use `--metadata-only` to omit payload previews. Use `--raw` for complete unredacted messages and
+payloads; this bypasses `--max-chars` and may expose secrets, personal data, or large outputs. The two modes are
+mutually exclusive.
+
+Use repeatable `--input-match REGEX` to search complete custom or function tool inputs before preview rendering.
+Repeated input patterns use OR semantics. When combined with `--match`, an event must satisfy both filter classes.
+`catalog_sessions.py show` supports the same filters and payload modes.
 
 ### Summary Mode
 
@@ -125,7 +134,7 @@ python3 ~/.agents/skills/session-recall/scripts/inspect_sessions.py summary ROLL
 ```
 
 Summary mode computes range-scoped message, activity, turn, duration, token-delta, tool, command, file-change, MCP,
-compaction, replay, media, model, effort, malformed-line, and rollout-size metrics.
+compaction, replay, media, model, effort, malformed-line, rollout-size, and execution-overlap metrics.
 
 Repeatable `--require-tool TOOL` retains only rollouts that used every named tool inside the requested range. Filtering
 happens before sorting, limiting, aggregation, counter projection, and output formatting. It uses the complete internal
@@ -143,7 +152,46 @@ python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py list \
 
 Use `--fields FIELD,...` to select and order output fields. Use `--compact` for a bounded overview that retains
 identity, event bounds, completeness indicators, workload totals, failure counts, models, efforts, and top counters.
-Projection never changes calculations.
+Projection never changes calculations. Use `--list-fields` without rollout paths to print every selectable field.
+Unknown fields report nearby names.
+
+Full selectable summary fields are:
+
+```text
+kind,path,session_id,sessions,first_event_at,last_event_at,rollout_bytes,
+records_in_range,malformed_lines,activity_events,user_messages,assistant_messages,
+visible_messages,tool_calls,custom_tool_calls,function_tool_calls,tools,
+tools_truncated,tools_distinct,tool_calls_omitted,completed_turns,aborted_turns,
+active_duration_ms,average_time_to_first_token_ms,execution_items,parallel_groups,
+parallel_execution_items,max_concurrency,execution_work_ms,execution_wall_ms,
+execution_overlap_ms,failed_parallel_groups,successful_siblings_in_failed_groups,
+command_executions,command_successes,command_failures,command_duration_ms,
+command_families,command_families_truncated,command_families_distinct,
+command_executions_omitted,file_change_events,files_changed,mcp_calls,mcp_failures,
+mcp_duration_ms,mcp_tools,mcp_tools_truncated,mcp_tools_distinct,mcp_calls_omitted,
+compactions,image_inputs,audio_inputs,replayed_events,model_context_window,
+token_snapshots_in_range,token_delta_complete,input_tokens,cached_input_tokens,
+cache_write_input_tokens,output_tokens,reasoning_output_tokens,total_tokens,models,
+reasoning_efforts
+```
+
+`tool_calls` counts model-visible tool calls. `custom_tool_calls` and `function_tool_calls` partition that total by
+response-item type.
+
+Execution metrics use completed command, MCP, image-view, and extension intervals that contain recorded start and end
+times:
+
+- `execution_items` counts those intervals.
+- `parallel_groups` counts connected groups containing overlapping intervals; `parallel_execution_items` counts their
+  members.
+- `max_concurrency` is the largest number of intervals active at once.
+- `execution_work_ms` sums interval durations. `execution_wall_ms` sums their union. `execution_overlap_ms` is the
+  difference between those values.
+- `failed_parallel_groups` counts overlapping groups containing a failed execution.
+  `successful_siblings_in_failed_groups` counts the other non-failed executions in those groups.
+
+These are observed execution intervals. `execution_overlap_ms` is not a claim about end-to-end latency saved.
+Aggregate summaries sum interval metrics across rollouts and take the maximum `max_concurrency`.
 
 Counters `tools`, `command_families`, and `mcp_tools` are JSON objects. Without `--counter-limit`, all entries are
 included. `--counter-limit N` retains the N largest entries in each counter; `0` emits empty objects. Compact mode
