@@ -1,8 +1,8 @@
 ---
 name: hyprland
 description: >-
-  Observe and control a live Hyprland desktop. 
-  Use when the user asks to inspect or interact with windows or workspaces.
+  Use when using the hyprctl command or when the user asks to inspect hyprland logs,
+  rendering or input behavior, windows, or workspaces.
 ---
 
 # Hyprland
@@ -27,6 +27,9 @@ the filter.
 Before running any `hyprctl dispatch`, `hyprctl eval`, or `hyprctl repl` command—or diagnosing Hyprctl failures,
 discovering dispatcher names, or waiting on compositor events—read
 [references/hyprctl-lua.md](references/hyprctl-lua.md) completely. Do not try legacy dispatcher syntax first.
+
+For compositor logs, crashes, rendering, color-management, direct-scanout, or input-latency investigations, read
+[references/log-triage.md](references/log-triage.md) completely.
 
 ## Follow one workflow
 
