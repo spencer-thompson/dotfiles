@@ -203,6 +203,7 @@ assert(config_values["animations.enabled"] == false, "disabled animations")
 assert(config_values["decoration.blur.enabled"] == false, "disabled blur")
 assert(config_values["decoration.rounding"] == 0, "disabled rounding")
 assert(#angle_updates == 2 and angle_updates[1].enabled == false and angle_updates[2].enabled == false, "disabled angle loops")
+assert(executed_commands[#executed_commands] == "noctalia msg notification-dnd-set on", "enabled do not disturb")
 
 steam.windows = 0
 event_handlers["window.destroy"]()
@@ -211,6 +212,7 @@ assert(config_values["animations.enabled"] == true, "restored animations")
 assert(config_values["decoration.blur.enabled"] == false, "preserved a pre-existing blur override")
 assert(config_values["decoration.rounding"] == 12, "restored the captured rounding")
 assert(angle_updates[3].enabled == true and angle_updates[4].enabled == true, "restored angle loops")
+assert(executed_commands[#executed_commands] == "noctalia msg notification-dnd-set off", "disabled do not disturb")
 
 steam.windows = 1
 event_handlers["window.open"]()

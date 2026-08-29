@@ -56,6 +56,10 @@ local function apply_binds(binds)
 end
 
 local function apply_profile(profile)
+	if profile.config then
+		hl.config(profile.config)
+	end
+
 	for _, monitor in ipairs(require("modules.lid").effective_monitor_rules(profile)) do
 		hl.monitor(monitor)
 	end
