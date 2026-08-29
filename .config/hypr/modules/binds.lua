@@ -201,9 +201,8 @@ local function enable_performance_mode(source)
 		},
 	})
 	looks.set_angle_loops_enabled(false)
-	hl.exec_cmd(
-		[[notify-send -a Hyprland -i noctalia-glyph:bolt-filled -t 2000 "Performance mode enabled"]]
-	)
+	-- hl.exec_cmd([[notify-send -a Hyprland -i noctalia-glyph:bolt-filled -t 2000 "Performance mode enabled"]])
+	hl.exec_cmd("noctalia msg notification-dnd-set on")
 end
 
 local function disable_performance_mode()
@@ -217,9 +216,8 @@ local function disable_performance_mode()
 
 	hl.config(snapshot)
 	looks.set_angle_loops_enabled(true)
-	hl.exec_cmd(
-		[[notify-send -a Hyprland -i noctalia-glyph:bolt-off -t 2000 "Performance mode disabled"]]
-	)
+	-- hl.exec_cmd([[notify-send -a Hyprland -i noctalia-glyph:bolt-off -t 2000 "Performance mode disabled"]])
+	hl.exec_cmd("noctalia msg notification-dnd-set off")
 end
 
 local function active_steam_workspace_is_occupied()
