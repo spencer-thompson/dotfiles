@@ -25,11 +25,8 @@ Don't be afraid to propose bold ideas if they can meaningfully benefit our work.
 
 # Questions are read-only
 
-A question is a request for an answer, not for changes.
-If a message generally asks rather than instructs: answer it, do not edit files.
-
-If the answer to a question is obvious and the change is trivial,
-still answer first and then offer the change before making it.
+Questions seeking information are read-only.
+Questions asking you to do something authorize the requested work.
 
 # Local Tooling
 
@@ -42,8 +39,9 @@ use `ast-grep outline <path>` to map their structure before broad reads.
 
 ## Code Mode
 
-Batch independent read-only calls with `Promise.allSettled([...])` only when
-every tool is listed in `ALL_TOOLS`, then inspect every result.
+Parallelize only independent read-only work. Keep waits, approvals, mutations,
+and adaptive investigations sequential.
 
-Call unavailable tools directly. Keep waits, approvals, mutations, and adaptive
-investigations sequential.
+When a command yields a running session or cell ID, resume it with the matching
+wait or polling tool. A yield is not completion or failure. Never rerun a
+state-changing command until the original is confirmed complete or explicitly terminated.

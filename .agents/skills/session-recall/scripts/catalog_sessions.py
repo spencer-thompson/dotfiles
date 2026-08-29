@@ -262,6 +262,13 @@ def _add_catalog_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--children", metavar="THREAD_ID", help="Alias for --parent-thread-id")
     parser.add_argument("--top-level-only", action="store_true")
     parser.add_argument("--exclude-thread", action="append", default=[], metavar="THREAD_ID")
+    parser.add_argument(
+        "--exclude-thread-source",
+        action="append",
+        default=[],
+        metavar="SOURCE",
+        help="Exclude this exact thread_source; repeatable and case-insensitive",
+    )
     parser.add_argument("--limit", type=int, default=None, help="Maximum rows after filtering and sorting; 0 means all")
     parser.add_argument("--preview-chars", type=int, default=180)
 
@@ -388,6 +395,7 @@ def query_catalog(
     parent_thread_id: str | None = None,
     top_level_only: bool = False,
     excluded_threads: set[str] | None = None,
+    excluded_thread_sources: set[str] | None = None,
     limit: int = 40,
     preview_chars: int = 180,
     thread_ids: list[str] | None = None,
@@ -452,6 +460,11 @@ def query_catalog(
             placeholders = ", ".join("?" for _ in excluded)
             where.append(f"id NOT IN ({placeholders})")
             params.extend(sorted(excluded))
+        excluded_sources = {source.lower() for source in excluded_thread_sources or set()}
+        if excluded_sources:
+            placeholders = ", ".join("?" for _ in excluded_sources)
+            where.append(f"lower(coalesce(thread_source, '')) NOT IN ({placeholders})")
+            params.extend(sorted(excluded_sources))
         if thread_ids:
             placeholders = ", ".join("?" for _ in thread_ids)
             where.append(f"id IN ({placeholders})")
@@ -697,6 +710,7 @@ def main() -> int:
                 parent_thread_id=args.parent_thread_id,
                 top_level_only=args.top_level_only,
                 excluded_threads=set(args.exclude_thread),
+                excluded_thread_sources=set(args.exclude_thread_source),
                 limit=0 if args.command == "stats" else args.limit,
                 preview_chars=args.preview_chars,
             )

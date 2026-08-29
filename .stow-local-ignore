@@ -11,6 +11,7 @@ ricing-todo.md
 
 # Generated caches and local scratch files
 (^|/)\.rumdl_cache(/|$)
+(^|/)\.ruff_cache(/|$)
 (^|/)__pycache__(/|$)
 (^|/)[^/]+\.py[co]$
 (^|/)[^/]+\.log$

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Perfect Functions"
+  short_description: "Write honest, testable, well-shaped functions"
+  default_prompt: "Use $perfect-functions to design or review these functions."
+
+policy:
+  allow_implicit_invocation: false

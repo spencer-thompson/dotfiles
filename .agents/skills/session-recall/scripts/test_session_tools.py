@@ -69,6 +69,7 @@ class CatalogTests(unittest.TestCase):
         reasoning_effort: str = "medium",
         agent_role: str = "",
         agent_path: str = "",
+        thread_source: str | None = None,
         created_at_ms: int = 1_750_000_000_000,
         updated_at_ms: int = 1_750_000_100_000,
         recency_at_ms: int = 1_750_000_050_000,
@@ -105,7 +106,7 @@ class CatalogTests(unittest.TestCase):
                     agent_role,
                     "",
                     agent_path,
-                    "subagent" if agent_role or agent_path else "user",
+                    thread_source or ("subagent" if agent_role or agent_path else "user"),
                     tokens_used,
                     name,
                     git_origin_url,
@@ -183,6 +184,54 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual([row["thread_id"] for row in family], ["child", "root"])
         self.assertEqual(family[0]["family_cumulative_tokens"], 400)
         self.assertEqual([row["thread_id"] for row in top], ["child"])
+
+    def test_excludes_thread_sources_before_sorting_and_limit(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database = Path(directory) / "state.sqlite"
+            self._create_catalog(database)
+            self._insert_thread(
+                database,
+                thread_id="guardian",
+                thread_source="guardian_review",
+                recency_at_ms=300,
+            )
+            self._insert_thread(database, thread_id="user", recency_at_ms=200)
+
+            rows = self._query(
+                database,
+                excluded_thread_sources={"GUARDIAN_REVIEW"},
+                sort="recency",
+                limit=1,
+            )
+
+            output = StringIO()
+            with (
+                patch.object(
+                    sys,
+                    "argv",
+                    [
+                        "catalog_sessions.py",
+                        "list",
+                        "--db",
+                        str(database),
+                        "--days",
+                        "0",
+                        "--exclude-thread-source",
+                        "guardian_review",
+                        "--limit",
+                        "1",
+                        "--fields",
+                        "thread_id",
+                        "--format",
+                        "jsonl",
+                    ],
+                ),
+                redirect_stdout(output),
+            ):
+                self.assertEqual(catalog_sessions.main(), 0)
+
+        self.assertEqual([row["thread_id"] for row in rows], ["user"])
+        self.assertEqual(json.loads(output.getvalue()), {"thread_id": "user"})
 
     def test_stats_aggregate_and_group(self) -> None:
         rows = [

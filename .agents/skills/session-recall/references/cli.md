@@ -12,14 +12,16 @@ detailed workload evidence is required.
 ```bash
 python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py list \
   --since START_ISO --until REVIEW_CUTOFF_ISO \
-  --top-level-only --sort recency --limit 40 --compact
+  --top-level-only --exclude-thread-source guardian_review \
+  --sort recency --limit 40 --compact
 ```
 
 Filtering and ranking run before output projection. `--sort` accepts `recency`, `updated`, `created`, or
 `tokens`. `--top-by-tokens N` aliases `--sort tokens --limit N`; `--min-tokens N` filters first.
 
 Discovery filters include `--since`, `--until`, `--query`, `--cwd`, `--source`, `--model`, `--reasoning-effort`,
-`--git-project`, `--git-branch`, `--named-only`, `--archived`, `--top-level-only`, and repeatable `--exclude-thread`.
+`--git-project`, `--git-branch`, `--named-only`, `--archived`, `--top-level-only`, repeatable `--exclude-thread`, and
+repeatable case-insensitive exact `--exclude-thread-source`. Exclusions apply before sorting and limiting.
 Use the same exact start and cutoff for catalog discovery and rollout inspection so out-of-range rollouts are never
 selected merely to produce empty summaries.
 

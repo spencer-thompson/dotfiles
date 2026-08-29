@@ -62,7 +62,7 @@ local function reset_effects()
 	prepared_window = nil
 end
 
-assert(#gestures == 12, "registered the expected gesture map")
+assert(#gestures == 11, "registered the expected gesture map")
 
 find_gesture(3, "left").action()
 assert(dispatches[1].kind == "layout" and dispatches[1].message == "rollprev", "rolled the tape left")
@@ -95,6 +95,16 @@ assert(fullscreen.action == "fullscreen", "mapped Super plus three-finger up to 
 local special = find_gesture(3, "down", "SUPER")
 assert(special.action == "special" and special.workspace_name == "special", "mapped Super plus down to scratchpad")
 
+local window_swipe = find_gesture(4, "swipe")
+assert(type(window_swipe.action) == "table", "registered unmodified window swipe as a live gesture")
+
+for _, gesture in ipairs(gestures) do
+	assert(
+		not (gesture.fingers == 4 and not gesture.mods and (gesture.direction == "up" or gesture.direction == "down")),
+		"removed the unmodified four-finger Noctalia swipes"
+	)
+end
+
 local move = find_gesture(4, "swipe", "SUPER")
 assert(move.action == "move", "mapped Super plus four-finger swipe to native window movement")
 
@@ -106,6 +116,38 @@ assert(type(centered_pinch.action) == "table", "registered centered pinch resize
 
 local twist_pinch = find_gesture(4, "pinch")
 assert(type(twist_pinch.action) == "table", "registered twist pinch resize as a live gesture")
+
+active_window.floating = false
+reset_effects()
+window_swipe.action.start({})
+window_swipe.action.update({ delta = { x = 30, y = -10 } })
+window_swipe.action.finish({ cancelled = false })
+assert(#dispatches == 0, "kept a tiled window tiled after a mostly horizontal swipe")
+
+reset_effects()
+window_swipe.action.start({})
+window_swipe.action.update({ delta = { x = 4, y = -30 } })
+window_swipe.action.finish({ cancelled = false })
+assert(dispatches[1].kind == "float", "floated a tiled window after an upward swipe")
+assert(dispatches[1].spec.action == "enable", "forced floating on after an upward swipe")
+assert(dispatches[1].spec.window == active_window, "floated the window captured when the swipe began")
+
+reset_effects()
+window_swipe.action.start({})
+window_swipe.action.update({ delta = { x = 0, y = -30 } })
+window_swipe.action.finish({ cancelled = true })
+assert(#dispatches == 0, "kept a tiled window tiled after a cancelled upward swipe")
+
+active_window.floating = true
+reset_effects()
+window_swipe.action.start({})
+window_swipe.action.update({ delta = { x = 10, y = -5 } })
+assert(dispatches[1].kind == "move", "moved a floating window during a swipe")
+assert(dispatches[1].spec.x == 114 and dispatches[1].spec.y == 193, "scaled the floating window movement")
+window_swipe.action.update({ delta = { x = -5, y = 10 } })
+assert(dispatches[2].spec.x == 107 and dispatches[2].spec.y == 207, "accumulated floating window movement")
+window_swipe.action.finish({ cancelled = true })
+assert(dispatches[3].spec.x == 100 and dispatches[3].spec.y == 200, "restored a cancelled floating window move")
 
 local function assert_geometry(width, height, x, y, message, offset)
 	offset = offset or 0

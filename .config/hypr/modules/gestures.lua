@@ -4,12 +4,14 @@ local MIN_WINDOW_WIDTH = 160
 local MIN_WINDOW_HEIGHT = 100
 local PINCH_SCALE_SENSITIVITY = 1.25
 local MOVE_SENSITIVITY = 1.4
+local FLOAT_SWIPE_THRESHOLD = 24
 local TWIST_DEADZONE_DEGREES = 1
 local TWIST_ASPECT_BIAS_PER_DEGREE = 0.02
 local MAX_TWIST_ASPECT_BIAS = 0.75
 
 local layouts = require("modules.layouts")
 local resize_state = nil
+local swipe_state = nil
 
 local function clamp(value, minimum, maximum)
 	return math.max(minimum, math.min(value, maximum))
@@ -23,36 +25,122 @@ local function round(value)
 	return math.floor(value + 0.5)
 end
 
-local function run(command)
-	return function()
-		hl.exec_cmd(command)
-	end
-end
-
 local function dispatch_layout(message)
 	return function()
 		hl.dispatch(hl.dsp.layout(message))
 	end
 end
 
+local function set_window_floating(window, enabled)
+	if not window or window.floating == enabled then
+		return
+	end
+
+	if not enabled then
+		layouts.prepare_spatial_tile(window)
+	end
+
+	hl.dispatch(hl.dsp.window.float({
+		action = enabled and "enable" or "disable",
+		window = window,
+	}))
+end
+
 local function set_active_floating(enabled)
 	return function()
-		local window = hl.get_active_window()
-
-		if not window or window.floating == enabled then
-			return
-		end
-
-		if not enabled then
-			layouts.prepare_spatial_tile(window)
-		end
-
-		hl.dispatch(hl.dsp.window.float({
-			action = enabled and "enable" or "disable",
-			window = window,
-		}))
+		set_window_floating(hl.get_active_window(), enabled)
 	end
 end
+
+local function move_swipe_window(state, x, y)
+	local last = state.last_position
+
+	if last and last.x == x and last.y == y then
+		return
+	end
+
+	hl.dispatch(hl.dsp.window.move({
+		x = x,
+		y = y,
+		window = state.window,
+	}))
+
+	state.last_position = { x = x, y = y }
+end
+
+local function start_window_swipe()
+	local window = hl.get_active_window()
+
+	if not window then
+		swipe_state = nil
+		return
+	end
+
+	swipe_state = {
+		window = window,
+		was_floating = window.floating,
+		x = window.at.x,
+		y = window.at.y,
+		delta_x = 0,
+		delta_y = 0,
+		last_position = { x = window.at.x, y = window.at.y },
+	}
+end
+
+local function update_window_swipe(event)
+	if
+		not swipe_state
+		or type(event.delta) ~= "table"
+		or type(event.delta.x) ~= "number"
+		or type(event.delta.y) ~= "number"
+	then
+		return
+	end
+
+	swipe_state.delta_x = swipe_state.delta_x + event.delta.x * MOVE_SENSITIVITY
+	swipe_state.delta_y = swipe_state.delta_y + event.delta.y * MOVE_SENSITIVITY
+
+	if not swipe_state.was_floating or not swipe_state.window.floating then
+		return
+	end
+
+	move_swipe_window(
+		swipe_state,
+		round(swipe_state.x + swipe_state.delta_x),
+		round(swipe_state.y + swipe_state.delta_y)
+	)
+end
+
+local function finish_window_swipe(event)
+	local state = swipe_state
+	swipe_state = nil
+
+	if not state then
+		return
+	end
+
+	if state.was_floating then
+		if state.window.floating and event.cancelled then
+			move_swipe_window(state, state.x, state.y)
+		end
+
+		return
+	end
+
+	local swiped_up = state.delta_y <= -FLOAT_SWIPE_THRESHOLD
+		and math.abs(state.delta_y) > math.abs(state.delta_x)
+
+	if not event.cancelled and swiped_up then
+		set_window_floating(state.window, true)
+	end
+end
+
+---@type any
+local window_swipe = {
+	start = start_window_swipe,
+	update = update_window_swipe,
+	finish = finish_window_swipe,
+}
 
 local function apply_resize(state, width_scale, height_scale, center_delta_x, center_delta_y)
 	local minimum_width_scale = math.max(MIN_RESIZE_SCALE, MIN_WINDOW_WIDTH / state.width)
@@ -217,17 +305,11 @@ hl.gesture({
 	workspace_name = "special",
 })
 
--- Four-finger shell shortcuts.
+-- Swipe up to float tiled windows; freely move windows that already float.
 hl.gesture({
 	fingers = 4,
-	direction = "up",
-	action = run("noctalia msg panel-toggle launcher"),
-})
-
-hl.gesture({
-	fingers = 4,
-	direction = "down",
-	action = run("noctalia msg panel-toggle control-center notifications"),
+	direction = "swipe",
+	action = window_swipe,
 })
 
 -- Hold Super to move; add Shift to resize. Pinch resizing stays centered.

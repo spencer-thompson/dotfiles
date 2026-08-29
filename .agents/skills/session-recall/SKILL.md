@@ -32,8 +32,13 @@ rollout evidence, and report what happened, what remains open, and what may dese
    ```bash
    python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py list \
      --since START_ISO --until REVIEW_CUTOFF_ISO \
-     --archived all --top-level-only --sort recency --limit 40 --compact
+     --archived all --top-level-only --exclude-thread-source guardian_review \
+     --sort recency --limit 40 --compact
    ```
+
+   For ordinary work reviews, exclude guardian approval threads from primary discovery and workload totals. Guardian
+   threads currently use `thread_source=guardian_review` and `model=codex-auto-review`. Include and report them
+   separately when reviewing approvals, sandbox behavior, permission rules, escalations, or auto-review itself.
 
    Prefer these signals:
 
@@ -57,7 +62,8 @@ rollout evidence, and report what happened, what remains open, and what may dese
    ```bash
    python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py list \
      --since START_ISO --until REVIEW_CUTOFF_ISO \
-     --git-project OWNER/REPO --sort recency --limit 20 --format paths \
+     --git-project OWNER/REPO --exclude-thread-source guardian_review \
+     --sort recency --limit 20 --format paths \
    | python3 ~/.agents/skills/session-recall/scripts/inspect_sessions.py summary \
      --paths-from-stdin --since START_ISO --until REVIEW_CUTOFF_ISO --aggregate --compact
    ```
