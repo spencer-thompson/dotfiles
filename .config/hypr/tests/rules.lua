@@ -54,9 +54,9 @@ assert(#operator == 1, "registered one OutRival Operator window rule")
 assert(operator[1].float and operator[1].no_initial_focus, "kept Operator floating without initial focus")
 assert(
 	operator[1].center
-		and operator[1].size[1] == "(monitor_w*0.8)"
-		and operator[1].size[2] == "(monitor_h*0.8)",
-	"centered Operator at 80 percent of the monitor"
+		and operator[1].size[1] == "(monitor_w*0.6)"
+		and operator[1].size[2] == "(monitor_h*0.6)",
+	"centered Operator at 60 percent of the monitor"
 )
 assert(operator[1].border_size == 2 and operator[1].border_color == "rgb(ff0000)", "gave Operator a red 2px border")
 assert(operator[1].no_blur, "disabled blur behind Operator's Wayland surface")
