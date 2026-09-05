@@ -79,12 +79,26 @@ python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py show THREAD_
 before output, and applies `--tail` independently per thread. Event filters include `--kind`, `--since`, `--until`,
 `--match`, `--input-match`, `--ignore-case`, `--max-chars`, `--raw`, and `--metadata-only`.
 
-Fetch only the final assistant response from each selected thread:
+Peek at the latest assistant message from each selected thread (this can be a progress update or unrelated side task,
+not necessarily a substantive final answer):
 
 ```bash
 python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py show THREAD_ID ... \
   --events-only --kind assistant --tail 1 --until REVIEW_CUTOFF_ISO --format jsonl
 ```
+
+When that peek is insufficient, search a specific topic across the selected IDs without loading whole transcripts:
+
+```bash
+python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py show THREAD_ID ... \
+  --events-only --kind user --kind assistant --match 'TOPIC|ARTIFACT|ISSUE_ID' --ignore-case \
+  --since START_ISO --until REVIEW_CUTOFF_ISO --tail 8 --max-chars 3000 --format jsonl
+```
+
+`list --query` searches name, title, first user message, cwd, Git origin, and branch; it does not search later messages.
+Use `show --match` for conversation content after selecting candidates. An empty catalog search is not evidence that
+the topic was never discussed. For completion verification, omit the message-kind restriction and target the relevant
+tool result or artifact. Read later topic matches before treating an earlier decision as final.
 
 Metadata modes are:
 
@@ -214,3 +228,8 @@ metrics. Structured values use compact JSON inside one TSV cell. Custom fields p
 
 Inspector tokens are deltas between cumulative snapshots around the requested range. Check `token_delta_complete`;
 false means no pre-range baseline existed and the value may include earlier use. Active duration excludes idle gaps.
+
+Catalog cumulative tokens rank whole-thread workload; inspector deltas describe the requested event range.
+Message counts, tokens, tools, bytes, and duration measure different things. Output projections (`--compact`,
+`--fields`, metadata modes, and counter limits) do not change filtering, ranking, calculations, or evidence collection.
+Preserve truncation, distinct-count, and omitted-count fields when handing off or storing limited counters.

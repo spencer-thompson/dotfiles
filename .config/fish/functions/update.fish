@@ -1,5 +1,5 @@
 # UPDATE
-function update --description "Update system packages, global npm packages, and fish completions"
+function update --description "Update system packages, global npm packages, and shell caches"
     if type -q paru
         echo -e "\e[1;35mUpdating Packages\e[0m"
         paru -Syu
@@ -12,6 +12,7 @@ function update --description "Update system packages, global npm packages, and 
         npm update -g
     end
 
-    echo -e "\e[1;35mUpdating Completions\e[0m"
+    echo -e "\e[1;35mUpdating Shell Caches\e[0m"
     fish_update_completions
+    refresh_shell_cache
 end

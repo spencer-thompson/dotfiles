@@ -77,39 +77,60 @@ if status is-interactive
     set -gx fish_cursor_replace_one underscore
     set fish_emoji_width 2
 
-    if type -q fzf
-        fzf --fish | source
+    set -l shell_init_cache_dir "$XDG_CACHE_HOME/fish/init"
+    set -l completion_cache_dir "$XDG_CACHE_HOME/fish/completions"
+    set -l shell_cache_missing 0
+
+    for tool in atuin fzf mise starship zoxide
+        if type -q "$tool"; and not test -s "$shell_init_cache_dir/$tool.fish"
+            set shell_cache_missing 1
+        end
     end
 
-    if type -q starship
-        starship init fish | source
+    if type -q codex; and not test -s "$completion_cache_dir/codex.fish"
+        set shell_cache_missing 1
+    end
+
+    if type -q atuin; and not test -s "$completion_cache_dir/atuin.fish"
+        set shell_cache_missing 1
+    end
+
+    if test "$shell_cache_missing" -eq 1
+        refresh_shell_cache >/dev/null
+    end
+
+    if type -q fzf; and test -r "$shell_init_cache_dir/fzf.fish"
+        source "$shell_init_cache_dir/fzf.fish"
+    end
+
+    if type -q starship; and test -r "$shell_init_cache_dir/starship.fish"
+        source "$shell_init_cache_dir/starship.fish"
         enable_transience
     end
 
     # type -q direnv; and direnv hook fish | source
 
-    if type -q atuin
-        atuin init fish | source
-        atuin gen-completions --shell fish | source
+    if type -q atuin; and test -r "$shell_init_cache_dir/atuin.fish"
+        source "$shell_init_cache_dir/atuin.fish"
 
         # Use Atuin's wrapper so completion/search paging can keep handling Up.
         bind -M insert up _atuin_bind_up
     end
 
-    if type -q zoxide
-        zoxide init fish | source
+    if type -q zoxide; and test -r "$shell_init_cache_dir/zoxide.fish"
+        source "$shell_init_cache_dir/zoxide.fish"
     end
 
     # type -q hcloud; and hcloud completion fish | source
 
-    if type -q codex
-        codex completion fish | source
+    if not contains -- "$completion_cache_dir" $fish_complete_path
+        set --prepend fish_complete_path "$completion_cache_dir"
     end
 
     # type -q jj; and jj util completion fish | source
 
-    if type -q mise
-        mise activate fish | source
+    if type -q mise; and test -r "$shell_init_cache_dir/mise.fish"
+        source "$shell_init_cache_dir/mise.fish"
     end
 
     # ABBREVIATIONS

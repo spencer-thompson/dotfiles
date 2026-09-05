@@ -1,7 +1,7 @@
 interface:
   display_name: "Session Recall"
-  short_description: "Review recent Codex sessions for insight"
-  default_prompt: "Use $session-recall to review recent sessions and surface work, patterns, and useful improvements."
+  short_description: "Find past Codex chats, decisions, and work"
+  default_prompt: "Use $session-recall to find relevant past chats and summarize the evidence, decisions, and open work."
 
 policy:
   allow_implicit_invocation: false
