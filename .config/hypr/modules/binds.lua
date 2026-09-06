@@ -312,9 +312,9 @@ bind(mod .. " + S", exec([[noctalia msg screenshot-region]]), "Screenshot")
 bind(mod .. " + SHIFT + S", exec("noctalia msg settings-toggle"), "Settings")
 bind(mod .. " + Backspace", exec("noctalia msg session lock"), "Lock")
 
--- transcription with hyprwhspr
-bind(mod .. " + A", exec([[/usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.sh record]]), "Toggle dictation")
-bind(mod .. " + SHIFT + A", exec("hyprwhspr record cancel"), "Cancel dictation")
+-- Voice dictation with vedit
+bind(mod .. " + A", exec(os.getenv("HOME") .. "/.local/bin/vedit toggle"), "Toggle dictation")
+bind(mod .. " + SHIFT + A", exec(os.getenv("HOME") .. "/.local/bin/vedit cancel"), "Cancel dictation")
 
 -- Flexible bind
 bind(mod .. " + Z", exec("/home/sthom/projects/my-resume/scripts/quick_paste"), "Quick paste")
