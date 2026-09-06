@@ -5,7 +5,7 @@ return {
 	secondary_monitor = main_monitor,
 	config = {
 		cursor = {
-			no_hardware_cursors = 1,
+			no_hardware_cursors = 2,
 		},
 		debug = {
 			disable_logs = false,

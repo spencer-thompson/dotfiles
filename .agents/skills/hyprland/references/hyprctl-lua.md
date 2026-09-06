@@ -1,8 +1,6 @@
 # Hyprctl and Lua Reference
 
-Read this reference completely before running any `hyprctl dispatch`, `hyprctl eval`, or `hyprctl repl` command,
-diagnosing Hyprctl failures, discovering dispatcher names, or waiting on compositor events. Target Hyprland 0.55+ and
-its Lua dispatcher API.
+Examples target Hyprland 0.55+ and its Lua dispatcher API. Read the sections relevant to the operation.
 
 ## Contents
 
@@ -57,11 +55,9 @@ approval, then parse the returned JSON; do not change the filter or invent envir
 
 ## Preflight and validate dispatchers
 
-Preflight unfamiliar Lua without performing the intended action:
+When an unfamiliar call needs a syntax or target check, inspect it without performing the intended action:
 
 ```bash
-hyprctl dispatch 'hl.dsp.no_op()'
-hyprctl eval 'hl.dispatch(hl.dsp.no_op())'
 hyprctl repl 'return type(hl.dsp.focus({window="stableid:18000008"}))'
 hyprctl repl 'return type(hl.get_window("stableid:18000008"))'
 ```
@@ -87,7 +83,7 @@ hyprctl repl 'local w=hl.get_window("stableid:18000008"); if not w then error("s
 Replace the example ID. This avoids activation and workspace switching but briefly redirects seat keyboard focus. Prefer
 application IPC for arbitrary text or multi-step interaction.
 
-Use exact selectors and `follow = false` for window operations:
+Use exact selectors. Set `follow = false` when moving a window should not switch the user's workspace:
 
 ```bash
 hyprctl dispatch "hl.dsp.window.float({action=\"enable\",window=\"${hyprland_window_selector}\"})"

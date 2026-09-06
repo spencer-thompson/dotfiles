@@ -1,123 +1,87 @@
 ---
 name: hyprland
 description: >-
-  Use when using the hyprctl command or when the user asks to inspect hyprland logs,
-  rendering or input behavior, windows, or workspaces.
+  Operate desktop apps on Hyprland Wayland Linux using screenshots, keyboard and
+  pointer input, and compositor control. Use for GUI tasks, window and workspace
+  management, or Hyprland rendering, input, and log investigations.
 ---
 
 # Hyprland
 
-Operate the user's live desktop with an observe-act-verify loop. Preserve the active workspace and focus whenever the
-task allows it. Use screenshots when appearance, layout, transient UI, or visual confirmation matters; use compositor
-state alone when it fully answers the task.
+Complete the requested desktop task using the simplest effective interface. Prefer application APIs, CLI, IPC,
+D-Bus, or accessibility actions when they fit; use screenshots and GUI input when the task needs them.
+For desktop control, use `wdotool` for input, `hyprctl` for windows and compositor state, and `grim` for screenshots.
 
-## Set up safely
+## Observe, act, verify
 
-Use only the tools the task needs: `hyprctl` for compositor state and dispatchers, the orchestration layer or `jq` for
-JSON, `grim` for screenshots, `wtype` for focused keyboard input, `ydotool` for visible pointer input, `slurp` for
-interactive selection, and `socat` for compositor events.
+- Inspect relevant compositor state with `hyprctl -j activewindow`, `activeworkspace`, `clients`, `workspaces`,
+  `monitors`, or `layers`. Use screenshots for visual details that state alone cannot answer.
+- For window operations, retain an exact target: prefer `stableId`, with address as a fallback. Re-resolve after
+  the window closes or is replaced; do not silently send an action intended for it to a different window.
+- Perform a short, coherent group of actions, then check the result. Refresh observations when focus, layout,
+  or content changes could invalidate the next action. Verify outcomes, not just command success.
 
-Use the inherited `HYPRLAND_INSTANCE_SIGNATURE`, `WAYLAND_DISPLAY`, and `XDG_RUNTIME_DIR`. Request compositor or input
-socket approval when sandboxing blocks access; never invent replacement values.
+Use the inherited `HYPRLAND_INSTANCE_SIGNATURE`, `WAYLAND_DISPLAY`, and `XDG_RUNTIME_DIR`. If sandboxing blocks a
+socket, use the normal approval mechanism for that command rather than guessing replacement environment values.
 
-Run `hyprctl -j` reads as standalone tool calls, then parse their returned JSON. If a pipeline reports
-`Couldn't set socket timeout (2)`, rerun the standalone `hyprctl` call with the required approval instead of changing
-the filter.
+For Lua dispatchers, targeting examples, or IPC failures, consult [hyprctl-lua.md](references/hyprctl-lua.md).
+This installation uses the Hyprland 0.55+ Lua API; check installed stubs for unfamiliar calls instead of trying
+legacy dispatcher syntax. For logs, crashes, rendering, or latency, consult [log-triage.md](references/log-triage.md).
 
-Before running any `hyprctl dispatch`, `hyprctl eval`, or `hyprctl repl` command—or diagnosing Hyprctl failures,
-discovering dispatcher names, or waiting on compositor events—read
-[references/hyprctl-lua.md](references/hyprctl-lua.md) completely. Do not try legacy dispatcher syntax first.
+## Capture and input
 
-For compositor logs, crashes, rendering, color-management, direct-scanout, or input-latency investigations, read
-[references/log-triage.md](references/log-triage.md) completely.
-
-## Follow one workflow
-
-1. Observe only the relevant state with `activewindow`, `activeworkspace`, `clients`, `workspaces`, `monitors`, or
-   `layers`. Keep sensitive titles and metadata out of output unless needed.
-2. Resolve exactly one mapped target. Retain its `stableId`, address, PID, class or initial class, and workspace ID.
-3. Preserve workspace and focus. Never record or restore cursor position; query it only when the task needs coordinates.
-4. Act through the least disruptive semantic interface and an exact target whenever one is accepted.
-5. Verify in proportion to the action. Revalidate the retained identity before consequential actions or when it may be
-   stale; stop on mismatch instead of repeating a broad match or silently choosing another window.
-
-Use the raw `stableId` with `grim -T`. Use lowercase `stableid:<ID>` with dispatchers, falling back to
-`address:<ADDRESS>` only when no stable ID exists.
-
-## Choose the least disruptive control path
-
-Use this order:
-
-1. Prefer an application API, connector, CLI, IPC socket, D-Bus method, or AT-SPI action. These can often invoke
-   controls or send arbitrary text without compositor focus.
-2. Use a Hyprland targeted dispatcher for a discrete shortcut or window operation.
-3. Use `wtype` only for the currently keyboard-focused surface.
-4. Use `ydotool` or pointer dispatchers only for visible, coordinate-verified surfaces.
-
-Respect these limits:
-
-- `grim -T <stableId>` can capture an inactive-workspace window when foreign-toplevel capture is supported.
-- `send_shortcut` can target an inactive native Wayland window without activating it or switching workspaces, but
-  Hyprland briefly redirects seat keyboard focus internally. The target may observe transient focus events, and XWayland
-  applications may behave differently.
-- Pair every targeted `send_key_state` key-down with key-up.
-- `wtype`, `ydotool`, and generic pointer input cannot target arbitrary hidden windows. Use application IPC or semantic
-  accessibility actions instead.
-
-Never focus, reveal, or switch to a hidden window merely to inspect it.
-
-## Capture without switching workspaces
-
-Confirm support with `grim -h | rg -q -- '-T <identifier>'`, then capture a retained stable ID:
+Use `grim` for screenshots. Check `grim -h` for `-T` support, then capture a window without changing workspaces:
 
 ```bash
 hyprland_shot_path="$(mktemp --suffix=.png -p /tmp hyprland-window-XXXXXX)"
 grim -T "$hyprland_stable_id" "$hyprland_shot_path"
 ```
 
-Inspect the file with `view_image` and recapture after visual changes when useful. Omit `-c` unless the cursor matters.
-An off-workspace client may throttle rendering, so corroborate a stale-looking image with compositor or application
-state. Remove temporary screenshots when finished.
+Use the raw stable ID for `grim -T` and `stableid:<ID>` for dispatchers. Inspect captures with `view_image`.
+If window capture is unavailable or the target has no stable ID, capture a visible output with `grim -o <output>`
+or a region with `grim -g 'X,Y WIDTHxHEIGHT'`. Derive output names and geometry from current state.
+Off-workspace windows may throttle rendering; corroborate stale-looking captures with application or compositor state.
+Remove temporary captures when finished unless they are task deliverables.
 
-For content without a client stable ID, capture the smallest useful visible output or region:
+Choose input according to what it can actually target:
 
-```bash
-grim -o DP-1 "$hyprland_shot_path"
-grim -g 'X,Y WIDTHxHEIGHT' "$hyprland_shot_path"
-```
+- Application interfaces and AT-SPI can operate controls without focus when supported.
+- Targeted Hyprland dispatchers suit window operations and discrete shortcuts. `send_shortcut` can reach an inactive
+  native Wayland window, but briefly redirects seat keyboard focus; XWayland behavior may differ.
+- Use `wdotool` for focused keyboard input and visible pointer interaction. Its `wlr-protocols` backend works on this
+  Hyprland installation without a separate daemon. Use `wdotool info` or `diag` when troubleshooting.
 
-If foreign-toplevel capture is unavailable, explain the limitation instead of revealing the window as a workaround.
-
-## Handle disruptive operations
-
-Treat focus or workspace changes, `slurp`, `wtype`, pointer movement, clicks, and visible launches that may focus or
-reveal a window as disruptive. Perform them only when explicitly requested or after explaining why they are unavoidable
-and obtaining approval.
-
-A headless or background process launch with no expected compositor-visible effect is not disruptive on that fact alone.
-It still requires normal authorization for its effects and outcome verification, but not desktop start/completion
-notifications.
-
-Immediately before disruption, notify the user without exposing task data or window titles:
+Common input commands, after observing the target:
 
 ```bash
-notify-send -a Codex -u normal "Codex desktop automation starting" \
-  "I need to temporarily change focus and use pointer input."
+wdotool key ctrl+a
+wdotool type 'Text with Unicode: café ✓'
+wdotool mousemove "$hyprland_pointer_x" "$hyprland_pointer_y"
+wdotool click 1
+wdotool key Escape
 ```
 
-Fall back to `hyprctl notify 1 5000 0 "Codex desktop automation starting: temporarily changing focus."`. If both methods
-fail, do not begin.
+Pointer coordinates are desktop coordinates. Account for screenshot resizing, window origin, and output scale;
+do not use coordinates from a resized window capture directly. Use `hyprctl cursorpos` when verifying pointer placement:
+wdotool's current Hyprland backend cannot read pointer position or window geometry.
 
-Re-observe immediately before coordinate or keyboard input after any visual change. Restore workspace and focus only if
-the current state still matches what the automation produced; never overwrite newer user activity.
+Keep `wtype` and `ydotool` as fallbacks. In the Blender 5.2.1 test, wdotool handled Unicode, Ctrl+A, clicks, and exact
+absolute movement. wtype typed Unicode but its Ctrl+A chord failed even with delays. ydotool handled ASCII, Ctrl+A,
+and clicks, but dropped Unicode and misplaced absolute movement; it also needed a running `ydotoold`.
+These are observed application-specific results, not guarantees for every app. Stop any temporary daemon after use.
 
-Once disruption begins, always send a completion notification, even on failure. State accurately whether prior focus and
-workspace context was restored, intentionally changed, or could not be restored. Use `notify-send` first and fall back
-to `hyprctl notify 5 5000 0 "Codex desktop automation finished."`; report if both fail.
+Pair `send_key_state` key-down with key-up. A hidden workspace or virtual output does not provide independent input
+focus; use application interfaces for background interaction, or bring the target forward when the task requires it.
 
-## Guardrails
+## Share the desktop
 
-- Pause for confirmation before sending, submitting, purchasing, deleting, exposing private data, or closing possibly
-  unsaved work. Prefer graceful close over kill.
-- Avoid session exit, DPMS, compositor reload, configuration changes, and forced termination unless explicitly
-  requested.
+The user's task authorizes ordinary focus changes, typing, clicks, and launches needed to complete it. Do not ask
+again for each mechanism. Ask when the target or consequences are materially unclear, or an action exceeds existing
+authorization. Inspecting an app does not by itself authorize submitting its content or discarding unsaved work.
+
+Prefer background operations when practical. Before taking over foreground input, briefly tell the user in chat;
+desktop notifications are optional. If user activity changes the target or focus during input, pause and re-observe.
+Avoid fighting the user's keyboard or pointer.
+
+Restore prior workspace and focus after temporary interaction when useful, but only if they still match the state
+left by the automation. Leave the requested final layout intact and never overwrite newer user activity.

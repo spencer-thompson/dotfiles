@@ -25,6 +25,12 @@ function M.setup(opts)
 	local main_monitor = opts.main_monitor or opts.mainMonitor
 	local secondary_monitor = opts.secondary_monitor or opts.secondaryMonitor
 
+	hl.window_rule({
+		name = "xwayland-border",
+		match = { xwayland = true },
+		border_color = "rgb(ee9b54)",
+	})
+
 	layer("launcher", {
 		blur = true,
 		xray = false,
@@ -106,11 +112,13 @@ function M.setup(opts)
 	})
 
 	local steam_workspace = { on_created_empty = "steam" }
+	local steam_client = { workspace = "10 silent" }
 	if has_monitor(main_monitor) then
 		steam_workspace.monitor = main_monitor
-		window("steam", { monitor = main_monitor })
+		steam_client.monitor = main_monitor
 	end
-	workspace("name:steam", steam_workspace)
+	window("steam", steam_client)
+	workspace("10", steam_workspace)
 
 	for number = 2, 5 do
 		workspace(tostring(number), { on_created_empty = "kitty" })
@@ -118,6 +126,7 @@ function M.setup(opts)
 
 	local steam_game = {
 		name = "steam-games",
+		workspace = "10 silent",
 		content = "game",
 		fullscreen = true,
 	}

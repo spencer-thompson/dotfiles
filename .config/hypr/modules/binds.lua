@@ -224,7 +224,7 @@ local function active_steam_workspace_is_occupied()
 	for _, monitor in ipairs(hl.get_monitors()) do
 		local workspace = monitor.active_workspace
 
-		if workspace and workspace.name == "steam" and workspace.windows > 0 then
+		if workspace and workspace.name == "10" and workspace.windows > 0 then
 			return true
 		end
 	end
@@ -279,7 +279,7 @@ bind(mod .. " + U", toggle_floating, "Toggle floating")
 bind(mod .. " + C", float_and_center, "Float and center")
 bind("SHIFT + " .. mod .. " + C", tile_active_window, "Tile window")
 bind(mod .. " + SHIFT + G", toggle_performance_mode, "Toggle performance mode")
-bind(mod .. " + G", hl.dsp.focus({ workspace = "name:steam" }), "Steam workspace")
+bind(mod .. " + G", hl.dsp.focus({ workspace = 10 }), "Steam workspace")
 bind("SHIFT + " .. mod .. " + R", hl.dsp.force_renderer_reload(), "Reload renderer")
 bind(mod .. " + F", hl.dsp.window.fullscreen(0), "Toggle fullscreen")
 bind(mod .. " + P", exec("hyprpicker -a"), "Pick color")

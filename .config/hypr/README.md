@@ -110,11 +110,12 @@ in the side columns while the third column remains full-height.
 
 ## Steam Gaming
 
-`Super+G` focuses the named `steam` workspace. Steam game windows matching `^steam_app_[0-9]+$` open fullscreen and are
+`Super+G` (or `Super+0`) focuses workspace 10, launching Steam when it is created empty. Steam and game windows route
+to workspace 10 without switching focus. Steam game windows matching `^steam_app_[0-9]+$` open fullscreen and are
 marked as game content, allowing `render.direct_scanout = 2` to attempt direct scanout whenever compositor conditions
 permit it. Direct scanout can reduce compositor work and latency by presenting an eligible fullscreen game directly.
 
-While the Steam workspace is visible and occupied on any monitor, performance mode disables animations, blur, motion
+While workspace 10 is visible and occupied on any monitor, performance mode disables animations, blur, motion
 blur, shadows, glow, and rounding. Leaving or emptying the workspace restores the settings captured when automation
 enabled the mode. `Super+Shift+G` remains the manual toggle and can suppress automation for the current Steam session.
 

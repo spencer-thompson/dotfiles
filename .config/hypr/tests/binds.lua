@@ -190,7 +190,14 @@ for _, event in ipairs({
 	assert(event_handlers[event], "registered performance synchronization for " .. event)
 end
 
-local steam = { name = "steam", windows = 0 }
+assert(binds["SUPER + G"].action.spec.workspace == 10, "focused workspace 10 with Super+G")
+assert(binds["SUPER + 0"].action.spec.workspace == 10, "kept the numeric workspace shortcut")
+
+monitors = { { active_workspace = { name = "steam", windows = 1 } } }
+event_handlers["workspace.active"]()
+assert(#config_updates == 0, "ignored the retired named Steam workspace")
+
+local steam = { name = "10", windows = 0 }
 monitors = { { active_workspace = steam } }
 
 event_handlers["workspace.active"]()

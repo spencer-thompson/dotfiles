@@ -41,9 +41,18 @@ assert(#nwg_look == 1 and nwg_look[1].float and nwg_look[1].size == "800 500", "
 local portal = matching(window_rules, "class", "xdg-desktop-portal-gtk")
 assert(#portal == 1 and portal[1].center and portal[1].float and portal[1].size == "900 600", "consolidated portal effects")
 
-local steam = matching(workspace_rules, "workspace", "name:steam")
+local steam = matching(workspace_rules, "workspace", "10")
 assert(#steam == 1, "registered one Steam workspace rule")
 assert(steam[1].monitor == "DP-1" and steam[1].on_created_empty == "steam", "kept all Steam workspace effects")
+assert(#matching(workspace_rules, "workspace", "name:steam") == 0, "removed the named Steam workspace")
+
+local steam_client = matching(window_rules, "class", "steam")
+assert(#steam_client == 1 and steam_client[1].workspace == "10 silent", "routed Steam to workspace 10")
+assert(steam_client[1].monitor == "DP-1", "kept Steam on the main monitor")
+
+local steam_game = matching(window_rules, "class", "^steam_app_[0-9]+$")
+assert(#steam_game == 1 and steam_game[1].workspace == "10 silent", "routed games to workspace 10")
+assert(steam_game[1].fullscreen and steam_game[1].content == "game", "kept fullscreen game behavior")
 
 local discord = matching(window_rules, "class", "discord")
 assert(#discord == 1, "registered one Discord window rule")
