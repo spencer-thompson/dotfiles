@@ -4,4 +4,4 @@ interface:
   default_prompt: "Use $session-recall to find relevant past chats and summarize the evidence, decisions, and open work."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

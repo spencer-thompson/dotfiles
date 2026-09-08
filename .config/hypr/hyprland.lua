@@ -101,7 +101,7 @@ hl.config({
             xray = true,
         },
         motion_blur = {
-            enabled = true,
+            enabled = false,
             samples = 7,
         },
         shadow = {

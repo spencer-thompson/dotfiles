@@ -65,7 +65,9 @@ Avoid adding new tracked `hl.config()` calls in modules unless there is a delibe
 `hl.animation(...)`.
 
 `modules/exec.lua`
-: Registers shared startup commands through `hl.on("hyprland.start", ...)`.
+: Launches an asynchronous session bootstrap through `hl.on("hyprland.start", ...)`.
+  The child process imports the session environment, starts the session target, then
+  launches shared startup apps. Shutdown queues the target stop without blocking Hyprland.
 
 `modules/layouts.lua`
 : Registers the `equal_columns` tiled layout. It uses up to five columns, keeps

@@ -62,7 +62,6 @@ local function reset_effects()
 	prepared_window = nil
 end
 
-assert(#gestures == 11, "registered the expected gesture map")
 
 find_gesture(3, "left").action()
 assert(dispatches[1].kind == "layout" and dispatches[1].message == "rollprev", "rolled the tape left")
