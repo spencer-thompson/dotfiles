@@ -111,6 +111,8 @@ function M.setup(opts)
 		no_blur = true,
 	})
 
+	window("^slack$", { workspace = "1 silent" })
+
 	local steam_workspace = { on_created_empty = "steam" }
 	local steam_client = { workspace = "10 silent" }
 	if has_monitor(main_monitor) then
@@ -148,7 +150,7 @@ function M.setup(opts)
 		match = { class = "^outrival-operator$" },
 		float = true,
 		center = true,
-		size = { "(monitor_w*0.6)", "(monitor_h*0.6)" },
+		size = { "(monitor_w*0.6)", "(monitor_h*0.7)" },
 		border_size = 2,
 		border_color = "rgb(ff0000)",
 		no_blur = true,

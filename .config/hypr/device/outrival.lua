@@ -95,6 +95,7 @@ return {
 	},
 
 	startup = {
+		"slack --gtk-version=3 --force-renderer-accessibility",
 		{
 			command = programs.browser,
 			rules = { workspace = "1 silent" },

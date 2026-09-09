@@ -34,7 +34,7 @@ order = [ "Top", "Bottom" ]
     padding = 36
     panel_overlap = 2
     scale = 1.2500000111758709
-    start = [ "launcher", "wallpaper", "clipboard", "notifications", "wallhaven" ]
+    start = [ "launcher", "wallpaper", "clipboard", "notifications", "wallhaven", "sky-hyprland" ]
     thickness = 36
     widget_spacing = 32
 
@@ -408,7 +408,7 @@ browser_placement = "floating"
 browser_position = "center"
 
 [plugins]
-enabled = [ "noctalia/wallhaven", "goodroot/noctwhspr", "blackbartblues/audio-switcher" ]
+enabled = [ "noctalia/wallhaven", "goodroot/noctwhspr", "blackbartblues/audio-switcher", "sthom/sky-hyprland" ]
 
 [shell]
 app_icon_color = "primary"
@@ -563,3 +563,6 @@ font_weight = 800
 pill_scale = 0.5
 scale = 1.5
 show_labels = false
+
+[widget.sky-hyprland]
+type = "sthom/sky-hyprland:activity"
