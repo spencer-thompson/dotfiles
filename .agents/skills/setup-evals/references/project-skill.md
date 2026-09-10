@@ -1,54 +1,38 @@
 # Ongoing project eval skill
 
-Create a project-owned skill, normally named `evals`, that future agents can discover during performance, regression,
-profiling, simplification, or performance-sensitive refactoring work. Follow the repository's established project-skill
-location. If no convention exists, keep one tracked source of truth and document any local discovery link or install.
+Create a project-owned skill, normally named `evals`, for running and interpreting evaluations, investigating performance, and
+assessing changes with a plausible performance effect. Follow the repository's skill location; if none exists, keep one
+tracked source and document how agents discover it. Preserve any project preference for manual invocation.
 
-## Required content
+## Project-specific instructions
 
-The skill must name exact project commands, the local database path, standard scenario and workload version, default
-repetitions, required tools, and the full correctness gate.
+Name the exact commands, database path, standard workload and version, warm-up and repetition settings, required tools,
+and applicable correctness checks. Link a project-owned schema/query reference with queries tested against the database.
+Document additional collection modes only if implemented, including which results are comparable.
 
-Its workflow should require:
+Translate the relevant collection and comparison rules from this setup skill into project-specific instructions. The
+result must work without this installer or prior conversation context, including source identification, timing
+semantics, sampling units, variation, and inconclusive results.
 
-1. inspect status and preserve unrelated changes;
-2. run the standard eval before editing;
-3. query the new run and find the largest actionable project-owned issue;
-4. inspect the owning code and tests;
-5. make one coherent evidence-backed change;
-6. run focused checks, then the complete project gate;
-7. rerun the identical eval command;
-8. compare matching run IDs, conditions, subjects, and dimensions;
-9. keep or reject the change based on speed, correctness, memory, size, complexity, and readability;
-10. repeat only while another worthwhile target remains.
+## Workflow and scope
 
-Stop when the remaining cost is noise, external, deliberate, or would require disproportionate complexity. Never alter
-the workload or environment to manufacture a win. Keep negative runs.
+Use evals to assess the requested change. Pursue additional optimizations only when they fall within the user's scope;
+ordinary cleanup does not automatically require a performance investigation.
 
-## Collection modes
+For measurement-only requests, run, query, and report without requiring a code change. For implementation work:
 
-Document the standard deterministic command first. Then document separately named diagnostic modes and the real-session
-capture path. Explain which results are comparable and which are exploratory.
+1. Inspect status and preserve unrelated work; run a relevant baseline before changing product code.
+2. Make the requested change, using evidence to select a target when optimization is the task.
+3. Run focused correctness checks and the project's required gates, then repeat the same eval command.
+4. Compare explicit run IDs under equivalent conditions. Consider correctness, performance, readability, and resource
+   tradeoffs relevant to the change. Keep negative runs; safely revert rejected code without discarding unrelated work.
 
-## Query reference
+Complete the requested task before pursuing another target. In an open-ended optimization task, stop when remaining
+costs are noise, external, deliberate, or require disproportionate complexity. A correct cleanup may be worthwhile
+without a measurable speedup; judge it against the actual goal.
 
-Link a project-owned schema/query reference. Test every included query against the created database. Queries should
-cover recent runs, phase hotspots, per-subject costs, algorithm outcomes, resources, counters, and explicit before/after
-run IDs.
+## Reporting
 
-## Reporting contract
-
-Require a concise table:
-
-| Metric | Before run | After run | Change | Read |
-| --- | ---: | ---: | ---: | --- |
-| User-visible latency | `run 12: 18.7 ms` | `run 13: 14.2 ms` | `-24%` | Good |
-| Peak memory | `run 12: 35.3 MiB` | `run 13: 39.8 MiB` | `+13%` | Bad, accepted tradeoff |
-
-The report must include both good and bad results, noise, external bottlenecks, unfair comparisons, and accepted
-tradeoffs. It should state whether the complete project gate passed and name the next worthwhile target, if one exists.
-
-## Invocation
-
-Automatic invocation is usually useful for the ongoing project skill because it should guide ordinary performance work.
-Respect an existing project policy or explicit user preference that requires manual invocation instead.
+Show exact run IDs, sample counts, variation, and relevant results in a concise table. Use before/after columns only for
+comparisons. State wins, regressions, inconclusive measurements, external bottlenecks, and accepted tradeoffs when
+present. Report verification results and any limits on the conclusion.

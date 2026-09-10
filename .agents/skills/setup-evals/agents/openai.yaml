@@ -1,7 +1,7 @@
 interface:
   display_name: "Set Up Evals"
   short_description: "Install a project-owned evidence loop"
-  default_prompt: "Use $setup-evals to install a development-only evaluation system and propose project agent policies."
+  default_prompt: "Use $setup-evals to set up a development-only evaluation system, validate a baseline, and document the project eval workflow."
 
 policy:
   allow_implicit_invocation: false
