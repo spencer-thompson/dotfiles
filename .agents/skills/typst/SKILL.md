@@ -27,9 +27,10 @@ focused, and create components only for repeated visual relationships.
    scripts/render-review.sh path/to/document.typ
    ```
 
-6. Inspect the contact sheet, then every page at readable size. Fix hierarchy, density, spacing, alignment, wrapping,
-   clipping, page balance, and asset problems. Rerender the whole document after shared-style or page-flow changes, then
-   compile the requested output.
+6. For local edits, inspect affected pages at readable size. For new documents, substantial deliverables, or changes
+   to shared styles or page flow, inspect the full contact sheet and every page. Fix hierarchy, density, spacing,
+   alignment, wrapping, clipping, page balance, and asset problems. Rerender the whole document after shared-style or
+   page-flow changes, then compile the requested output.
 
 ## Common gotchas
 
@@ -54,8 +55,8 @@ pdffonts path/to/file.pdf
 
 ## References
 
-- Read [`references/syntax.md`](references/syntax.md) for syntax, document patterns, tables, figures, math, citations,
-  `context`, and debugging.
+- Consult relevant sections of [`references/syntax.md`](references/syntax.md) when syntax or a document pattern needs
+  clarification; search headings or symbols rather than reading the entire reference by default.
 - Read [`references/document-design.md`](references/document-design.md) for net-new documents, redesigns, templates, or
   visual-polish work.
 - Use the official [Typst reference](https://typst.app/docs/reference/) and

@@ -21,11 +21,14 @@ return {
         {
             output = main_monitor,
             mode = "5120x2160@179.99",
+            -- mode = "1920x1080@60",
             position = "0x0",
             scale = 1,
             bitdepth = 10,
+            -- bitdepth = 8,
             cm = "auto",
             vrr = 3,
+            -- vrr = 0,
         },
     },
 

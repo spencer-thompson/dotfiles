@@ -52,6 +52,9 @@ When a page is crowded:
 
 ## Review twice
 
+Use the full review below for new documents, substantial deliverables, and changes to shared styles or page flow.
+For a local edit with no wider layout effect, inspect the affected pages using the same visual criteria.
+
 First inspect the contact sheet:
 
 - Do related pages share structure and density?
@@ -64,5 +67,5 @@ Then inspect every page at readable size:
 - Check tables, figures, and assets for clarity and proportion.
 - Check clipping, overflow, awkward wraps, widows, and orphans.
 
-Rerender the whole document after shared-style or page-flow changes. Stop when the set and every individual page look
-intentional.
+Rerender the whole document after shared-style or page-flow changes. Stop when the reviewed pages look intentional and
+no unresolved layout problems remain within the review scope.

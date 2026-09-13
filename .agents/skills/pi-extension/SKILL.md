@@ -49,3 +49,6 @@ export default function (pi: ExtensionAPI) {
 [references/extensions.md](references/extensions.md) contains the full official Pi extension documentation from
 <https://pi.dev/docs/latest/extensions>. It covers events, contexts, API methods, tools, state, custom UI, rendering,
 modes, and examples.
+
+The reference is a snapshot retrieved on 2026-08-20. When compatibility matters, verify the relevant API against the
+installed package types and current official documentation; do not assume the snapshot matches the installed version.

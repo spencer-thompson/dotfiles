@@ -65,10 +65,8 @@ Pointer coordinates are desktop coordinates. Account for screenshot resizing, wi
 do not use coordinates from a resized window capture directly. Use `hyprctl cursorpos` when verifying pointer placement:
 wdotool's current Hyprland backend cannot read pointer position or window geometry.
 
-Keep `wtype` and `ydotool` as fallbacks. In the Blender 5.2.1 test, wdotool handled Unicode, Ctrl+A, clicks, and exact
-absolute movement. wtype typed Unicode but its Ctrl+A chord failed even with delays. ydotool handled ASCII, Ctrl+A,
-and clicks, but dropped Unicode and misplaced absolute movement; it also needed a running `ydotoold`.
-These are observed application-specific results, not guarantees for every app. Stop any temporary daemon after use.
+Keep `wtype` and `ydotool` as fallbacks. For observed compatibility issues and daemon requirements, consult
+[input troubleshooting](references/input-troubleshooting.md). Stop any temporary daemon after use.
 
 Pair `send_key_state` key-down with key-up. A hidden workspace or virtual output does not provide independent input
 focus; use application interfaces for background interaction, or bring the target forward when the task requires it.

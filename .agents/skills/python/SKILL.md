@@ -9,8 +9,8 @@ description: >-
 
 ## Toolchain Precedence
 
-- Inspect `pyproject.toml`, lockfiles, tool configuration, CI workflows, project scripts, tests, and repository guidance
-  before choosing commands.
+- Inspect repository guidance and the configuration relevant to the requested change. Consult lockfiles, CI workflows,
+  project scripts, or tests as needed to resolve which commands and tools the project uses.
 - Treat explicit repository instructions and commands invoked by CI or project scripts as authoritative. Use committed
   configuration and lockfiles as supporting evidence.
 - Preserve the actively declared tool in each role. When evidence conflicts, prefer repository instructions and invoked
@@ -28,8 +28,8 @@ description: >-
   `uv sync` and `uv lock`.
 - In uv projects, run declared project tools with `uv run <command>` so they use the project environment. Use
   `uv run --locked <command>` for reproducible validation and fail when the lockfile is stale.
-- Use `uvx <tool>` for a one-off check that the project does not own. Add recurring contributor or CI tools to the
-  repository's development dependencies instead of relying on hidden global setup.
+- Use `uvx <tool>` for a one-off check that the project does not own. When tooling setup is in scope, declare recurring
+  contributor or CI tools as development dependencies. Ordinary code edits do not authorize adding project tooling.
 - Use Ruff for both linting and formatting. Preserve existing Ruff configuration; without configuration, use Ruff's
   stable defaults instead of enabling a broad or preview rule set.
 - Apply Ruff's safe fixes by default. Review unsafe fixes and dead-code deletions against intended behavior and tests.
@@ -48,13 +48,13 @@ description: >-
 - Avoid broad exceptions, import-time side effects, hidden global state, wildcard imports, and premature class
   hierarchies.
 
-### Resist Helper Extraction
+### Function Boundaries
 
 - Keep single-use logic inline when it reads clearly at the call site.
 - Do not create a helper function or private `_helper` merely to shorten a function, label a few straightforward lines,
   remove minor duplication, or make the code look decomposed.
-- Extract a helper only when it creates a real conceptual boundary, centralizes substantial shared logic, isolates a
-  tricky invariant or side effect, or makes the caller materially easier to understand despite the added indirection.
+- Extract or inline according to whether the boundary improves understanding, testing, or change locality. A useful
+  helper can name a concept, centralize shared logic, or isolate a tricky invariant or side effect.
 - A helper must have a clear name and contract. If the reader has to jump to another definition without gaining a
   simpler mental model, keep the code inline.
 - Do not turn this preference into long, tangled functions. Split code at genuine conceptual boundaries, not arbitrary
@@ -62,15 +62,16 @@ description: >-
 
 ## Tests and Core Validation
 
-- Add or update focused behavioral tests for behavior changes. Preserve the repository's test runner; use pytest when
-  the repository has no declared alternative.
-- Before handoff, run every applicable configured core check: tests, lint, formatting, and the single selected type
-  checker. Use project-owned commands when declared. For a repository without declared tools, use:
+- Add or update focused behavioral tests when the change warrants them. Preserve the repository's test runner; use
+  pytest when the repository has no declared alternative.
+- Run checks proportionate to the changed behavior plus required repository gates. Use project-owned commands when
+  declared; do not automatically run the full suite or introduce missing checks for a small edit. For repositories
+  without declared tools, choose relevant checks from:
   - `uv run --with pytest pytest` when tests exist
   - `uvx ruff check .`
   - `uv format --check`
   - `uv check --locked`
-- Run Ruff fixes before formatting, then run lint again.
+- When applying Ruff fixes, do so before formatting and check the resulting files for remaining lint findings.
 - Report exactly which checks ran and any failures or unavailable checks.
 
 ## Specialized Checks

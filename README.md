@@ -31,6 +31,10 @@ My most used, *and most recommended*, applications are:
 - **Kitty**: `.config/kitty/`
 - **Tofi**: `.config/tofi/`
 
+## Audio
+
+- **WirePlumber**: [Personal audio policy design](.config/wireplumber/README.md)
+
 ## Gaming
 
 Steam launch options for:

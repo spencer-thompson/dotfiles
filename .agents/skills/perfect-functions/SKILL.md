@@ -49,6 +49,7 @@ controlled mutation.
 Keep every line at one level of abstraction. A function should compose a few conceptual operations without opening
 one operation and implementing its machinery inline.
 
+Extract or inline according to whether the boundary improves understanding, testing, or change locality.
 Extract a lower-level operation when it gives a real concept a name, isolates a side effect, removes fragile
 algorithmic detail, or earns independent tests. Prefer a trusted library algorithm when one already represents the
 operation.
@@ -70,5 +71,6 @@ Before finishing, ask:
 - Would an extraction clarify a concept, or only make the reader jump between files?
 - Do tests cover the honest core and the dishonest boundary in proportion to their risk?
 
-Read [references/examples.md](references/examples.md) before a non-trivial design or review. It contains the video's
-worked examples, tradeoffs, and failure modes. Skip it when a tiny function is already covered by the guidance above.
+Consult relevant sections of [references/examples.md](references/examples.md) when a dependency boundary, invariant,
+or abstraction tradeoff needs clarification. Search its headings for the concept at hand; do not load all examples
+as a prerequisite to design or review.
