@@ -1,0 +1,28 @@
+id = "sthom/audio-policy"
+name = "Personal Audio"
+version = "0.1.0"
+plugin_api = 15
+author = "Spencer"
+license = "MIT"
+icon = "headphones"
+description = "Your output, microphone, app focus, and phone handoff."
+dependencies = ["audio-policy", "pw-dump", "pw-metadata", "wpctl"]
+
+[[panel]]
+id = "audio"
+entry = "panel.luau"
+width = 600
+height = 670
+placement = "attached"
+position = "top_right"
+open_near_click = true
+
+[[widget]]
+id = "widget"
+entry = "widget.luau"
+[widget.actions]
+left = "panel-toggle sthom/audio-policy:audio"
+
+[[service]]
+id = "service"
+entry = "service.luau"

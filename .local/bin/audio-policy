@@ -1,0 +1,235 @@
+#!/usr/bin/env python3
+"""Small control client; WirePlumber owns routing and persistence."""
+
+import argparse
+import json
+import subprocess
+import sys
+import time
+import uuid
+
+HOLD = "personal_audio_hold"
+
+
+def run(*args):
+    return subprocess.run(args, check=True, text=True, capture_output=True, timeout=8).stdout
+
+
+def graph():
+    return json.loads(run("pw-dump"))
+
+
+def metadata(objects, name):
+    for obj in objects:
+        if obj.get("props", {}).get("metadata.name") == name:
+            return obj.get("metadata", [])
+    return []
+
+
+def entry(entries, key, subject=0):
+    return next((e.get("value") for e in entries if e.get("key") == key and e.get("subject") == subject), None)
+
+
+def identity(props):
+    for key in ("application.id", "application.name", "application.process.binary", "node.name"):
+        if props.get(key):
+            return key + ":" + props[key]
+    return "unknown"
+
+
+def enabled(value):
+    return value is True or str(value).lower() == "true"
+
+
+def activate():
+    before = graph()
+    if entry(metadata(before, "personal-audio"), "state"):
+        print("Audio policy already active; no restart needed.")
+        return
+    for obj in before:
+        p = obj.get("info", {}).get("props", {})
+        capture = (
+            p.get("media.class") == "Stream/Input/Audio"
+            and not enabled(p.get("stream.monitor"))
+            and not enabled(p.get("node.passive"))
+        )
+        call = p.get("media.class") == "Stream/Output/Audio" and (
+            p.get("application.process.binary", "").lower() == "discord"
+            or p.get("media.role", "").lower() in ("communication", "phone")
+        )
+        # Muting/pausing capture does not mean a call has ended.
+        if capture or call:
+            raise ValueError("A call/capture stream exists. Finish the call or recording before activation.")
+    defaults = metadata(before, "default")
+    selected = {kind: (entry(defaults, "default.audio." + kind) or {}).get("name", "") for kind in ("sink", "source")}
+    address = next(
+        (
+            o.get("info", {}).get("props", {}).get("api.bluez5.address")
+            for o in before
+            if o.get("info", {}).get("props", {}).get("node.name") == selected["sink"]
+        ),
+        None,
+    )
+    print("Restarting WirePlumber; restoring your selected devices afterward.")
+    run("systemctl", "--user", "restart", "wireplumber")
+    reconnected = False
+    for attempt in range(100):
+        objects = graph()
+        nodes = {
+            o.get("info", {}).get("props", {}).get("node.name"): o["id"]
+            for o in objects
+            if o.get("type") == "PipeWire:Interface:Node"
+        }
+        if address and selected["sink"] not in nodes and attempt >= 10 and not reconnected:
+            run("bluetoothctl", "--timeout", "6", "connect", address)
+            reconnected = True
+        ready = entry(metadata(objects, "personal-audio"), "state")
+        if ready and all(not name or name in nodes for name in selected.values()):
+            current = metadata(objects, "default")
+            restored = True
+            for kind, name in selected.items():
+                if name and (entry(current, "default.audio." + kind) or {}).get("name") != name:
+                    run("wpctl", "set-default", str(nodes[name]))
+                    restored = False
+            if restored:
+                print("Audio policy active; selected output and microphone restored.")
+                return
+        time.sleep(0.1)
+    raise ValueError(
+        "Activation did not restore the selected devices. Check audio-policy status and Bluetooth connection."
+    )
+
+
+def snapshot(objects):
+    policy_meta = metadata(objects, "personal-audio")
+    state = entry(policy_meta, "state")
+    defaults = metadata(objects, "default")
+    output = (entry(defaults, "default.audio.sink") or {}).get("name", "")
+    mic = (entry(defaults, "default.audio.source") or {}).get("name", "")
+    result = {
+        "ready": state is not None,
+        "state": state or {},
+        "outputs": [],
+        "inputs": [],
+        "apps": [],
+        "owners": [],
+        "output": output,
+        "mic": mic,
+    }
+    apps = {}
+    for obj in objects:
+        if obj.get("type") != "PipeWire:Interface:Node":
+            continue
+        info = obj.get("info", {})
+        p = info.get("props", {})
+        name = p.get("node.name", "")
+        mc = p.get("media.class", "")
+        if name == HOLD:
+            continue
+        if mc in ("Audio/Sink", "Audio/Source", "Audio/Source/Virtual"):
+            dest = "outputs" if mc == "Audio/Sink" else "inputs"
+            result[dest].append(
+                {
+                    "id": name,
+                    "name": p.get("node.description", name),
+                    "active": name == (output if dest == "outputs" else mic),
+                }
+            )
+        elif mc == "Stream/Output/Audio" and not p.get("node.link-group"):
+            app_id = identity(p)
+            decision = entry(policy_meta, "decision", obj["id"]) or {}
+            app = apps.setdefault(
+                app_id,
+                {
+                    "id": app_id,
+                    "name": p.get("application.name", name),
+                    "active": False,
+                    "blocked": False,
+                    "reason": "Allowed",
+                    "streams": [],
+                },
+            )
+            app["active"] |= info.get("state") == "running"
+            app["blocked"] |= decision.get("blocked", False)
+            if decision.get("blocked"):
+                app["reason"] = decision.get("reason", "Blocked")
+            app["streams"].append(obj["id"])
+    # Keep explicitly blocked apps controllable even after their streams disappear.
+    for app_id in (state or {}).get("blocked", {}):
+        apps.setdefault(
+            app_id,
+            {
+                "id": app_id,
+                "name": app_id.partition(":")[2],
+                "active": False,
+                "blocked": True,
+                "reason": "Blocked by you",
+                "streams": [],
+            },
+        )
+    result["apps"] = sorted(apps.values(), key=lambda a: a["name"].lower())
+    result["owners"] = [a["name"] for a in result["apps"] if a["active"] and not a["blocked"]]
+    return result
+
+
+def send(action, app=None, enabled=None):
+    if not entry(metadata(graph(), "personal-audio"), "state"):
+        raise ValueError("Policy is installed but not active. After your call, run: audio-policy activate")
+    request = {"id": uuid.uuid4().hex, "action": action}
+    if app is not None:
+        request["app"] = app
+    if enabled is not None:
+        request["enabled"] = enabled
+    run("pw-metadata", "-n", "personal-audio", "0", "command", json.dumps(request), "Spa:String:JSON")
+    for _ in range(20):
+        reply = entry(metadata(graph(), "personal-audio"), "result")
+        if reply and reply.get("id") == request["id"]:
+            if not reply.get("ok"):
+                raise ValueError(reply.get("error", "Command failed"))
+            return
+        time.sleep(0.05)
+    raise ValueError("WirePlumber did not acknowledge the command; inspect audio-policy status")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser("status").add_argument("--json", action="store_true")
+    for cmd in ("normal", "release", "resume", "reset", "activate", "panel"):
+        sub.add_parser(cmd)
+    for cmd in ("focus", "game", "block", "allow", "output", "mic"):
+        sub.add_parser(cmd).add_argument("id", help="Stable ID from status --json")
+    for cmd in ("mix", "dnd"):
+        sub.add_parser(cmd).add_argument("enabled", choices=("on", "off"))
+    args = parser.parse_args()
+    if args.command == "panel":
+        run("noctalia", "msg", "panel-toggle", "sthom/audio-policy:audio")
+    elif args.command == "status":
+        s = snapshot(graph())
+        if args.json:
+            print(json.dumps(s))
+        else:
+            print("Policy: " + ("phone" if s["state"].get("phone") else s["state"].get("mode", "pending activation")))
+            print("Output: " + s["output"] + "\nMic: " + s["mic"])
+            for app in s["apps"]:
+                print(f"{app['id']} — {app['reason']}" + (" (active stream)" if app["active"] else ""))
+    elif args.command in ("output", "mic"):
+        expected = "Audio/Sink" if args.command == "output" else "Audio/Source"
+        for obj in graph():
+            p = obj.get("info", {}).get("props", {})
+            if p.get("node.name") == args.id and p.get("media.class", "").startswith(expected) and args.id != HOLD:
+                run("wpctl", "set-default", str(obj["id"]))
+                return
+        raise ValueError("Device is no longer available; refresh the device list")
+    elif args.command == "activate":
+        activate()
+    else:
+        send(args.command, getattr(args, "id", None), args.enabled == "on" if hasattr(args, "enabled") else None)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (ValueError, subprocess.SubprocessError, OSError) as exc:
+        print(f"audio-policy: {exc}", file=sys.stderr)
+        sys.exit(1)

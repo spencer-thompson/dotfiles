@@ -27,7 +27,7 @@ order = [ "Top", "Bottom" ]
     [bar.Top]
     center = [ "control-center", "battery", "clock", "network", "network_rx", "network_tx", "sysmon", "status" ]
     contact_shadow = true
-    end = [ "tray", "widget", "bluetooth", "volume", "brightness", "ram", "cpu", "temp", "spacer_2", "session" ]
+    end = [ "tray", "widget", "bluetooth", "volume", "audio-policy", "brightness", "ram", "cpu", "temp", "spacer_2", "session" ]
     font_family = "Berkeley Mono Variable"
     font_weight = 800
     margin_ends = 0
@@ -408,7 +408,10 @@ browser_placement = "floating"
 browser_position = "center"
 
 [plugins]
-enabled = [ "noctalia/wallhaven", "goodroot/noctwhspr", "blackbartblues/audio-switcher", "sthom/sky-hyprland" ]
+enabled = [ "noctalia/wallhaven", "goodroot/noctwhspr", "blackbartblues/audio-switcher", "sthom/sky-hyprland", "sthom/audio-policy" ]
+
+[widget.audio-policy]
+type = "sthom/audio-policy:widget"
 
 [shell]
 app_icon_color = "primary"

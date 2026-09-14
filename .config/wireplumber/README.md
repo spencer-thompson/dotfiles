@@ -1,7 +1,85 @@
 # Personal audio policy
 
-Design for this desktop, Sony WH-1000XM5 headphones, and phone handoff.
-Status: design only; custom routing scripts are not implemented or enabled yet.
+Personal audio controls for this desktop, Sony WH-1000XM5 headphones, and phone handoff.
+Status: first implementation installed and activated September 13; Noctalia controls enabled.
+Real routing tests passed on a separate hardware-free audio server. Initial activation disconnected the Sonys and
+playback fell back to unused S/PDIF. Reconnecting restored Discord; Spencer confirmed audio returned.
+Activation now skips restarts when already active, checks for idle as well as running call/capture streams,
+and reconnects/restores the selected devices before reporting success. Recovery logic has regression tests;
+do not restart during a call to retest it on hardware.
+
+## Use the first version
+
+Click the new headphones widget or run `audio-policy panel`. On a fresh installation, after calls end, run
+`audio-policy activate` once. It restarts WirePlumber and restores selected output/mic, refusing when a call or
+non-monitor capture stream exists. If already active, it returns without restarting.
+No packages or background session manager were added.
+
+| Control | Behavior |
+|---|---|
+| Output / Microphone | Select the native WirePlumber default; remember the choice using existing device state |
+| Normal | Allow playback except explicit blocks and recognized notification audio during Noctalia DND |
+| Focus, beside an app | Give that app playback focus; recognized calls remain permitted |
+| Protect game, beside an app | Hold other apps silently, including incoming call audio; existing visual call UI stays available |
+| Spotify mix | Permit Spotify alongside the selected game |
+| Block / Allow | Remember explicit blocks; Allow removes a block and admits the app to the current focus/game session |
+| Release for phone / Return to PC | Hold all ordinary PC playback silently, then restore the selected policy; Bluetooth stays connected |
+| Apps & block reasons | Expand to see active/idle streams, explicit controls, and explanations |
+| Reset policy choices | Clear custom choices and blocks; preserve native device and volume preferences |
+
+Pause music before releasing for the phone if you want to keep your place. Held apps continue playback silently.
+This is routing policy for ordinary autoconnecting desktop playback, not an application security boundary;
+applications that manage their own PipeWire links and linked audio filters are outside this first version.
+Current owners means active, allowed streams, not verified audible sound.
+
+Terminal controls accept stable IDs from `audio-policy status --json`:
+
+```sh
+audio-policy status
+audio-policy focus 'application.name:Spotify'
+audio-policy game 'application.name:Stardew Valley'
+audio-policy mix on
+audio-policy block 'application.name:Firefox'
+audio-policy allow 'application.name:Firefox'
+audio-policy release
+audio-policy resume
+audio-policy normal
+audio-policy reset
+```
+
+Calls are currently recognized by the communication/phone media role or the Discord process binary. Game mode
+does not distinguish ringing from an already joined call: explicitly Allow Discord when choosing to talk while gaming.
+DND is mirrored by the Noctalia service every two seconds and suppresses only streams tagged notification/event.
+Unlabelled notification sounds inside a browser cannot be distinguished from that browser's other playback.
+
+Still to iterate: automatic switch-by-pressing-play handoff; identify/test the real speaker fallback; additional
+call-app identities; physical-device reconnect and microphone-fallback testing. Existing WirePlumber fallback/pause
+behavior is retained. DJI is given a fallback priority boost without overriding manually saved mic choices. No new DSP
+or headphone profile changes are included.
+
+## Install / verify / undo
+
+Stow supplies the matching home paths. To register the personal panel on a fresh installation:
+
+```sh
+noctalia msg plugins source add personal-audio path "$HOME/dotfiles/.config/noctalia/plugins"
+noctalia msg plugins enable sthom/audio-policy
+audio-policy activate  # after calls/recordings, not during one
+```
+
+Tests create a private PipeWire socket, state directory and D-Bus session; hardware monitors are disabled:
+
+```sh
+lua .config/wireplumber/tests/policy.lua "$PWD"
+python .config/wireplumber/tests/activation.py
+dbus-run-session -- python .config/wireplumber/tests/integration.py
+noctalia plugins lint .config/noctalia/plugins/audio-policy
+```
+
+For ordinary recovery, `audio-policy reset` restores permissive playback and clears all custom choices.
+To remove the policy completely, rename `wireplumber.conf.d/90-personal-audio.conf` to end in `.conf.disabled`
+and restart WirePlumber after calls end. Disable the panel with `noctalia msg plugins disable sthom/audio-policy`.
+The microphone priority boost is removed with that fragment; native saved preferences remain.
 
 ## Version-one scope
 
@@ -26,13 +104,13 @@ application. A persistent preference can authorize automatic behavior; repeated 
 |---|---|---|
 | Scope | Same policy for Bluetooth and speakers | Identify the intended physical speaker output |
 | Music | Spotify usually takes precedence | Define precedence over other permitted media |
-| Games | Uninterrupted gaming; optionally mix Spotify with game audio; incoming calls appear visually without changing game audio | How gaming/mix mode is selected |
+| Games | Uninterrupted gaming; optionally mix Spotify with game audio; incoming calls appear visually without changing game audio | Explicit Protect game / Spotify mix controls implemented; test with real sessions |
 | Interruptions | Calls are an exception outside gaming; otherwise consider Noctalia DND | Which apps qualify as calls or important alerts |
 | Browser | Treat Firefox as one app initially | App admission policy remains undecided |
-| Phone handoff | Prefer switching by pressing play on the desired device | Prove PC stream release works; phone intent is not directly observable |
+| Phone handoff | Prefer switching by pressing play on the desired device | Manual release proved useful; automatic phone intent is not directly observable |
 | Reconnect/reboot | Restore last choice, with carefully bounded state | Exact lifetime of temporary overrides |
 | Headphone loss | Move to available speakers, otherwise pause | Non-pausable apps and inaccurate availability reporting |
-| Microphone | DJI Mic 3 over the tower's top USB port; USB capture verified and saved as the preferred input | Normal speaking-level/quality check; future priority list and Sony fallback remain undecided |
+| Microphone | DJI Mic 3 over the tower's top USB port; capture and listening verified, saved as preferred input | Future priority list and Sony fallback remain undecided |
 | Interface | Noctalia panel plus terminal commands for optional Hyprland bindings | Integrate with existing audio-switcher where practical |
 
 Panel hierarchy: output and microphone first, current audio owner(s) next, then a button or expander for allowed
@@ -63,19 +141,20 @@ as sounding good. The final quiet interval included speech, so its room-noise me
 DJI settings were not recorded; preserve the current device settings as the accepted listening baseline. No software
 noise suppressor was installed. Avoid stacking processing without a comparison.
 
-## State ownership (proposed implementation)
+## State ownership
 
 | Data | Location | Lifetime |
 |---|---|---|
 | Policy definitions and approved device priorities | Dotfiles WirePlumber configuration | Version-controlled preferences |
 | Last manually selected output/mic and native route/profile/volume state | `~/.local/state/wireplumber/` | Existing WirePlumber persistence; do not duplicate |
-| Last explicitly selected custom mode, if needed | `~/.local/state/audio-policy/state.json` | Minimal versioned state outside Git |
-| Active streams, current owner(s), block reasons, DND mirror, temporary grants | Runtime memory / PipeWire metadata | Recomputed; not restored as stale facts |
+| Explicit mode, owner app, Spotify mixing, app blocks | `~/.local/state/wireplumber/personal-audio-policy` | Version 1 JSON inside WirePlumber's native atomic state file; no second state writer |
+| Phone release, temporary app grants, DND mirror, live streams and reasons | `personal-audio` PipeWire metadata / script memory | Runtime only; phone release and grants clear on WirePlumber restart |
 
-Use stable device/application identifiers, not session numeric IDs. Restore a saved selection only if the target still
-exists and the current policy permits it; otherwise follow the approved fallback. Store a small schema version and use
-atomic writes for custom state. Expose inspect/reset commands. Read DND from Noctalia rather than keeping a second
-persistent DND preference. Configuration is authoritative; stale runtime state cannot override it.
+Use stable device/application identifiers, not session numeric IDs. WirePlumber restores native device preferences.
+Custom focus/game choice stays selected if its app disappears, so background apps do not unexpectedly take over;
+select Normal to clear focus. Unsupported or malformed saved policy falls back to Normal with a journal warning.
+`audio-policy status --json` inspects current choices; `reset` clears them. The custom state file replaces the earlier
+proposed separate `audio-policy/state.json`, avoiding a second persistence implementation.
 
 ## Dotfiles layout
 
@@ -98,16 +177,19 @@ The adapter's root-owned udev power rule is separate system configuration; it is
 
 Use WirePlumber's existing event and target-selection machinery. Define the precedence of explicit choices over
 automatic routing, including how a choice is cleared. Do not add a competing session manager or restart-loop daemon.
-Prototype one behavior, verify restoration of normal routing, then expose it through terminal or Noctalia controls.
+The first implementation uses Lua target-selection hooks, a virtual holding output, a small Python terminal client,
+and a Noctalia Luau panel/service. It never writes per-stream target metadata, so temporary holding routes cannot be
+saved as permanent application device preferences. Native output and microphone selection use `wpctl set-default`.
 
-First unresolved test: temporarily remove Firefox's stream from the Sony route without closing the tab, then retry
-YouTube on the phone. The first trace showed a successful deliberate power-cycle reconnect and an active PC stream;
-it did not establish why the phone paused. Confirm the interference before building policy around it.
+Phone-handoff isolation test succeeded on September 13: with Spotify confirmed paused, moving Firefox's active
+stream to a temporary null output made the Sony sink SUSPENDED while Bluetooth stayed connected. Spencer then
+played YouTube on the phone successfully, with no reported weirdness. This strongly implicates the PC's continued
+Firefox stream in this specific failed handoff; it does not diagnose every earlier controller/transport error.
 
-Active isolation test: after Spencer paused Spotify, Firefox stream 7246 (PipeWire node 98) was temporarily moved
-to `spencer_handoff_test`, a null output. Restoration details live in `/run/user/1000/spencer-audio-handoff.json`.
-Restore Firefox to its original Sony route and remove the temporary routing metadata/module after the phone trial;
-do not treat the test destination as a permanent application preference.
+After the trial, Firefox was restored to its original Sony route, its temporary `target.node` and `target.object`
+metadata were deleted, and the null output module and runtime restoration file were removed. WirePlumber's existing
+stream-state hook clears the saved application target on metadata deletion. Permanent app permissions are still
+undecided; do not implement blanket Firefox blocking based on this test.
 
 Per-tab permissions may require browser integration. PC routing policy cannot directly control phone playback or
 repair Bluetooth controller firmware. Report those boundaries accurately.
