@@ -55,8 +55,8 @@ wireplumber.profiles = { main = {
             processes.append(proc)
             return proc
 
-        def until(fn, message):
-            for _ in range(70):
+        def until(fn, message, attempts=70):
+            for _ in range(attempts):
                 try:
                     value = fn()
                     if value:
@@ -108,12 +108,65 @@ wireplumber.profiles = { main = {
                     "--channels",
                     "2",
                     "--properties",
-                    f'{{ application.name="{app}" application.process.binary="{app}" }}',
+                    f'{{ application.name="{app}" application.process.binary="{app}" media.role="'
+                    + ("Game" if app == "Stardew Valley" else "Communication" if app == "Discord" else "Music")
+                    + '" }',
                     "/dev/zero",
                 )
             until(
                 lambda: all(routed(a, "test_speakers") for a in ("Firefox", "Spotify", "Stardew Valley", "Discord")),
                 "normal routing failed",
+            )
+            fixture = ROOT / ".config/wireplumber/tests/mpris-fixture.py"
+            spotify_player = start("python", fixture, "spotify", "Playing")
+            watcher = start(ROOT / ".local/bin/audio-policy-watch")
+            until(lambda: routed("Firefox", "personal_audio_hold"), "Spotify automatic priority failed")
+            assert routed("Discord", "test_speakers") and routed("Stardew Valley", "test_speakers")
+            time.sleep(13)
+            assert snapshot()["state"]["tracker"] is True, "unchanged playback heartbeat expired"
+
+            def player_status(player, status):
+                run(
+                    "gdbus",
+                    "call",
+                    "--session",
+                    "--dest",
+                    "org.mpris.MediaPlayer2." + player,
+                    "--object-path",
+                    "/org/mpris/MediaPlayer2",
+                    "--method",
+                    "org.example.TestPlayer.SetStatus",
+                    status,
+                )
+
+            player_status("spotify", "Paused")
+            until(
+                lambda: routed("Spotify", "personal_audio_hold") and routed("Firefox", "test_speakers"),
+                "paused stream cleanup or unknown Firefox fallback failed",
+            )
+            firefox_player = start("python", fixture, "firefox", "Paused")
+            until(lambda: routed("Firefox", "personal_audio_hold"), "late player discovery failed")
+            other_tab = start("python", fixture, "firefox.other", "Playing")
+            until(lambda: routed("Firefox", "test_speakers"), "playing tab lost to paused tab")
+            other_tab.terminate()
+            other_tab.wait(timeout=5)
+            until(lambda: routed("Firefox", "personal_audio_hold"), "paused browser did not settle after tab exit")
+            player_status("firefox", "Playing")
+            until(lambda: routed("Firefox", "test_speakers"), "browser resume failed")
+            firefox_player.terminate()
+            firefox_player.wait(timeout=5)
+            until(
+                lambda: "application.name:Firefox" not in snapshot()["state"].get("playback", {}),
+                "vanished player did not become unknown",
+            )
+            watcher.terminate()
+            watcher.wait(timeout=5)
+            spotify_player.terminate()
+            spotify_player.wait(timeout=5)
+            until(
+                lambda: not snapshot()["state"].get("tracker") and routed("Spotify", "test_speakers"),
+                "observer expiry did not release stale automatic restrictions",
+                attempts=150,
             )
             run(CLI, "block", "application.name:Firefox")
             until(lambda: routed("Firefox", "personal_audio_hold"), "block did not move Firefox")
@@ -127,8 +180,12 @@ wireplumber.profiles = { main = {
             )
             run(CLI, "mix", "on")
             until(lambda: routed("Spotify", "test_speakers"), "game+Spotify mix failed")
-            run(CLI, "allow", "application.name:Discord")
-            until(lambda: routed("Discord", "test_speakers"), "explicit call exception failed")
+            run(CLI, "discord", "on")
+            until(lambda: routed("Discord", "test_speakers"), "independent Discord permission failed")
+            run(CLI, "focus", "application.name:Stardew Valley")
+            run(CLI, "game", "application.name:Stardew Valley")
+            assert snapshot()["state"]["discord"] is True
+            until(lambda: routed("Discord", "test_speakers"), "Discord permission lost on mode change")
             run(CLI, "release")
             until(
                 lambda: all(
@@ -149,6 +206,8 @@ wireplumber.profiles = { main = {
                     )
             run(CLI, "block", "application.name:Firefox")
             until(lambda: (base / "state/wireplumber/personal-audio-policy").exists(), "policy state not saved")
+            start(ROOT / ".local/bin/audio-policy-watch")
+            until(lambda: snapshot()["state"].get("tracker"), "observer restart failed")
             time.sleep(1.2)
             wp.terminate()
             wp.wait(timeout=5)
@@ -158,13 +217,15 @@ wireplumber.profiles = { main = {
             )
             assert snapshot()["state"]["phone"] is False
             assert snapshot()["state"]["allowed"] == {}
+            assert snapshot()["state"]["discord"] is False
+            until(lambda: snapshot()["state"].get("tracker"), "observer failed to recover after WirePlumber restart")
             run(CLI, "reset")
             until(
                 lambda: all(routed(a, "test_speakers") for a in ("Firefox", "Spotify", "Stardew Valley", "Discord")),
                 "reset did not restore playback",
             )
             print(
-                "PASS: real routing, focus permissions, game/call protection, mix, release/resume, persistence, reset"
+                "PASS: MPRIS discovery/events/expiry, routing, game + Discord + Spotify, release/resume, persistence, reset"
             )
         except Exception:
             print(json.dumps(snapshot(), indent=2))

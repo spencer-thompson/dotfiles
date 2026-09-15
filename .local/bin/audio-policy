@@ -41,9 +41,9 @@ def enabled(value):
     return value is True or str(value).lower() == "true"
 
 
-def activate():
+def activate(force=False):
     before = graph()
-    if entry(metadata(before, "personal-audio"), "state"):
+    if entry(metadata(before, "personal-audio"), "state") and not force:
         print("Audio policy already active; no restart needed.")
         return
     for obj in before:
@@ -72,7 +72,7 @@ def activate():
     )
     print("Restarting WirePlumber; restoring your selected devices afterward.")
     run("systemctl", "--user", "restart", "wireplumber")
-    reconnected = False
+    reconnect_attempts = 0
     for attempt in range(100):
         objects = graph()
         nodes = {
@@ -80,9 +80,14 @@ def activate():
             for o in objects
             if o.get("type") == "PipeWire:Interface:Node"
         }
-        if address and selected["sink"] not in nodes and attempt >= 10 and not reconnected:
-            run("bluetoothctl", "--timeout", "6", "connect", address)
-            reconnected = True
+        if address and selected["sink"] not in nodes and attempt in (10, 50):
+            reconnect_attempts += 1
+            # BlueZ may accept the first request before the transport is ready, or the
+            # headset may reset it. Verify the sink, then allow one bounded retry.
+            try:
+                run("bluetoothctl", "--timeout", "6", "connect", address)
+            except subprocess.SubprocessError:
+                print(f"Bluetooth reconnect attempt {reconnect_attempts} did not complete; waiting for the device.")
         ready = entry(metadata(objects, "personal-audio"), "state")
         if ready and all(not name or name in nodes for name in selected.values()):
             current = metadata(objects, "default")
@@ -151,8 +156,8 @@ def snapshot(objects):
             )
             app["active"] |= info.get("state") == "running"
             app["blocked"] |= decision.get("blocked", False)
-            if decision.get("blocked"):
-                app["reason"] = decision.get("reason", "Blocked")
+            if decision.get("blocked") or not app["blocked"]:
+                app["reason"] = decision.get("reason", "Allowed · playback state unknown")
             app["streams"].append(obj["id"])
     # Keep explicitly blocked apps controllable even after their streams disappear.
     for app_id in (state or {}).get("blocked", {}):
@@ -195,11 +200,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("status").add_argument("--json", action="store_true")
-    for cmd in ("normal", "release", "resume", "reset", "activate", "panel"):
+    for cmd in ("normal", "release", "resume", "reset", "panel"):
         sub.add_parser(cmd)
+    sub.add_parser("activate").add_argument(
+        "--reload", action="store_true", help="Reload changed policy after calls end"
+    )
     for cmd in ("focus", "game", "block", "allow", "output", "mic"):
         sub.add_parser(cmd).add_argument("id", help="Stable ID from status --json")
-    for cmd in ("mix", "dnd"):
+    for cmd in ("mix", "dnd", "discord"):
         sub.add_parser(cmd).add_argument("enabled", choices=("on", "off"))
     args = parser.parse_args()
     if args.command == "panel":
@@ -211,6 +219,8 @@ def main():
         else:
             print("Policy: " + ("phone" if s["state"].get("phone") else s["state"].get("mode", "pending activation")))
             print("Output: " + s["output"] + "\nMic: " + s["mic"])
+            print("Playback tracking: " + ("connected" if s["state"].get("tracker") else "unavailable"))
+            print("Discord alongside other audio: " + ("on" if s["state"].get("discord") else "off"))
             for app in s["apps"]:
                 print(f"{app['id']} — {app['reason']}" + (" (active stream)" if app["active"] else ""))
     elif args.command in ("output", "mic"):
@@ -222,7 +232,7 @@ def main():
                 return
         raise ValueError("Device is no longer available; refresh the device list")
     elif args.command == "activate":
-        activate()
+        activate(force=args.reload)
     else:
         send(args.command, getattr(args, "id", None), args.enabled == "on" if hasattr(args, "enabled") else None)
 

@@ -30,4 +30,33 @@ s.mode, r.dnd = "normal", true
 assert(p.decide(s, r, stream("Alert", "Notification")) == "Do not disturb")
 assert(p.decide(s, r, call) == nil)
 assert(p.identity(game) ~= p.identity(stream("Another Wine game")))
-print("Policy precedence checks passed")
+s, r = p.defaults(), { allowed = {}, playback = {} }
+r.playback[p.identity(firefox)] = "Paused"
+assert(p.decide(s, r, firefox) == "Media player paused")
+r.playback[p.identity(firefox)] = nil
+r.spotify = p.identity(spotify)
+assert(p.decide(s, r, firefox) == "Spotify is playing")
+assert(p.decide(s, r, game) == nil)
+assert(p.decide(s, r, call) == nil)
+s.blocked[p.identity(spotify)] = true
+assert(p.decide(s, r, firefox) == nil)
+s.blocked = {}
+r.exempt = { [p.identity(firefox)] = true }
+r.playback[p.identity(firefox)] = "Paused"
+assert(p.decide(s, r, firefox) == nil)
+r.exempt, r.playback = {}, {}
+s.mode, s.owner = "game", p.identity(game)
+r.discord = true
+assert(p.decide(s, r, call) == nil)
+r.playback[p.identity(call)] = "Paused"
+r.playback[p.identity(game)] = "Paused"
+assert(p.decide(s, r, call) == nil)
+assert(p.decide(s, r, game) == nil)
+assert(p.decide(s, r, spotify) ~= nil)
+s.mix = true
+assert(p.decide(s, r, spotify) == nil)
+s.blocked[p.identity(call)] = true
+assert(p.decide(s, r, call) == "Blocked by you")
+r.phone = true
+assert(p.decide(s, r, call) == "Released for phone")
+print("Policy precedence checks passed: playback, unknowns, capture, game + Discord + Spotify, overrides")

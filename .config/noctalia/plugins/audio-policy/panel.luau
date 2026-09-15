@@ -54,10 +54,17 @@ render = function()
       button(state.phone and "Return to PC" or "Release for phone", state.phone and "resume" or "release", nil, ready),
       button(state.mix and "Spotify mix: on" or "Spotify mix: off", "mix", state.mix and "off" or "on", ready),
     }),
+    ui.row({ gap = 8 }, {
+      button(state.discord and "Discord alongside: on" or "Discord alongside: off", "discord",
+        state.discord and "off" or "on", ready and state.capabilities ~= nil),
+    }),
+    ui.label({ text = state.tracker and "Playback tracking connected · Spotify priority in Normal mode"
+      or "Playback tracking unavailable · automatic media rules inactive",
+      fontSize = 11, color = "on_surface_variant", maxLines = 2 }),
     ui.label({ text = "Current audio owners", fontWeight = "bold" }),
     ui.label({ text = #(snapshot.owners or {}) > 0 and table.concat(snapshot.owners, ", ") or "No active playback streams",
       maxLines = 3 }),
-    ui.label({ text = "Active streams can contain silence. Focus and game protection are your choice.",
+    ui.label({ text = "Unknown streams can contain silence. Explicit Focus and game protection override Spotify priority.",
       fontSize = 11, color = "on_surface_variant", maxLines = 2 }),
     ui.button({ text = (expanded and "Hide" or "Show") .. " apps & block reasons", variant = "outline",
       onClick = function() expanded = not expanded; render() end }),
@@ -74,7 +81,7 @@ render = function()
         ui.row({ gap = 6 }, actions),
       }))
     end
-    table.insert(children, ui.label({ text = "Game mode holds other apps, including incoming call audio. Allow an app to join this session. Normal keeps your explicit blocks.",
+    table.insert(children, ui.label({ text = "Discord alongside allows Discord, including its alerts, through focus/game protection until switched off or WirePlumber restarts. Phone release and explicit blocks still win. It does not detect joined calls.",
       fontSize = 11, color = "on_surface_variant", maxLines = 3 }))
     table.insert(children, button("Reset policy choices", "reset", nil, ready))
   end

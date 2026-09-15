@@ -29,6 +29,22 @@ DEVICES = [node("sony", **{"api.bluez5.address": "AC:80:0A:5B:A8:67"}), node("dj
 
 
 class ActivationTests(unittest.TestCase):
+    def test_explicit_reload_still_refuses_capture(self):
+        capture = node("mic", "Stream/Input/Audio")
+        with (
+            patch.dict(activate.__globals__, graph=lambda: [READY, capture], run=lambda *a: self.fail(str(a))),
+            self.assertRaisesRegex(ValueError, "Finish the call"),
+        ):
+            activate(force=True)
+
+    def test_explicit_reload_restores_active_policy(self):
+        calls = []
+        with patch.dict(
+            activate.__globals__, graph=lambda: [READY, DEFAULTS, *DEVICES], run=lambda *a: calls.append(a)
+        ):
+            activate(force=True)
+        self.assertEqual(calls, [("systemctl", "--user", "restart", "wireplumber")])
+
     def test_already_active_never_restarts(self):
         with patch.dict(activate.__globals__, graph=lambda: [READY], run=lambda *a: self.fail(str(a))):
             activate()
@@ -73,6 +89,17 @@ class ActivationTests(unittest.TestCase):
             self.assertRaisesRegex(ValueError, "did not restore"),
         ):
             activate()
+
+    def test_retries_when_bluetooth_accepts_request_without_restoring_sink(self):
+        calls = []
+        reads = iter([[DEFAULTS, *DEVICES]] + [[READY]] * 51 + [[READY, DEFAULTS, *DEVICES]])
+        with (
+            patch.dict(activate.__globals__, graph=lambda: next(reads), run=lambda *a: calls.append(a)),
+            patch("time.sleep"),
+        ):
+            activate()
+        connects = [c for c in calls if c[0] == "bluetoothctl"]
+        self.assertEqual(len(connects), 2)
 
 
 if __name__ == "__main__":

@@ -13,7 +13,8 @@ do not restart during a call to retest it on hardware.
 Click the new headphones widget or run `audio-policy panel`. On a fresh installation, after calls end, run
 `audio-policy activate` once. It restarts WirePlumber and restores selected output/mic, refusing when a call or
 non-monitor capture stream exists. If already active, it returns without restarting.
-No packages or background session manager were added.
+WirePlumber owns routing. The `audio-policy-watch` user service observes media-player state using the existing
+Python GObject bindings (`python-gobject`); it does not record audio or manage Bluetooth connections.
 
 Automatic Bluetooth headset-profile switching is disabled in `90-personal-audio.conf`.
 Use the DJI microphone while the Sonys stay in music mode; using the Sony microphone requires
@@ -23,10 +24,11 @@ LDAC remains unchanged while evaluating whether avoiding profile switches improv
 | Control | Behavior |
 |---|---|
 | Output / Microphone | Select the native WirePlumber default; remember the choice using existing device state |
-| Normal | Allow playback except explicit blocks and recognized notification audio during Noctalia DND |
+| Normal | Give locally playing Spotify priority over browser/other media; hold confirmed paused media; preserve explicit blocks and DND |
 | Focus, beside an app | Give that app playback focus; recognized calls remain permitted |
 | Protect game, beside an app | Hold other apps silently, including incoming call audio; existing visual call UI stays available |
 | Spotify mix | Permit Spotify alongside the selected game |
+| Discord alongside | Permit Discord through focus/game protection until switched off or WirePlumber restarts; also permits Discord alerts |
 | Block / Allow | Remember explicit blocks; Allow removes a block and admits the app to the current focus/game session |
 | Release for phone / Return to PC | Hold all ordinary PC playback silently, then restore the selected policy; Bluetooth stays connected |
 | Apps & block reasons | Expand to see active/idle streams, explicit controls, and explanations |
@@ -44,6 +46,8 @@ audio-policy status
 audio-policy focus 'application.name:Spotify'
 audio-policy game 'application.name:Stardew Valley'
 audio-policy mix on
+audio-policy discord on
+audio-policy discord off
 audio-policy block 'application.name:Firefox'
 audio-policy allow 'application.name:Firefox'
 audio-policy release
@@ -52,15 +56,44 @@ audio-policy normal
 audio-policy reset
 ```
 
-Calls are currently recognized by the communication/phone media role or the Discord process binary. Game mode
-does not distinguish ringing from an already joined call: explicitly Allow Discord when choosing to talk while gaming.
+Calls are recognized by the communication/phone media role or Discord identity. Game mode does not distinguish
+ringing from an already joined call: turn on Discord alongside when choosing to talk while gaming, and off afterward.
+This permission survives focus/game changes and quiet/muted calls. Explicit blocks and Release for phone still win.
+Other call apps can use the existing Allow control. No automatic joined-call detection is claimed.
 DND is mirrored by the Noctalia service every two seconds and suppresses only streams tagged notification/event.
 Unlabelled notification sounds inside a browser cannot be distinguished from that browser's other playback.
 
 Still to iterate: automatic switch-by-pressing-play handoff; identify/test the real speaker fallback; additional
 call-app identities; physical-device reconnect and microphone-fallback testing. Existing WirePlumber fallback/pause
-behavior is retained. DJI is given a fallback priority boost without overriding manually saved mic choices. No new DSP
-or headphone profile changes are included.
+behavior is retained. DJI is given a fallback priority boost without overriding manually saved mic choices. No DSP
+is added; automatic Bluetooth headset-profile switching is disabled as described above.
+
+### Automatic playback tracking
+
+`audio-policy-watch` listens for MPRIS player appearance, disappearance, and playback-status changes on the session
+bus. It matches Spotify, Firefox, Chromium, and Google Chrome identities and sends temporary observations through
+the policy's `playback` metadata key. A two-second heartbeat also checks live streams. WirePlumber applies these rules:
+
+- Spotify gets automatic priority in Normal mode only when MPRIS says Playing and a local Spotify stream is running.
+  Explicit Focus/game choices win; games and recognized calls are not displaced by normal media priority.
+- Confirmed Paused/Stopped media streams move to the holding output after a 1.5-second grace period, observed on
+  the next refresh (normally within about 3.5 seconds). Playing restores eligibility without overriding explicit rules.
+- Browser players are aggregated per application: any Playing player wins over paused tabs. A failed or missing
+  status is unknown. This is not per-tab routing or silence detection, and autoplay is not proof of user intent.
+- Browser capture exempts that browser from automatic media suppression, protecting unlabelled web calls. Game
+  protection can still require explicitly allowing the browser. Protected games and recognized calls ignore paused
+  media observations; silence and microphone mute never end their permission.
+- Explicit Allow overrides automatic holding. Block and Release for phone override all playback and call permissions.
+- If the observer stops reporting for roughly 12 seconds, its restrictions expire. Manual choices remain intact.
+
+Firefox can keep an audio stream without exposing an MPRIS player, as observed on September 15. Such streams remain
+unknown; Spotify priority can hold them while Spotify plays, but pausing Spotify alone cannot guarantee phone handoff.
+Use Release for phone in that case. Reliable phone intent and complete browser activity tracking need additional
+integration. These routing rules do not repair Bluetooth packet/firmware failures.
+
+The panel and `audio-policy status` show tracking availability and reasons such as “Spotify is playing,”
+“Media player paused,” “Discord allowed alongside other audio,” and “playback state unknown.” Automatic state and
+Discord permission are temporary; they do not overwrite saved focus, mixing, device, or app-block preferences.
 
 ## Install / verify / undo
 
@@ -70,7 +103,13 @@ Stow supplies the matching home paths. To register the personal panel on a fresh
 noctalia msg plugins source add personal-audio path "$HOME/dotfiles/.config/noctalia/plugins"
 noctalia msg plugins enable sthom/audio-policy
 audio-policy activate  # after calls/recordings, not during one
+systemctl --user daemon-reload
+systemctl --user enable --now audio-policy-watch.service
 ```
+
+After updating an already active Lua policy, use `audio-policy activate --reload` after calls and recordings end.
+It checks for capture/call streams and restores the selected devices. The observer reconnects after a policy restart.
+For a fresh checkout, Stow must link the new service unit and executable before enabling the service.
 
 Tests create a private PipeWire socket, state directory and D-Bus session; hardware monitors are disabled:
 
@@ -81,9 +120,11 @@ dbus-run-session -- python .config/wireplumber/tests/integration.py
 noctalia plugins lint .config/noctalia/plugins/audio-policy
 ```
 
-For ordinary recovery, `audio-policy reset` restores permissive playback and clears all custom choices.
+For ordinary recovery, `audio-policy reset` clears custom choices and returns to Normal mode. Automatic playback
+rules resume when the observer next reports; stop the observer too if diagnosing those rules.
 To remove the policy completely, rename `wireplumber.conf.d/90-personal-audio.conf` to end in `.conf.disabled`
 and restart WirePlumber after calls end. Disable the panel with `noctalia msg plugins disable sthom/audio-policy`.
+Stop the observer with `systemctl --user disable --now audio-policy-watch.service`.
 The microphone priority boost is removed with that fragment; native saved preferences remain.
 
 ## Troubleshoot dropouts and phone handoff
@@ -106,6 +147,8 @@ journalctl -b -k --no-pager -o short-iso | rg -i 'bluetooth|btusb|hci0'
 audio-policy status
 wpctl status
 wpctl settings bluetooth.autoswitch-to-headset-profile
+systemctl --user status audio-policy-watch.service
+journalctl --user -b -u audio-policy-watch.service --no-pager -o short-iso
 
 # Example: narrow an audio-log query to the time of a dropout (local time)
 journalctl --user -b -u wireplumber -u pipewire -u pipewire-pulse \
@@ -170,7 +213,7 @@ application. A persistent preference can authorize automatic behavior; repeated 
 | Area | Spencer's preference | Unresolved detail |
 |---|---|---|
 | Scope | Same policy for Bluetooth and speakers | Identify the intended physical speaker output |
-| Music | Spotify usually takes precedence | Define precedence over other permitted media |
+| Music | Spotify usually takes precedence | Automatic priority in Normal mode; explicit Focus/game choices win |
 | Games | Uninterrupted gaming; optionally mix Spotify with game audio; incoming calls appear visually without changing game audio | Explicit Protect game / Spotify mix controls implemented; test with real sessions |
 | Interruptions | Calls are an exception outside gaming; otherwise consider Noctalia DND | Which apps qualify as calls or important alerts |
 | Browser | Treat Firefox as one app initially | App admission policy remains undecided |
@@ -215,7 +258,7 @@ noise suppressor was installed. Avoid stacking processing without a comparison.
 | Policy definitions and approved device priorities | Dotfiles WirePlumber configuration | Version-controlled preferences |
 | Last manually selected output/mic and native route/profile/volume state | `~/.local/state/wireplumber/` | Existing WirePlumber persistence; do not duplicate |
 | Explicit mode, owner app, Spotify mixing, app blocks | `~/.local/state/wireplumber/personal-audio-policy` | Version 1 JSON inside WirePlumber's native atomic state file; no second state writer |
-| Phone release, temporary app grants, DND mirror, live streams and reasons | `personal-audio` PipeWire metadata / script memory | Runtime only; phone release and grants clear on WirePlumber restart |
+| Phone release, Discord permission, temporary grants, DND, playback observations and reasons | `personal-audio` PipeWire metadata / script memory | Runtime only; observations expire without heartbeats; other temporary choices clear on restart |
 
 Use stable device/application identifiers, not session numeric IDs. WirePlumber restores native device preferences.
 Custom focus/game choice stays selected if its app disappears, so background apps do not unexpectedly take over;

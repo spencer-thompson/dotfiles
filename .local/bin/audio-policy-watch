@@ -1,0 +1,174 @@
+#!/usr/bin/env python3
+"""Observe MPRIS; WirePlumber remains the only routing and persistence owner."""
+
+import json
+import runpy
+import subprocess
+import time
+from pathlib import Path
+
+from gi.repository import Gio, GLib
+
+helpers = runpy.run_path(str(Path(__file__).resolve().with_name("audio-policy")))
+PREFIX = "org.mpris.MediaPlayer2."
+PLAYER = "org.mpris.MediaPlayer2.Player"
+PATH = "/org/mpris/MediaPlayer2"
+GRACE = 1.5
+
+
+def family(name):
+    value = name.lower()
+    for candidate in ("spotify", "firefox", "chromium", "google-chrome"):
+        if value == candidate or value.startswith(candidate + "."):
+            return candidate
+    return None
+
+
+def stream_family(props):
+    return family(props.get("application.process.binary", "")) or family(props.get("application.name", ""))
+
+
+def aggregate(statuses):
+    # One playing browser player wins over another paused tab.
+    if "Playing" in statuses:
+        return "Playing"
+    if statuses and all(s in ("Paused", "Stopped") for s in statuses):
+        return "Paused" if "Paused" in statuses else "Stopped"
+    return None
+
+
+class Observer:
+    def __init__(self):
+        self.bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
+        self.players = {}
+        self.since = {}
+        self.pending = False
+        self.last_error = None
+        self.sequence = 0
+        self.bus.signal_subscribe(
+            None,
+            "org.freedesktop.DBus.Properties",
+            "PropertiesChanged",
+            PATH,
+            None,
+            Gio.DBusSignalFlags.NONE,
+            self.changed,
+        )
+        self.bus.signal_subscribe(
+            "org.freedesktop.DBus",
+            "org.freedesktop.DBus",
+            "NameOwnerChanged",
+            "/org/freedesktop/DBus",
+            None,
+            Gio.DBusSignalFlags.NONE,
+            self.names_changed,
+        )
+        self.refresh()
+        GLib.timeout_add(2000, self.publish)
+
+    def call(self, name, interface, method, args=None, path=PATH):
+        return self.bus.call_sync(
+            name, path, interface, method, args, None, Gio.DBusCallFlags.NONE, 1000, None
+        ).unpack()
+
+    def changed(self, _bus, _sender, _path, _interface, _signal, params):
+        if params.unpack()[0] == PLAYER:
+            self.schedule()
+
+    def names_changed(self, _bus, _sender, _path, _interface, _signal, params):
+        if params.unpack()[0].startswith(PREFIX):
+            self.schedule()
+
+    def schedule(self):
+        if not self.pending:
+            self.pending = True
+            GLib.idle_add(self.refresh)
+
+    def refresh(self):
+        self.pending = False
+        players = {}
+        try:
+            names = self.call(
+                "org.freedesktop.DBus", "org.freedesktop.DBus", "ListNames", path="/org/freedesktop/DBus"
+            )[0]
+            for name in names:
+                if not name.startswith(PREFIX):
+                    continue
+                kind = family(name[len(PREFIX) :])
+                if not kind:
+                    continue
+                try:
+                    props = self.call(
+                        name, "org.freedesktop.DBus.Properties", "GetAll", GLib.Variant("(s)", (PLAYER,))
+                    )[0]
+                    players.setdefault(kind, []).append(props.get("PlaybackStatus"))
+                except GLib.Error:
+                    players.setdefault(kind, []).append(None)
+        except GLib.Error as exc:
+            self.error(str(exc))
+        self.players = players
+        self.publish()
+        return False
+
+    def error(self, message):
+        if message != self.last_error:
+            print(message, flush=True)
+            self.last_error = message
+
+    def publish(self):
+        try:
+            objects = helpers["graph"]()
+            state = helpers["entry"](helpers["metadata"](objects, "personal-audio"), "state") or {}
+            if "playback" not in state.get("capabilities", []):
+                self.error(
+                    "Waiting for policy with playback tracking; run audio-policy activate --reload after calls end"
+                )
+                return True
+            nodes = [o for o in objects if o.get("type") == "PipeWire:Interface:Node"]
+            # Browser capture may be an unlabelled call: never suppress it as ordinary media.
+            capture_families = {
+                stream_family(o.get("info", {}).get("props", {}))
+                for o in nodes
+                if o.get("info", {}).get("props", {}).get("media.class") == "Stream/Input/Audio"
+            }
+            apps, exempt, seen = {}, {}, set()
+            spotify = ""
+            for node in nodes:
+                info = node.get("info", {})
+                props = info.get("props", {})
+                if props.get("media.class") != "Stream/Output/Audio":
+                    continue
+                kind = stream_family(props)
+                if not kind:
+                    continue
+                app = helpers["identity"](props)
+                if kind in capture_families:
+                    exempt[app] = True
+                    continue
+                status = aggregate(self.players.get(kind, []))
+                if status is None:
+                    continue
+                seen.add(app)
+                previous, since = self.since.get(app, (None, time.monotonic()))
+                if previous != status:
+                    since = time.monotonic()
+                self.since[app] = (status, since)
+                if status == "Playing" or time.monotonic() - since >= GRACE:
+                    apps[app] = status
+                if kind == "spotify" and status == "Playing" and info.get("state") == "running":
+                    spotify = app
+            self.since = {app: value for app, value in self.since.items() if app in seen}
+            self.sequence += 1
+            update = {"version": 1, "apps": apps, "spotify": spotify, "exempt": exempt, "sequence": self.sequence}
+            helpers["run"](
+                "pw-metadata", "-n", "personal-audio", "0", "playback", json.dumps(update), "Spa:String:JSON"
+            )
+            self.last_error = None
+        except (OSError, ValueError, subprocess.SubprocessError) as exc:
+            self.error(str(exc))
+        return True
+
+
+if __name__ == "__main__":
+    Observer()
+    GLib.MainLoop().run()
