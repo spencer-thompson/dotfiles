@@ -15,6 +15,11 @@ Click the new headphones widget or run `audio-policy panel`. On a fresh installa
 non-monitor capture stream exists. If already active, it returns without restarting.
 No packages or background session manager were added.
 
+Automatic Bluetooth headset-profile switching is disabled in `90-personal-audio.conf`.
+Use the DJI microphone while the Sonys stay in music mode; using the Sony microphone requires
+manually selecting a headset profile. This setting applies to all Bluetooth headsets.
+LDAC remains unchanged while evaluating whether avoiding profile switches improves reliability.
+
 | Control | Behavior |
 |---|---|
 | Output / Microphone | Select the native WirePlumber default; remember the choice using existing device state |
@@ -80,6 +85,68 @@ For ordinary recovery, `audio-policy reset` restores permissive playback and cle
 To remove the policy completely, rename `wireplumber.conf.d/90-personal-audio.conf` to end in `.conf.disabled`
 and restart WirePlumber after calls end. Disable the panel with `noctalia msg plugins disable sthom/audio-policy`.
 The microphone priority boost is removed with that fragment; native saved preferences remain.
+
+## Troubleshoot dropouts and phone handoff
+
+Start with read-only checks. Note the symptom and approximate local time, then compare audio, Bluetooth,
+and kernel events at that time. `-b` selects the current boot; `-o short-iso` includes the date and timezone.
+Run these commands as your desktop user so the audio commands reach the correct session.
+
+```sh
+# Audio services
+journalctl --user -b -u wireplumber -u pipewire -u pipewire-pulse --no-pager -o short-iso
+
+# Bluetooth service
+journalctl -b -u bluetooth --no-pager -o short-iso
+
+# Kernel Bluetooth events
+journalctl -b -k --no-pager -o short-iso | rg -i 'bluetooth|btusb|hci0'
+
+# Current policy, selected devices, and automatic headset-profile switching
+audio-policy status
+wpctl status
+wpctl settings bluetooth.autoswitch-to-headset-profile
+
+# Example: narrow an audio-log query to the time of a dropout (local time)
+journalctl --user -b -u wireplumber -u pipewire -u pipewire-pulse \
+  --since '2026-09-15 13:00:00' --until '2026-09-15 13:05:00' --no-pager -o short-iso
+```
+
+Use the same `--since` and `--until` window for Bluetooth and kernel queries. If the journal reports insufficient
+permissions, use `sudo` for the system Bluetooth/kernel queries; keep `--user` audio queries under your own user.
+
+Interpret the evidence before changing settings:
+
+- Bluetooth transport failures or an unexpectedly terminated connection confirm an audio connection failure.
+  They do not identify whether the trigger was the adapter, headset, interference, or device switching.
+- Missing packet-completion reports suggest a Bluetooth transport/controller problem. A log message asking
+  “Bluetooth adapter firmware bug?” is a hypothesis, not proof of faulty firmware.
+- `wp_properties_get: assertion 'self != NULL' failed` needs separate investigation. The message alone does
+  not establish that the custom policy caused the dropout, or that the warning is harmless.
+- `audio-policy status` describes the current state, not the state at an earlier failure. If it shows phone
+  release, use Return to PC or `audio-policy resume` when you want PC playback again.
+
+The WH-1000XM6 supports switching playback to the second device through its own multipoint behavior; the custom
+policy does not implement automatic phone-intent detection. Phone notification sounds can also trigger unwanted
+switches. See [Sony's multipoint guide](https://helpguide.sony.net/mdr/2984/v1/en/contents/TP1001863603.html).
+
+### Example investigation: September 15, 2026
+
+On `outrival`, momentary dropouts and phone-to-PC handoff trouble coincided with these logged events (Eastern time):
+
+| Time | Evidence |
+|---|---|
+| 12:38 p.m. | Missing Bluetooth packet-completion reports |
+| 1:01–1:03 p.m. | Repeated Sony audio transport failures; kernel reported an unknown voice connection handle |
+| 1:03 p.m. | DJI receiver disconnected and reappeared; plugging in or powering on could explain this |
+| 1:41 p.m. | Sony audio connection terminated unexpectedly |
+
+The audio services stayed running. Recurring property warnings were not traced to a cause. Automatic Bluetooth
+headset-profile switching was subsequently disabled in `90-personal-audio.conf` and applied live with
+`wpctl settings bluetooth.autoswitch-to-headset-profile false`. The Sony output and DJI input remained selected;
+LDAC was left unchanged. This is a trial to avoid profile-switch interruptions, not a confirmed fix for the
+dropouts. Compare behavior after each change before trying another codec or changing controller settings.
+Avoid restarting WirePlumber during a call or recording.
 
 ## Version-one scope
 
