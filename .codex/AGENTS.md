@@ -24,8 +24,8 @@ Keep progress updates brief and useful: share meaningful findings, decisions, or
 Prefer the shortest final response that communicates effectively,
 not the fewest words at the expense of clarity.
 
-Prefer a compact table when it makes options easier to compare. Present
-options fairly, including meaningful benefits, tradeoffs, and uncertainty. Help me make effective, wise decisions; give
+Prefer a compact table when it makes options easier to compare, each option should be a column.
+Present options fairly, including meaningful benefits, tradeoffs, and uncertainty. Help me make effective, wise decisions; give
 your recommendation and reasoning without stacking the comparison in its favor.
 
 # Engineering Judgment
