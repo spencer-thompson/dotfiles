@@ -30,11 +30,17 @@ LDAC remains unchanged while evaluating whether avoiding profile switches improv
 | Spotify mix | Permit Spotify alongside the selected game |
 | Discord alongside | Permit Discord through focus/game protection until switched off or WirePlumber restarts; also permits Discord alerts |
 | Block / Allow | Remember explicit blocks; Allow removes a block and admits the app to the current focus/game session |
-| Release for phone / Return to PC | Hold all ordinary PC playback silently, then restore the selected policy; Bluetooth stays connected |
+| Release for phone / Return to PC | Hold all ordinary PC playback until manual return or a new tracked PC media start; survives restarts |
 | Apps & block reasons | Expand to see active/idle streams, explicit controls, and explanations |
 | Reset policy choices | Clear custom choices and blocks; preserve native device and volume preferences |
 
 Pause music before releasing for the phone if you want to keep your place. Held apps continue playback silently.
+Open the panel with `audio-policy panel`, then choose **Release for phone**. Phone mode stays selected through
+pauses, notification sounds, observer restarts, and WirePlumber restarts. A tracked PC player changing to Playing
+with a running local stream returns to PC automatically, provided your saved focus/game rules admit it. Existing
+Playing state does not count; pause and play again if the player was already playing when you released for phone.
+Spotify and supported browser media can trigger return; untracked sounds and games cannot. Browser autoplay can
+also count as Playing because MPRIS does not identify whether you pressed Play. Manual **Return to PC** always works.
 This is routing policy for ordinary autoconnecting desktop playback, not an application security boundary;
 applications that manage their own PipeWire links and linked audio filters are outside this first version.
 Current owners means active, allowed streams, not verified audible sound.
@@ -258,7 +264,8 @@ noise suppressor was installed. Avoid stacking processing without a comparison.
 | Policy definitions and approved device priorities | Dotfiles WirePlumber configuration | Version-controlled preferences |
 | Last manually selected output/mic and native route/profile/volume state | `~/.local/state/wireplumber/` | Existing WirePlumber persistence; do not duplicate |
 | Explicit mode, owner app, Spotify mixing, app blocks | `~/.local/state/wireplumber/personal-audio-policy` | Version 1 JSON inside WirePlumber's native atomic state file; no second state writer |
-| Phone release, Discord permission, temporary grants, DND, playback observations and reasons | `personal-audio` PipeWire metadata / script memory | Runtime only; observations expire without heartbeats; other temporary choices clear on restart |
+| Phone mode | `~/.local/state/wireplumber/personal-audio-policy` | Saved until manual return or a fresh permitted PC media start |
+| Discord permission, temporary grants, DND, playback observations and reasons | `personal-audio` PipeWire metadata / script memory | Runtime only; observations expire without heartbeats; other temporary choices clear on restart |
 
 Use stable device/application identifiers, not session numeric IDs. WirePlumber restores native device preferences.
 Custom focus/game choice stays selected if its app disappears, so background apps do not unexpectedly take over;

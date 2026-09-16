@@ -139,6 +139,42 @@ wireplumber.profiles = { main = {
                     status,
                 )
 
+            run(CLI, "release")
+            until(lambda: routed("Spotify", "personal_audio_hold"), "phone mode did not hold existing music")
+            time.sleep(2.2)
+            assert snapshot()["state"]["phone"] is True, "existing Playing state cancelled phone mode"
+            notification = start(
+                "pw-cat",
+                "--playback",
+                "--raw",
+                "--format",
+                "s16",
+                "--channels",
+                "2",
+                "--properties",
+                '{ application.name="Notification" media.role="Notification" }',
+                "/dev/zero",
+            )
+            until(lambda: routed("Notification", "personal_audio_hold"), "notification escaped phone mode")
+            assert snapshot()["state"]["phone"] is True, "notification cancelled phone mode"
+            notification.terminate()
+            notification.wait(timeout=5)
+            watcher.terminate()
+            watcher.wait(timeout=5)
+            watcher = start(ROOT / ".local/bin/audio-policy-watch")
+            time.sleep(2.2)
+            assert snapshot()["state"]["phone"] is True, "observer restart cancelled phone mode"
+            player_status("spotify", "Paused")
+            until(
+                lambda: snapshot()["state"]["playback"].get("application.name:Spotify") == "Paused",
+                "paused telemetry missing",
+            )
+            assert snapshot()["state"]["phone"] is True
+            player_status("spotify", "Playing")
+            until(
+                lambda: not snapshot()["state"]["phone"] and routed("Spotify", "test_speakers"),
+                "fresh PC playback did not return from phone",
+            )
             player_status("spotify", "Paused")
             until(
                 lambda: routed("Spotify", "personal_audio_hold") and routed("Firefox", "test_speakers"),
@@ -208,6 +244,7 @@ wireplumber.profiles = { main = {
             until(lambda: (base / "state/wireplumber/personal-audio-policy").exists(), "policy state not saved")
             start(ROOT / ".local/bin/audio-policy-watch")
             until(lambda: snapshot()["state"].get("tracker"), "observer restart failed")
+            run(CLI, "release")
             time.sleep(1.2)
             wp.terminate()
             wp.wait(timeout=5)
@@ -215,7 +252,7 @@ wireplumber.profiles = { main = {
             until(
                 lambda: snapshot()["ready"] and snapshot()["state"]["mode"] == "game", "saved game choice not restored"
             )
-            assert snapshot()["state"]["phone"] is False
+            assert snapshot()["state"]["phone"] is True, "phone mode did not survive WirePlumber restart"
             assert snapshot()["state"]["allowed"] == {}
             assert snapshot()["state"]["discord"] is False
             until(lambda: snapshot()["state"].get("tracker"), "observer failed to recover after WirePlumber restart")

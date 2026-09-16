@@ -9,8 +9,16 @@ if saved.policy then
   if ok and policy.validate(parsed) then choice = parsed
   else log:warning("Ignoring invalid saved policy; using normal playback") end
 end
-local runtime = { phone = false, dnd = false, allowed = {}, discord = false, playback = {} }
+local runtime = { phone = saved.phone == "true", dnd = false, allowed = {}, discord = false, playback = {} }
 local metadata = ImplMetadata("personal-audio")
+
+local function persist_choice()
+  saved = { phone = tostring(runtime.phone), policy = Json.Object {
+    version = 1, mode = choice.mode, owner = choice.owner, mix = choice.mix,
+    blocked = Json.Object(choice.blocked),
+  }:to_string() }
+  state:save_after_timeout(saved)
+end
 
 local function publish()
   metadata:set(0, "state", "Spa:String:JSON", Json.Object {
@@ -44,6 +52,26 @@ SimpleEventHook {
     runtime.playback = update.apps
     runtime.exempt = type(update.exempt) == "table" and update.exempt or {}
     runtime.spotify = type(update.spotify) == "string" and update.spotify ~= "" and update.spotify or nil
+    -- A new observer or a telemetry gap establishes a baseline; it is not a Play action.
+    local generation = tonumber(update.generation) or 0
+    if update.session ~= runtime.observer_session or (runtime.tracker_ttl or 0) == 0 then
+      runtime.phone_generation = generation
+    end
+    runtime.observer_session, runtime.generation = update.session, generation
+    if runtime.phone and type(update.starts) == "table" then
+      for id, started in pairs(update.starts) do
+        if type(started) == "number" and started > (runtime.phone_generation or generation)
+            and update.apps[id] == "Playing" and not choice.blocked[id]
+            and (choice.mode == "normal" or choice.owner == id or runtime.allowed[id]
+              or (choice.mode == "game" and choice.mix and id:lower():match("spotify$"))) then
+          runtime.phone = false
+          persist_choice()
+          log:info("Returned to PC: tracked media started (" .. id .. ")")
+          changed = true
+          break
+        end
+      end
+    end
     runtime.tracker_ttl = 6
     if changed then
       publish()
@@ -175,8 +203,10 @@ SimpleEventHook {
     elseif action == "allow" and type(app) == "string" and app ~= "" then
       choice.blocked[app], runtime.allowed[app] = nil, true
       persist = true
-    elseif action == "release" then runtime.phone = true
-    elseif action == "resume" then runtime.phone = false
+    elseif action == "release" then
+      runtime.phone, runtime.phone_generation = true, runtime.generation or 0
+      persist = true
+    elseif action == "resume" then runtime.phone = false; persist = true
     elseif action == "discord" and type(cmd.enabled) == "boolean" then runtime.discord = cmd.enabled
     elseif action == "dnd" and type(cmd.enabled) == "boolean" then runtime.dnd = cmd.enabled
     elseif action == "reset" then
@@ -185,11 +215,7 @@ SimpleEventHook {
     else error_message = "Unknown or invalid command" end
     if not error_message then
       if persist then
-        saved = { policy = Json.Object {
-          version = 1, mode = choice.mode, owner = choice.owner, mix = choice.mix,
-          blocked = Json.Object(choice.blocked),
-        }:to_string() }
-        state:save_after_timeout(saved)
+        persist_choice()
       end
       publish()
       event:get_source():call("schedule-rescan", "linking")

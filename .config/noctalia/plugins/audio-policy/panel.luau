@@ -46,7 +46,7 @@ render = function()
     ui.button({ text = "Volume & device details", variant = "ghost", onClick = function()
       noctalia.runAsync({ "noctalia", "msg", "panel-toggle", "blackbartblues/audio-switcher:audio-switcher" })
     end }),
-    ui.label({ text = ready and (state.phone and "Released for phone · PC playback is held silently"
+    ui.label({ text = ready and (state.phone and "Phone mode · Return to PC or start tracked PC media to return"
       or ("Mode: " .. (state.mode or "normal") .. (state.dnd and "  ·  Do not disturb" or "")))
       or "Ready to activate after your call: audio-policy activate", maxLines = 2, color = "primary" }),
     ui.row({ gap = 8 }, {

@@ -5,6 +5,7 @@ import json
 import runpy
 import subprocess
 import time
+import uuid
 from pathlib import Path
 
 from gi.repository import Gio, GLib
@@ -45,6 +46,10 @@ class Observer:
         self.pending = False
         self.last_error = None
         self.sequence = 0
+        self.session = uuid.uuid4().hex
+        self.generation = 0
+        self.starts = {}
+        self.initialized = False
         self.bus.signal_subscribe(
             None,
             "org.freedesktop.DBus.Properties",
@@ -106,6 +111,12 @@ class Observer:
                     players.setdefault(kind, []).append(None)
         except GLib.Error as exc:
             self.error(str(exc))
+        if self.initialized:
+            for kind, statuses in players.items():
+                if aggregate(statuses) == "Playing" and aggregate(self.players.get(kind, [])) != "Playing":
+                    self.generation += 1
+                    self.starts[kind] = self.generation
+        self.initialized = True
         self.players = players
         self.publish()
         return False
@@ -131,7 +142,7 @@ class Observer:
                 for o in nodes
                 if o.get("info", {}).get("props", {}).get("media.class") == "Stream/Input/Audio"
             }
-            apps, exempt, seen = {}, {}, set()
+            apps, exempt, seen, starts = {}, {}, set(), {}
             spotify = ""
             for node in nodes:
                 info = node.get("info", {})
@@ -155,11 +166,22 @@ class Observer:
                 self.since[app] = (status, since)
                 if status == "Playing" or time.monotonic() - since >= GRACE:
                     apps[app] = status
+                if status == "Playing" and info.get("state") == "running" and kind in self.starts:
+                    starts[app] = self.starts[kind]
                 if kind == "spotify" and status == "Playing" and info.get("state") == "running":
                     spotify = app
             self.since = {app: value for app, value in self.since.items() if app in seen}
             self.sequence += 1
-            update = {"version": 1, "apps": apps, "spotify": spotify, "exempt": exempt, "sequence": self.sequence}
+            update = {
+                "version": 1,
+                "apps": apps,
+                "spotify": spotify,
+                "exempt": exempt,
+                "sequence": self.sequence,
+                "session": self.session,
+                "generation": self.generation,
+                "starts": starts,
+            }
             helpers["run"](
                 "pw-metadata", "-n", "personal-audio", "0", "playback", json.dumps(update), "Spa:String:JSON"
             )
