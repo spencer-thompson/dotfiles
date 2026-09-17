@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# Thin HTTP client: preserve the full question and answer interface.
+set -euo pipefail
+
+usage() {
+	cat <<'EOF'
+Usage: jev [--dry-run] [--model ID] [--timeout SECONDS] [REQUEST.json|-]
+       jev --models
+
+Read one JSON request from a file or stdin. Default model: jev-latest.
+Requires bash, curl, jq, and TYPESAFE_API_KEY (except --dry-run).
+Print the full JSON response to stdout; errors go to stderr with nonzero exit.
+--dry-run validates and prints the request without sending it.
+--models lists available models. Requests are not automatically retried.
+EOF
+}
+
+die() {
+	printf 'jev: %s\n' "$*" >&2
+	exit 1
+}
+dry_run=false
+models=false
+model=''
+timeout=30
+input='-'
+input_set=false
+while (($#)); do
+	case "$1" in
+	--help | -h)
+		usage
+		exit 0
+		;;
+	--dry-run) dry_run=true ;;
+	--models) models=true ;;
+	--model | --timeout)
+		(($# >= 2)) || die "$1 needs a value"
+		if [[ $1 == --model ]]; then model=$2; else timeout=$2; fi
+		shift
+		;;
+	-)
+		$input_set && die 'supply only one request'
+		input_set=true
+		;;
+	-*) die "unknown option: $1" ;;
+	*)
+		$input_set && die 'supply only one request'
+		input=$1
+		input_set=true
+		;;
+	esac
+	shift
+done
+[[ $timeout =~ ^[1-9][0-9]*$ ]] || die 'timeout must be a positive integer'
+command -v jq >/dev/null || die 'jq is required'
+
+if $models; then
+	if $dry_run || $input_set || [[ -n $model ]]; then
+		die '--models cannot be combined with a request, --model, or --dry-run'
+	fi
+else
+	payload=$(jq -ces --arg model "$model" '
+    if length != 1 then error("expected one JSON request") else .[0] end
+    | if type != "object" then error("request must be an object") else . end
+    | if $model != "" then .model = $model else .model //= "jev-latest" end
+    | if ((.state | type) == "string" or (.state | type) == "object" or
+          (.state | type) == "array") and
+         (.model | type == "string" and length > 0) and
+         (.questions | type == "object" and length > 0)
+      then . else error("expected state, model, and nonempty questions map") end
+  ' "$input") || die 'invalid request JSON'
+	if $dry_run; then
+		printf '%s\n' "$payload" | jq .
+		exit 0
+	fi
+fi
+
+[[ -n ${TYPESAFE_API_KEY:-} ]] || die 'set TYPESAFE_API_KEY in the environment'
+[[ $TYPESAFE_API_KEY != *$'\n'* && $TYPESAFE_API_KEY != *$'\r'* ]] || die 'invalid API key'
+command -v curl >/dev/null || die 'curl is required'
+
+# Pass credentials through a file descriptor, not command-line arguments.
+http() {
+	curl --silent --show-error --fail --connect-timeout 10 --max-time "$timeout" \
+		--header @<(printf 'Authorization: Bearer %s\n' "$TYPESAFE_API_KEY") \
+		--header 'Content-Type: application/json' "$@"
+}
+if $models; then
+	http https://api.typesafe.ai/v1/models | jq -e .
+else
+	printf '%s\n' "$payload" |
+		http --data-binary @- https://api.typesafe.ai/v1/systemone | jq -e .
+fi
