@@ -27,6 +27,9 @@ Read only the supporting reference needed for the current work:
   covers SDK entry points, a minimal example, and runtime behavior.
 - **Test, tune, or debug:** [Evaluation](references/evaluation.md)
   covers uncertainty, representative cases, and failure diagnosis.
+- **Apply our measured lessons:** [Local findings](references/local-findings.md)
+  records the September 17, 2026 experiments. Read for state-addressing problems,
+  confidence-based decisions, or a proposed browser delegation loop.
 
 ## Essential constraints
 
@@ -52,4 +55,3 @@ model identifiers, limits, prices, or performance claims.
 
 Adapted from the
 [TypeSafe reference skill](https://github.com/typesafe-ai/skills/blob/main/skills/typesafe-ai/SKILL.md).
-See [LICENSE](LICENSE) for the upstream license.

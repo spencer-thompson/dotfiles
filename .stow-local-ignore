@@ -1,5 +1,8 @@
 install.sh
 
+# Repository instructions stay here; .codex/AGENTS.md must still be stowed.
+^/AGENTS\.md$
+
 ricing-todo.md
 
 \.git

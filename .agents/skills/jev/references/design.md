@@ -22,8 +22,11 @@ changed state.
 
 Put the complete judgment in instructions and define possible answers in criteria.
 Question IDs are for code and are not sent to the model: a descriptive key cannot
-replace instructions. Reference nested state explicitly, such as
-`ticket.messages[0].text`.
+replace instructions. Resolve array positions and deep lookups in code before
+inference when practical. Supply the target text directly under a meaningful field
+such as `customer_message`, or inside its structured question, together with the
+context needed to interpret it. Explicit indexing instructions alone did not fix
+the addressing errors in our [local experiments](local-findings.md).
 
 Ask one coherent judgment per question. Separate independent dimensions without
 removing context necessary to interpret them. Structured instructions and criteria

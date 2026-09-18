@@ -37,6 +37,8 @@ making a harmless selection invalid. Ignore uncertainty on unused branches.
 Inspect the exact input state, question definitions, candidate coverage, raw answers,
 policy composition, and observed outcome. Separate:
 
+- Wrong source item: resolve positional references in code and supply the intended
+  text directly; compare with the original input before changing the rubric.
 - Missing or stale evidence: improve state collection or take another observation.
 - Ambiguous criteria or missing candidates: repair the question and option set.
 - Model error despite adequate evidence: change decomposition or use a fallback.

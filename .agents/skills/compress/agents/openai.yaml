@@ -1,0 +1,3 @@
+interface:
+  display_name: "Compress"
+  short_description: "Minimize representation size; readability is optional"
