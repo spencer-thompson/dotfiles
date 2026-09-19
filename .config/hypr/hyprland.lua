@@ -114,12 +114,13 @@ hl.config({
         },
         glow = {
             enabled = true,
-            range = 8,
-            render_power = 4,
-            -- color = "rgba(b6c7e955)",
-            -- color = "rgba(00000055)",
-            color = "rgba(00000000)",
-            -- color_inactive = "rgba(8f909800)",
+            range = 14,
+            render_power = 2,
+            -- Fallback gradient; Noctalia's palette overrides it below.
+            color = {
+                colors = { "rgba(b6c7e973)", "rgba(cdbde973)" },
+                angle = 0,
+            },
             color_inactive = "rgba(00000088)",
         },
         active_opacity = 1.0,
@@ -182,7 +183,13 @@ if noctalia_ok then
     hl.config({
         decoration = {
             glow = {
-                color = { colors = { with_alpha(noctalia.colors.primary, 0.5), with_alpha(noctalia.colors.secondary, 0.5), }, angle = 0, },
+                color = {
+                    colors = {
+                        with_alpha(noctalia.colors.primary, 0.45),
+                        with_alpha(noctalia.colors.secondary, 0.45),
+                    },
+                    angle = 0,
+                },
                 color_inactive = with_alpha(noctalia.colors.surface, 0.5),
             },
         },

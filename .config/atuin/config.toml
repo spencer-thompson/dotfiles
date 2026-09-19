@@ -46,12 +46,12 @@ filter_mode = "global"
 
 ## With workspace filtering enabled, Atuin will filter for commands executed
 ## in any directory within a git repository tree (default: false)
-# workspaces = false
+workspaces = true
 
 ## which filter mode to use when atuin is invoked from a shell up-key binding
 ## the accepted values are identical to those of "filter_mode"
 ## leave unspecified to use same mode set in "filter_mode"
-# filter_mode_shell_up_key_binding = "global"
+filter_mode_shell_up_key_binding = "session"
 
 ## which search mode to use when atuin is invoked from a shell up-key binding
 ## the accepted values are identical to those of "search_mode"
@@ -65,6 +65,7 @@ style = "compact"
 ## the maximum number of lines the interface should take up
 ## set it to 0 to always go full screen
 inline_height = 20
+inline_height_shell_up_key_binding = 8
 
 ## Invert the UI - put the search bar at the top , Default to `false`
 # invert = false

@@ -5,6 +5,8 @@ function fish_user_key_bindings
 
     # Make sure ctrl-n still works in insert mode.
     bind -M insert ctrl-n down-or-search
+    bind -M insert ctrl-y forward-char
+    bind -M default k history-pager
 
     # Copy/paste.
     bind yy fish_clipboard_copy

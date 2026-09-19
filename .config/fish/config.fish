@@ -71,8 +71,6 @@ end
 if status is-interactive
     # VIM BINDS
     set -g fish_key_bindings fish_vi_key_bindings
-    bind --mode insert \cy forward-char
-    bind --mode command k history-pager
 
     set -gx fish_cursor_replace_one underscore
     set fish_emoji_width 2
@@ -145,7 +143,7 @@ if status is-interactive
     abbr --add ...... cd ../../../../..
     abbr --add ai aichat
     abbr --add oc opencode
-    abbr --add ultradark hyprsunset --temperature 3000 --gamma 40
+    abbr --add ultradark noctalia msg nightlight-force-toggle
 
     ## git
     abbr --add gs git status --short

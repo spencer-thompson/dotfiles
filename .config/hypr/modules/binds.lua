@@ -22,6 +22,15 @@ local function exec(cmd)
 	return hl.dsp.exec_cmd(cmd)
 end
 
+local function adjust_zoom(delta)
+	return function()
+		local current = hl.get_config("cursor.zoom_factor")
+		-- Round wheel steps so zooming back out reaches exactly 1x.
+		local zoom = math.floor((current + delta) * 100 + 0.5) / 100
+		hl.config({ cursor = { zoom_factor = math.max(1, math.min(3, zoom)) } })
+	end
+end
+
 local function move_to_workspace(workspace)
 	return hl.dsp.window.move({ workspace = workspace, follow = false })
 end
@@ -167,6 +176,11 @@ local performance_snapshot = nil
 local performance_mode_source = nil
 local automatic_performance_mode_suppressed = false
 
+local function sync_game_dnd()
+	-- Query the current mode in the child, so queued updates cannot arrive out of order.
+	hl.exec_cmd("~/.config/hypr/scripts/game-dnd.sh")
+end
+
 local function capture_visual_settings()
 	return {
 		animations = {
@@ -202,7 +216,7 @@ local function enable_performance_mode(source)
 	})
 	looks.set_angle_loops_enabled(false)
 	-- hl.exec_cmd([[notify-send -a Hyprland -i noctalia-glyph:bolt-filled -t 2000 "Performance mode enabled"]])
-	hl.exec_cmd("noctalia msg notification-dnd-set on")
+	sync_game_dnd()
 end
 
 local function disable_performance_mode()
@@ -217,7 +231,7 @@ local function disable_performance_mode()
 	hl.config(snapshot)
 	looks.set_angle_loops_enabled(true)
 	-- hl.exec_cmd([[notify-send -a Hyprland -i noctalia-glyph:bolt-off -t 2000 "Performance mode disabled"]])
-	hl.exec_cmd("noctalia msg notification-dnd-set off")
+	sync_game_dnd()
 end
 
 local function active_steam_workspace_is_occupied()
@@ -265,10 +279,15 @@ for _, event in ipairs({
 	"window.open",
 	"window.destroy",
 	"window.move_to_workspace",
-	"config.reloaded",
 }) do
 	hl.on(event, sync_game_workspace_performance_mode)
 end
+
+hl.on("config.reloaded", function()
+	sync_game_workspace_performance_mode()
+	-- A reload can end manual mode; restore its saved DND preference too.
+	sync_game_dnd()
+end)
 
 -- Hyprland utility binds
 bind(mod .. " + Return", exec(programs.terminal), "Open terminal")
@@ -290,11 +309,7 @@ bind(
 )
 bind("F11", hl.dsp.window.fullscreen(0), "Toggle fullscreen")
 
-bind(
-	mod .. " + O",
-	exec([[fish -c 'grim -g "$(slurp)" - | mocr | wl-copy && notify-send "Finished"']]),
-	"OCR selection"
-)
+bind(mod .. " + O", exec("~/.config/hypr/scripts/ocr.sh"), "OCR selection")
 bind(mod .. " + SHIFT + D", exec("noctalia msg notification-dnd-toggle"), "Toggle do not disturb")
 bind(mod .. " + comma", adjust_gaps(2), "Increase Gaps", { repeating = true })
 bind(mod .. " + period", adjust_gaps(-2), "Decrease Gaps", { repeating = true })
@@ -311,6 +326,16 @@ bind(mod .. " + R", exec("noctalia msg panel-toggle launcher"), "Launcher")
 bind(mod .. " + S", exec([[noctalia msg screenshot-region]]), "Screenshot")
 bind(mod .. " + SHIFT + S", exec("noctalia msg settings-toggle"), "Settings")
 bind(mod .. " + Backspace", exec("noctalia msg session lock"), "Lock")
+bind(
+	mod .. " + F9",
+	exec("noctalia msg plugin noctalia/screen_recorder:service all replay-toggle"),
+	"Toggle 30-second replay buffer"
+)
+bind(
+	mod .. " + F10",
+	exec("noctalia msg plugin noctalia/screen_recorder:service all replay-save"),
+	"Save the last 30 seconds"
+)
 
 -- Voice dictation with vedit
 bind(mod .. " + A", exec(os.getenv("HOME") .. "/.local/bin/vedit toggle"), "Toggle dictation")
@@ -324,25 +349,31 @@ bind(mod .. " + mouse:274", exec("playerctl play-pause"), "Play/pause")
 bind(mod .. " + mouse:275", exec("playerctl previous"), "Previous track")
 bind(mod .. " + mouse:276", exec("playerctl next"), "Next track")
 
+-- Mouse-wheel zoom: scrolling down to 1x resets it without another shortcut.
+bind("CTRL + " .. mod .. " + mouse_up", adjust_zoom(0.1), "Zoom in")
+bind("CTRL + " .. mod .. " + mouse_down", adjust_zoom(-0.1), "Zoom out")
+
 -- Move/resize windows with mainMod + LMB/RMB and dragging
 bind(mod .. " + mouse:272", hl.dsp.window.drag(), "Move window", { mouse = true })
 bind(mod .. " + mouse:273", hl.dsp.window.resize(), "Resize window", { mouse = true })
 
 -- Special workspaces
+bind(mod .. " + M", hl.dsp.workspace.toggle_special("spotify"), "Show/hide Spotify")
 bind("CTRL + Space", hl.dsp.workspace.toggle_special(), "Toggle scratchpad")
 bind(mod .. " + Space", hl.dsp.workspace.toggle_special(), "Toggle scratchpad")
 bind("SHIFT + CTRL + Space", move_to_workspace("special"), "Move to scratchpad")
 bind("SHIFT + " .. mod .. " + Space", move_to_workspace("special"), "Move to scratchpad")
 
 -- Laptop keys
-bind("XF86AudioMute", exec("noctalia msg volume-mute"), "Mute audio")
-bind("XF86AudioLowerVolume", exec("pactl set-sink-volume @DEFAULT_SINK@ -1%"), "Volume down", { repeating = true })
-bind("XF86AudioRaiseVolume", exec("pactl set-sink-volume @DEFAULT_SINK@ +1%"), "Volume up", { repeating = true })
-bind("XF86AudioPrev", exec("playerctl previous"), "Previous track")
-bind("XF86AudioPlay", exec("playerctl play-pause"), "Play/pause")
-bind("XF86AudioNext", exec("playerctl next"), "Next track")
-bind("XF86MonBrightnessDown", exec([[noctalia msg brightness-down]]), "Brightness down", { repeating = true })
-bind("XF86MonBrightnessUp", exec([[noctalia msg brightness-up]]), "Brightness up", { repeating = true })
+bind("XF86AudioMute", exec("noctalia msg volume-mute"), "Mute audio", { locked = true })
+bind("XF86AudioMicMute", exec("noctalia msg mic-mute"), "Mute microphone", { locked = true })
+bind("XF86AudioLowerVolume", exec("noctalia msg volume-down 1%"), "Volume down", { repeating = true, locked = true })
+bind("XF86AudioRaiseVolume", exec("noctalia msg volume-up 1%"), "Volume up", { repeating = true, locked = true })
+bind("XF86AudioPrev", exec("playerctl previous"), "Previous track", { locked = true })
+bind("XF86AudioPlay", exec("playerctl play-pause"), "Play/pause", { locked = true })
+bind("XF86AudioNext", exec("playerctl next"), "Next track", { locked = true })
+bind("XF86MonBrightnessDown", exec("noctalia msg brightness-down"), "Brightness down", { repeating = true, locked = true })
+bind("XF86MonBrightnessUp", exec("noctalia msg brightness-up"), "Brightness up", { repeating = true, locked = true })
 
 -- Move focus with mainMod + arrow keys
 bind(mod .. " + left", hl.dsp.focus({ direction = "left" }), "Focus left")
@@ -399,3 +430,9 @@ for workspace = 1, 10 do
 	bind(mod .. " + " .. key, hl.dsp.focus({ workspace = workspace }), "Workspace " .. workspace)
 	bind("SHIFT + " .. mod .. " + " .. key, move_to_workspace(workspace), "Move to workspace " .. workspace)
 end
+
+return {
+	performance_mode_enabled = function()
+		return performance_mode_source ~= nil
+	end,
+}

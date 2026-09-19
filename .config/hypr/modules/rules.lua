@@ -10,6 +10,19 @@ local function window(class, props)
 	hl.window_rule(props)
 end
 
+local function floating(name, match, width, height, props)
+	props = props or {}
+	props.name = name
+	props.match = match
+	props.float = true
+	props.center = true
+	props.size = {
+		("(monitor_w*%g)"):format(width / 100),
+		("(monitor_h*%g)"):format(height / 100),
+	}
+	hl.window_rule(props)
+end
+
 local function workspace(name, props)
 	props.workspace = name
 	hl.workspace_rule(props)
@@ -25,11 +38,12 @@ function M.setup(opts)
 	local main_monitor = opts.main_monitor or opts.mainMonitor
 	local secondary_monitor = opts.secondary_monitor or opts.secondaryMonitor
 
-	hl.window_rule({
-		name = "xwayland-border",
-		match = { xwayland = true },
-		border_color = "rgb(ee9b54)",
-	})
+	-- Ordinary work windows keep the layout's tiling. Modal dialogs are
+	-- compact; named utilities use the same proportions on every display.
+	floating("modal-dialogs", { modal = true }, 25, 30, { dim_around = true })
+	floating("keyring-prompt", {
+		class = "^([Gg]cr-prompter(-4)?|org\\.gnome\\.keyring\\.SystemPrompter|org\\.gnome\\.gcr\\.Prompter)$",
+	}, 25, 30, { dim_around = true })
 
 	layer("launcher", {
 		blur = true,
@@ -37,61 +51,32 @@ function M.setup(opts)
 		dim_around = true,
 	})
 
-	window("nwg-look", {
-		float = true,
-		size = "800 500",
-	})
+	floating("appearance-settings", { class = "^nwg-look$" }, 40, 70)
+	floating("qt-settings", { class = "^qt[56]ct$" }, 40, 70)
+	floating("audio-settings", { class = "^org\\.pulseaudio\\.pavucontrol$" }, 40, 70)
+	floating("passwords-and-keys", { class = "^org\\.gnome\\.seahorse\\.Application$" }, 40, 70)
+	floating("file-chooser", { class = "^xdg-desktop-portal-gtk$" }, 40, 70)
+	floating("termfilechooser", { class = "^kitty$", title = "^termfilechooser$" }, 40, 70)
+	floating("imv", { class = "^imv$" }, 40, 70)
+	floating("screenshots", { class = "^com\\.gabm\\.satty$" }, 70, 80, { dim_around = true })
 
-	window("org.pulseaudio.pavucontrol", {
-		float = true,
-		size = "800 500",
-	})
-
-	window("xdg-desktop-portal-gtk", {
-		center = true,
-		float = true,
-		size = "900 600",
-	})
-
-	hl.window_rule({
-		name = "imv",
-		match = { class = "^imv$" },
-		center = true,
-		float = true,
-	})
-
-	hl.window_rule({
-		name = "termfilechooser",
-		match = {
-			class = "^kitty$",
-			title = "^termfilechooser$",
-		},
-		center = true,
-		float = true,
-		size = { "(monitor_w*0.4)", "(monitor_h*0.8)" },
-	})
-
-	hl.window_rule({
-		name = "screenshots",
-		match = { class = "com.gabm.satty" },
-		min_size = "800 500",
-		border_size = 2,
-		rounding = 0,
-		dim_around = true,
-		float = true,
-	})
+	local password_manager = "^(1[Pp]assword|com\\.1password\\.1[Pp]assword)$"
+	floating("1password", { class = password_manager }, 40, 70)
+	-- Quick Access is a separate transient window, not the full vault UI.
+	floating("1password-quick-access", {
+		class = password_manager,
+		initial_title = "^.*Quick Access.*$",
+	}, 25, 30)
 
 	hl.window_rule({
 		name = "special-kitty",
 		match = { class = "kitty" },
-		rounding = 0,
 		scroll_touchpad = 5,
 	})
 
 	hl.window_rule({
 		name = "special-ghostty",
 		match = { class = "com.mitchellh.ghostty" },
-		rounding = 4,
 		scroll_touchpad = 2.5,
 	})
 
@@ -112,6 +97,16 @@ function M.setup(opts)
 	})
 
 	window("^slack$", { workspace = "1 silent" })
+
+	workspace("special:spotify", { on_created_empty = "spotify-launcher" })
+	hl.window_rule({
+		name = "spotify-scratchpad",
+		match = { class = "^[Ss]potify$" },
+		workspace = "special:spotify silent",
+		float = true,
+		center = true,
+		size = { "(monitor_w*0.7)", "(monitor_h*0.7)" },
+	})
 
 	local steam_workspace = { on_created_empty = "steam" }
 	local steam_client = { workspace = "10 silent" }
@@ -162,7 +157,7 @@ function M.setup(opts)
 	hl.layer_rule({
 		name = "noctalia",
 		match = {
-			namespace = "^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd)$",
+			namespace = "^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd|window-switcher)$",
 		},
 		no_anim = true,
 		ignore_alpha = 0.5,
@@ -170,18 +165,8 @@ function M.setup(opts)
 		blur_popups = true,
 	})
 
-	hl.window_rule({
-		name = "noctalia-settings",
-		match = { class = "dev.noctalia.Noctalia" },
-		float = true,
-		size = { 1080, 1280 },
-	})
-
-	window("org.quickshell", {
-		center = true,
-		float = true,
-		size = "900 1100",
-	})
+	floating("noctalia-settings", { class = "^dev\\.noctalia\\.Noctalia$" }, 40, 70)
+	floating("quickshell-settings", { class = "^org\\.quickshell$" }, 40, 70)
 end
 
 return M

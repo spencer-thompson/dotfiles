@@ -27,7 +27,7 @@ order = [ "Top", "Bottom" ]
     [bar.Top]
     center = [ "control-center", "battery", "clock", "network", "network_rx", "network_tx", "sysmon", "status" ]
     contact_shadow = true
-    end = [ "tray", "widget", "bluetooth", "volume", "audio-policy", "brightness", "ram", "cpu", "temp", "spacer_2", "session" ]
+    end = [ "tray", "widget", "bluetooth", "volume", "audio-policy", "recorder", "brightness", "ram", "cpu", "temp", "spacer_2", "session" ]
     font_family = "Berkeley Mono Variable"
     font_weight = 800
     margin_ends = 0
@@ -408,7 +408,7 @@ browser_placement = "floating"
 browser_position = "center"
 
 [plugins]
-enabled = [ "noctalia/wallhaven", "goodroot/noctwhspr", "blackbartblues/audio-switcher", "sthom/sky-hyprland", "sthom/audio-policy" ]
+enabled = [ "noctalia/wallhaven", "goodroot/noctwhspr", "blackbartblues/audio-switcher", "sthom/sky-hyprland", "sthom/audio-policy", "noctalia/screen_recorder" ]
 
 [widget.audio-policy]
 type = "sthom/audio-policy:widget"
@@ -458,7 +458,7 @@ source = "wallpaper"
 wallpaper_scheme = "vibrant"
 
     [theme.templates]
-    builtin_ids = [ "gtk3", "gtk4", "kcolorscheme", "qt" ]
+    builtin_ids = [ "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "qt" ]
     community_ids = [ "papirus-icons", "yazi", "zathura", "hyprtoolkit" ]
 
         [theme.templates.user.noctwhspr_mic_osd]

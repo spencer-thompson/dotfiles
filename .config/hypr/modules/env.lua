@@ -35,7 +35,9 @@ local env = {
 	{ "QT_AUTO_SCREEN_SCALE_FACTOR", "1" },
 	{ "QT_WAYLAND_DISABLE_WINDOWDECORATION", "1" },
 	{ "QT_QPA_PLATFORM", "wayland;xcb" },
-	{ "QT_QPA_PLATFORMTHEME", "qt6ct" },
+	-- qt6ct also registers the qt5ct key, so both Qt generations use their
+	-- own matching plugin with one shared environment variable.
+	{ "QT_QPA_PLATFORMTHEME", "qt5ct" },
 	{ "QT_QPA_PLATFORMTHEME_QT6", "qt6ct" },
 
 	{ "ELECTRON_OZONE_PLATFORM_HINT", "auto" },

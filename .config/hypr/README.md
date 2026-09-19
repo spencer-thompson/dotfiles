@@ -110,6 +110,40 @@ in the side columns while the third column remains full-height.
 - `mfact` adjusts the center column when one exists; with an even number of columns, it adjusts the focused window's
   column.
 
+## Window Behavior and Desktop Theme
+
+Main work windows use the tiled layout. Floating rules center utilities and size them as percentages of the monitor:
+
+| Window | Width | Height |
+| --- | ---: | ---: |
+| Modal dialogs, keyring prompts, 1Password Quick Access | 25% | 30% |
+| Settings, file choosers, image viewer, 1Password | 40% | 70% |
+| Screenshot editor | 70% | 80% |
+
+Named scratchpads and the Operator retain their specialized behavior. Kitty and Ghostty inherit the shared corner
+style; XWayland windows inherit the Noctalia border colors. Size and placement rules apply when a window opens.
+Applications with fixed-size dialogs can retain their native dimensions.
+
+Noctalia generates GTK, Qt, Hyprland, and Kitty palettes. The GTK and Qt settings in these dotfiles select those
+palettes and Berkeley Mono Variable. Fontconfig also maps generic families and the older `Berkeley Mono` name to
+Berkeley Mono Variable, retaining glyph fallbacks. Qt 5 needs `qt5ct`; Qt 6 needs `qt6ct`, which also accepts the
+`qt5ct` platform-theme key. Generated palette files remain machine-local.
+
+GNOME interface fonts are stored in dconf. To match these files on another machine:
+
+```sh
+gsettings set org.gnome.desktop.interface font-name 'Berkeley Mono Variable 11'
+gsettings set org.gnome.desktop.interface document-font-name 'Berkeley Mono Variable 11'
+gsettings set org.gnome.desktop.interface monospace-font-name 'Berkeley Mono Variable 11'
+gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Berkeley Mono Variable Bold 11'
+gsettings set org.gnome.desktop.interface font-antialiasing 'grayscale'
+gsettings set org.gnome.desktop.interface font-hinting 'slight'
+```
+
+The user D-Bus Secret Service entry routes activation to the existing GNOME Keyring systemd service, avoiding a
+second daemon. Login unlocking also requires `pam_gnome_keyring.so` in the machine's PAM login configuration and
+a `login` keyring encrypted with the login password; Stow does not configure PAM or move keyrings.
+
 ## Steam Gaming
 
 `Super+G` (or `Super+0`) focuses workspace 10, launching Steam when it is created empty. Steam and game windows route
@@ -120,6 +154,26 @@ permit it. Direct scanout can reduce compositor work and latency by presenting a
 While workspace 10 is visible and occupied on any monitor, performance mode disables animations, blur, motion
 blur, shadows, glow, and rounding. Leaving or emptying the workspace restores the settings captured when automation
 enabled the mode. `Super+Shift+G` remains the manual toggle and can suppress automation for the current Steam session.
+Game mode temporarily enables Do Not Disturb and restores the prior setting on exit, including after a config reload.
+Turning DND off yourself during a game is respected. The snapshot lives in the compositor session's runtime directory.
+
+## Summonable Tools and Zoom
+
+- `Super+M`: show/hide Spotify in its own floating scratchpad. The first use launches `spotify-launcher` if the
+  workspace is empty. Hiding it keeps Spotify running.
+- `Super+Space` (or `Ctrl+Space`): show/hide the general scratchpad.
+- `Ctrl+Super+wheel up/down`: zoom the desktop in/out in 10% steps, between 1x and 3x.
+  Scrolling back down to 1x restores the normal view; no separate reset key is needed.
+
+## Capture Shortcuts
+
+- `Super+O`: select a region, recognize text with Tesseract, and copy it. Canceling leaves the clipboard alone.
+- `Super+F9`: start/stop Noctalia's 30-second replay buffer. It captures the monitor focused when recording starts,
+  with desktop audio, at 60 fps using hardware HEVC encoding. The recorder bar widget shows its status.
+- `Super+F10`: save the active buffer to `~/videos/Recordings`. Start the buffer before the moment you want to save.
+
+Replay is opt-in each session and buffers in RAM. It requires `gpu-screen-recorder` and Noctalia's official
+`noctalia/screen_recorder` plugin. Shared recording settings live in `../noctalia/recording.toml`.
 
 ## Device Profiles
 

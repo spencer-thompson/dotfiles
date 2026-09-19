@@ -1,0 +1,15 @@
+# Opt in with Super+F9; save the last 30 seconds with Super+F10.
+# "focused" selects the current monitor when the buffer starts.
+[plugin_settings."noctalia/screen_recorder"]
+video_source = "focused"
+directory = "~/videos/Recordings"
+frame_rate = 60
+video_encoder = "gpu"
+video_codec = "hevc"
+audio_source = "default_output"
+replay_enabled = true
+replay_duration = 30
+replay_storage = "ram"
+
+[widget.recorder]
+type = "noctalia/screen_recorder:recorder"

@@ -105,7 +105,7 @@ _G.hl = {
 	end,
 }
 
-require("modules.binds")
+local binding_module = require("modules.binds")
 
 config_updates = {}
 angle_updates = {}
@@ -210,7 +210,8 @@ assert(config_values["animations.enabled"] == false, "disabled animations")
 assert(config_values["decoration.blur.enabled"] == false, "disabled blur")
 assert(config_values["decoration.rounding"] == 0, "disabled rounding")
 assert(#angle_updates == 2 and angle_updates[1].enabled == false and angle_updates[2].enabled == false, "disabled angle loops")
-assert(executed_commands[#executed_commands] == "noctalia msg notification-dnd-set on", "enabled do not disturb")
+assert(binding_module.performance_mode_enabled(), "exposed the current mode to asynchronous DND synchronization")
+assert(executed_commands[#executed_commands] == "~/.config/hypr/scripts/game-dnd.sh", "synchronized do not disturb")
 
 steam.windows = 0
 event_handlers["window.destroy"]()
@@ -219,7 +220,8 @@ assert(config_values["animations.enabled"] == true, "restored animations")
 assert(config_values["decoration.blur.enabled"] == false, "preserved a pre-existing blur override")
 assert(config_values["decoration.rounding"] == 12, "restored the captured rounding")
 assert(angle_updates[3].enabled == true and angle_updates[4].enabled == true, "restored angle loops")
-assert(executed_commands[#executed_commands] == "noctalia msg notification-dnd-set off", "disabled do not disturb")
+assert(not binding_module.performance_mode_enabled(), "exposed the restored mode")
+assert(executed_commands[#executed_commands] == "~/.config/hypr/scripts/game-dnd.sh", "restored the previous DND preference")
 
 steam.windows = 1
 event_handlers["window.open"]()
@@ -244,6 +246,9 @@ event_handlers["workspace.active"]()
 assert(config_values["animations.enabled"] == false, "kept manually enabled performance mode across workspace changes")
 toggle()
 assert(config_values["animations.enabled"] == true, "manually disabled performance mode")
+
+event_handlers["config.reloaded"]()
+assert(executed_commands[#executed_commands] == "~/.config/hypr/scripts/game-dnd.sh", "reconciled saved DND after reload")
 
 for _, command in ipairs(executed_commands) do
 	assert(not command:find("hyprctl reload", 1, true), "never reloaded Hyprland to restore performance settings")
