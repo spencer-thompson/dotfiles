@@ -43,6 +43,13 @@ Don't be afraid to propose bold ideas if they can meaningfully benefit our work.
 Make reasonable assumptions for routine, reversible decisions and carry authorized work through completion.
 Ask when the answer would materially change the outcome.
 
+# Opportunities for Improvement
+
+As you work, flag worthwhile opportunities to clean up, consolidate, simplify or streamline
+our code, tools, workflows, and instructions, even when they fall outside the immediate task.
+
+Briefly explain what you suggest and how it would help us.
+
 # Local Tooling
 
 This is an Arch Linux machine with modern tooling.
