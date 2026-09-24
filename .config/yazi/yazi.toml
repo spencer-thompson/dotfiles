@@ -120,7 +120,8 @@ process_workers = 5
 bizarre_retry = 3
 image_alloc = 536870912  # 512MB
 image_bound = [0, 0]
-suppress_preload = false
+# Git scans and previews should not prompt on quit; file operations still do.
+suppress_preload = true
 
 [[plugin.prepend_fetchers]]
 url = "*"
