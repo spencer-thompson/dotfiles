@@ -230,7 +230,7 @@ SimpleEventHook {
   name = "personal-audio/forget-node",
   interests = { EventInterest { Constraint { "event.type", "=", "node-removed" } } },
   execute = function(event)
-    local id = tonumber(event:get_subject().properties["object.id"])
+    local id = event:get_subject().id
     if id then metadata:set(id, "decision", nil, nil) end
   end,
 }:register()

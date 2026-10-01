@@ -43,7 +43,7 @@ function M.setup(opts)
 	floating("modal-dialogs", { modal = true }, 25, 30, { dim_around = true })
 	floating("keyring-prompt", {
 		class = "^([Gg]cr-prompter(-4)?|org\\.gnome\\.keyring\\.SystemPrompter|org\\.gnome\\.gcr\\.Prompter)$",
-	}, 25, 30, { dim_around = true })
+	}, 25, 30, { dim_around = true, stay_focused = true })
 
 	layer("launcher", {
 		blur = true,

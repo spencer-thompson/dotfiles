@@ -35,6 +35,17 @@ My most used, *and most recommended*, applications are:
 
 - **WirePlumber**: [Personal audio policy design](.config/wireplumber/README.md)
 
+## Battery care
+
+On `outrival`, TLP starts charging below 75% and stops at 80%. Before a trip, temporarily allow a full charge while
+plugged in:
+
+```bash
+sudo tlp fullcharge BAT0
+```
+
+The configured charge limits return when AC is unplugged or after a reboot.
+
 ## Gaming
 
 Steam launch options for:
