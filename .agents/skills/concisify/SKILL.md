@@ -1,6 +1,6 @@
 ---
 name: concisify
-description: Make writing, files, outputs, or code as concise as possible while preserving important meaning and easy understanding. Use when asked to shorten, tighten, or remove verbosity; use compress for aggressive size reduction that sacrifices readability.
+description: Use when asked to shorten, make concise, or remove verbosity.
 ---
 
 # Concisify
