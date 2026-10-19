@@ -32,7 +32,8 @@ LDAC remains unchanged while evaluating whether avoiding profile switches improv
 | Block / Allow | Remember explicit blocks; Allow removes a block and admits the app to the current focus/game session |
 | Release for phone / Return to PC | Hold all ordinary PC playback until manual return or a new tracked PC media start; survives restarts |
 | Apps & block reasons | Expand to see active/idle streams, explicit controls, and explanations |
-| Reset policy choices | Clear custom choices and blocks; preserve native device and volume preferences |
+| Do not disturb | Hold all playback silently, including unlabelled alerts, music, games, and calls |
+| Reset policy choices | Clear custom choices and blocks; preserve DND, native device and volume preferences |
 
 Pause music before releasing for the phone if you want to keep your place. Held apps continue playback silently.
 Open the panel with `audio-policy panel`, then choose **Release for phone**. Phone mode stays selected through
@@ -66,8 +67,11 @@ Calls are recognized by the communication/phone media role or Discord identity. 
 ringing from an already joined call: turn on Discord alongside when choosing to talk while gaming, and off afterward.
 This permission survives focus/game changes and quiet/muted calls. Explicit blocks and Release for phone still win.
 Other call apps can use the existing Allow control. No automatic joined-call detection is claimed.
-DND is mirrored by the Noctalia service every two seconds and suppresses only streams tagged notification/event.
-Unlabelled notification sounds inside a browser cannot be distinguished from that browser's other playback.
+DND is mirrored by the Noctalia service every two seconds and silences all managed playback, including unlabelled
+app/browser alerts, calls, and linked filters. It overrides focus, game mixing, and explicit app permissions.
+Turning DND off restores the usual routing rules without changing volume or mute preferences. DND survives
+WirePlumber restarts and policy resets; microphone capture is unaffected. Applications that create their own
+PipeWire links remain outside the routing policy.
 
 Still to iterate: automatic switch-by-pressing-play handoff; identify/test the real speaker fallback; additional
 call-app identities; physical-device reconnect and microphone-fallback testing. Existing WirePlumber fallback/pause

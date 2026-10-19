@@ -28,7 +28,23 @@ r.phone, s.mode, r.allowed = false, "focus", {}
 assert(p.decide(s, r, call) == nil)
 s.mode, r.dnd = "normal", true
 assert(p.decide(s, r, stream("Alert", "Notification")) == "Do not disturb")
+assert(p.decide(s, r, call) == "Do not disturb")
+assert(p.decide(s, r, stream("Slack")) == "Do not disturb")
+local filter = stream("Filter")
+filter["node.link-group"] = "filter-chain"
+assert(p.decide(s, r, filter) == "Do not disturb")
+assert(p.decide(s, r, { ["media.class"] = "Stream/Input/Audio" }) == nil)
+for _, mode in ipairs({ "normal", "focus", "game" }) do
+  s.mode, s.owner, s.mix = mode, p.identity(game), true
+  r.discord, r.allowed[p.identity(firefox)] = true, true
+  for _, app in ipairs({ game, spotify, firefox, call }) do
+    assert(p.decide(s, r, app) == "Do not disturb", mode .. " bypassed DND")
+  end
+end
+r.dnd = false
+assert(p.decide(s, r, game) == nil)
 assert(p.decide(s, r, call) == nil)
+assert(p.decide(s, r, filter) == nil)
 assert(p.identity(game) ~= p.identity(stream("Another Wine game")))
 s, r = p.defaults(), { allowed = {}, playback = {} }
 r.playback[p.identity(firefox)] = "Paused"

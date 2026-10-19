@@ -218,6 +218,39 @@ wireplumber.profiles = { main = {
             until(lambda: routed("Spotify", "test_speakers"), "game+Spotify mix failed")
             run(CLI, "discord", "on")
             until(lambda: routed("Discord", "test_speakers"), "independent Discord permission failed")
+            run(CLI, "allow", "application.name:Firefox")
+            run(CLI, "dnd", "on")
+            until(
+                lambda: all(
+                    routed(a, "personal_audio_hold") and not routed(a, "test_speakers")
+                    for a in ("Firefox", "Spotify", "Stardew Valley", "Discord")
+                ),
+                "DND failed to silence allowed apps, game, music, or calls",
+            )
+            alert = start(
+                "pw-cat",
+                "--playback",
+                "--raw",
+                "--format",
+                "s16",
+                "--channels",
+                "2",
+                "--properties",
+                '{ application.name="Slack" }',
+                "/dev/zero",
+            )
+            until(
+                lambda: routed("Slack", "personal_audio_hold") and not routed("Slack", "test_speakers"),
+                "new unlabelled alert escaped DND",
+            )
+            run(CLI, "dnd", "off")
+            until(
+                lambda: all(routed(a, "test_speakers") for a in ("Firefox", "Spotify", "Stardew Valley", "Discord")),
+                "DND off did not restore previous permissions",
+            )
+            assert snapshot()["state"]["mode"] == "game"
+            alert.terminate()
+            alert.wait(timeout=5)
             run(CLI, "focus", "application.name:Stardew Valley")
             run(CLI, "game", "application.name:Stardew Valley")
             assert snapshot()["state"]["discord"] is True
@@ -245,6 +278,7 @@ wireplumber.profiles = { main = {
             start(ROOT / ".local/bin/audio-policy-watch")
             until(lambda: snapshot()["state"].get("tracker"), "observer restart failed")
             run(CLI, "release")
+            run(CLI, "dnd", "on")
             time.sleep(1.2)
             wp.terminate()
             wp.wait(timeout=5)
@@ -253,16 +287,25 @@ wireplumber.profiles = { main = {
                 lambda: snapshot()["ready"] and snapshot()["state"]["mode"] == "game", "saved game choice not restored"
             )
             assert snapshot()["state"]["phone"] is True, "phone mode did not survive WirePlumber restart"
+            assert snapshot()["state"]["dnd"] is True, "DND did not survive WirePlumber restart"
             assert snapshot()["state"]["allowed"] == {}
             assert snapshot()["state"]["discord"] is False
             until(lambda: snapshot()["state"].get("tracker"), "observer failed to recover after WirePlumber restart")
             run(CLI, "reset")
+            assert snapshot()["state"]["dnd"] is True, "policy reset disabled DND"
+            until(
+                lambda: all(
+                    routed(a, "personal_audio_hold") for a in ("Firefox", "Spotify", "Stardew Valley", "Discord")
+                ),
+                "reset bypassed DND",
+            )
+            run(CLI, "dnd", "off")
             until(
                 lambda: all(routed(a, "test_speakers") for a in ("Firefox", "Spotify", "Stardew Valley", "Discord")),
                 "reset did not restore playback",
             )
             print(
-                "PASS: MPRIS discovery/events/expiry, routing, game + Discord + Spotify, release/resume, persistence, reset"
+                "PASS: MPRIS discovery/events/expiry, routing, DND, game + Discord + Spotify, release/resume, persistence, reset"
             )
         except Exception:
             print(json.dumps(snapshot(), indent=2))

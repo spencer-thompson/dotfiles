@@ -9,11 +9,11 @@ if saved.policy then
   if ok and policy.validate(parsed) then choice = parsed
   else log:warning("Ignoring invalid saved policy; using normal playback") end
 end
-local runtime = { phone = saved.phone == "true", dnd = false, allowed = {}, discord = false, playback = {} }
+local runtime = { phone = saved.phone == "true", dnd = saved.dnd == "true", allowed = {}, discord = false, playback = {} }
 local metadata = ImplMetadata("personal-audio")
 
 local function persist_choice()
-  saved = { phone = tostring(runtime.phone), policy = Json.Object {
+  saved = { phone = tostring(runtime.phone), dnd = tostring(runtime.dnd), policy = Json.Object {
     version = 1, mode = choice.mode, owner = choice.owner, mix = choice.mix,
     blocked = Json.Object(choice.blocked),
   }:to_string() }
@@ -208,9 +208,9 @@ SimpleEventHook {
       persist = true
     elseif action == "resume" then runtime.phone = false; persist = true
     elseif action == "discord" and type(cmd.enabled) == "boolean" then runtime.discord = cmd.enabled
-    elseif action == "dnd" and type(cmd.enabled) == "boolean" then runtime.dnd = cmd.enabled
+    elseif action == "dnd" and type(cmd.enabled) == "boolean" then runtime.dnd = cmd.enabled; persist = true
     elseif action == "reset" then
-      choice, runtime = policy.defaults(), { phone = false, dnd = false, allowed = {}, discord = false, playback = {} }
+      choice, runtime = policy.defaults(), { phone = false, dnd = runtime.dnd, allowed = {}, discord = false, playback = {} }
       persist = true
     else error_message = "Unknown or invalid command" end
     if not error_message then

@@ -51,9 +51,11 @@ function M.is_media(p)
 end
 
 function M.decide(s, runtime, p)
-  if p["media.class"] ~= "Stream/Output/Audio" or p["node.link-group"] then return nil end
+  if p["media.class"] ~= "Stream/Output/Audio" then return nil end
+  -- DND means silence, including unlabelled app alerts and otherwise allowed calls.
+  if runtime.dnd then return "Do not disturb" end
+  if p["node.link-group"] then return nil end
   local id = M.identity(p)
-  local role = (p["media.role"] or ""):lower()
   local call = M.is_call(p)
   if runtime.phone then return "Released for phone" end
   if s.blocked[id] then return "Blocked by you" end
@@ -70,9 +72,6 @@ function M.decide(s, runtime, p)
     if s.mode == "game" and s.mix and (p["application.name"] or ""):lower() == "spotify" then return nil end
     if s.mode == "focus" and call then return nil end
     return s.mode == "game" and "Game protected; allow to join this session" or "Another app has focus"
-  end
-  if runtime.dnd and (role == "notification" or role == "event") and not call then
-    return "Do not disturb"
   end
   if s.mode == "normal" and runtime.spotify and not s.blocked[runtime.spotify] and not protected and not M.is_spotify(p)
       and (M.is_media(p) or playback ~= nil) then
