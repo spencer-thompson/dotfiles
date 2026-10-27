@@ -10,6 +10,7 @@ import sys
 from collections import Counter
 from datetime import date, datetime, time, timedelta
 from difflib import get_close_matches
+from fnmatch import fnmatchcase
 from pathlib import Path
 from typing import Any
 
@@ -37,6 +38,7 @@ SENSITIVE_TOKEN = re.compile(
 )
 SENSITIVE_KEY = re.compile(r"(?i)(api[ _-]?key|authorization|bearer|password|secret|token)")
 ENV_ASSIGNMENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
+SKILL_REFERENCE = re.compile(r"\bskills/([A-Za-z0-9_-]+)/SKILL\.md\b")
 EVENT_KINDS = ("user", "assistant", "tool", "tool_output", "command", "file_change", "mcp", "turn", "compaction")
 ADDITIONAL_EXECUTION_ITEM_TYPES = {"ImageView", "Extension"}
 TOKEN_FIELDS = (
@@ -110,6 +112,18 @@ SUMMARY_FIELDS = (
     "mcp_tools_truncated",
     "mcp_tools_distinct",
     "mcp_calls_omitted",
+    "mcp_plugins",
+    "mcp_plugins_truncated",
+    "mcp_plugins_distinct",
+    "mcp_plugin_calls_omitted",
+    "mcp_apps",
+    "mcp_apps_truncated",
+    "mcp_apps_distinct",
+    "mcp_app_calls_omitted",
+    "skill_references",
+    "skill_references_truncated",
+    "skill_references_distinct",
+    "skill_references_omitted",
     "compactions",
     "image_inputs",
     "audio_inputs",
@@ -538,6 +552,7 @@ def _normalized_event(
             "server": item.get("server", ""),
             "tool": item.get("tool", ""),
             "app": item.get("appName", ""),
+            "plugin_id": item.get("pluginId", ""),
             "status": item.get("status", ""),
             "duration_ms": _duration_ms(item.get("duration")),
             "read_only": item.get("readOnlyHint"),
@@ -715,6 +730,9 @@ def _empty_summary(path: Path) -> dict[str, Any]:
         "_tools": Counter(),
         "_command_families": Counter(),
         "_mcp_tools": Counter(),
+        "_mcp_plugins": Counter(),
+        "_mcp_apps": Counter(),
+        "_skill_references": Counter(),
         "_files": set(),
         "_models": set(),
         "_efforts": set(),
@@ -827,6 +845,10 @@ def summarize_rollout(
                 summary["tool_calls"] += 1
                 summary["custom_tool_calls" if payload_type == "custom_tool_call" else "function_tool_calls"] += 1
                 summary["_tools"][name] += 1
+                tool_input = _tool_input(payload)
+                input_text = tool_input if isinstance(tool_input, str) else json.dumps(tool_input)
+                # Count references once per call, not mentions in the available-skills list.
+                summary["_skill_references"].update(set(SKILL_REFERENCE.findall(input_text)))
                 _update_event_bounds(summary, timestamp_text)
                 continue
 
@@ -898,6 +920,10 @@ def summarize_rollout(
                 label = "/".join(str(part) for part in (item.get("server"), item.get("tool")) if part)
                 if label:
                     summary["_mcp_tools"][label] += 1
+                if isinstance(item.get("pluginId"), str) and item["pluginId"]:
+                    summary["_mcp_plugins"][item["pluginId"]] += 1
+                if isinstance(item.get("appName"), str) and item["appName"]:
+                    summary["_mcp_apps"][item["appName"]] += 1
                 if str(item.get("status") or "").lower() in {"failed", "error", "aborted"}:
                     summary["mcp_failures"] += 1
                 _update_event_bounds(summary, timestamp_text)
@@ -938,6 +964,9 @@ def public_summary(summary: dict[str, Any], counter_limit: int | None = None) ->
         ("tools", "_tools", "tool_calls_omitted"),
         ("command_families", "_command_families", "command_executions_omitted"),
         ("mcp_tools", "_mcp_tools", "mcp_calls_omitted"),
+        ("mcp_plugins", "_mcp_plugins", "mcp_plugin_calls_omitted"),
+        ("mcp_apps", "_mcp_apps", "mcp_app_calls_omitted"),
+        ("skill_references", "_skill_references", "skill_references_omitted"),
     ):
         values, truncated, distinct, omitted = _project_counter(summary[private_field], counter_limit)
         result[field] = values
@@ -976,6 +1005,9 @@ def aggregate_summaries(rows: list[dict[str, Any]]) -> dict[str, Any]:
         aggregate["_tools"].update(row["_tools"])
         aggregate["_command_families"].update(row["_command_families"])
         aggregate["_mcp_tools"].update(row["_mcp_tools"])
+        aggregate["_mcp_plugins"].update(row["_mcp_plugins"])
+        aggregate["_mcp_apps"].update(row["_mcp_apps"])
+        aggregate["_skill_references"].update(row["_skill_references"])
         aggregate["_files"].update(row["_files"])
         aggregate["_models"].update(row["_models"])
         aggregate["_efforts"].update(row["_efforts"])
@@ -1078,6 +1110,16 @@ def _arguments() -> argparse.Namespace:
         metavar="TOOL",
         help="Keep rollouts that used this tool in range; repeat to require every named tool",
     )
+    for option, label in (
+        ("mcp", "recorded MCP server/tool"),
+        ("plugin", "recorded MCP plugin ID"),
+        ("app", "recorded MCP app name"),
+        ("skill-reference", "skill directory name referenced as skills/NAME/SKILL.md in a tool input"),
+    ):
+        summary_parser.add_argument(
+            f"--require-{option}", action="append", default=[], metavar="GLOB",
+            help=f"Require a {label} matching this case-sensitive glob in range; repeat for AND",
+        )
     summary_parser.add_argument("--format", choices=("jsonl", "tsv"), default="jsonl")
     projection = summary_parser.add_mutually_exclusive_group()
     projection.add_argument("--fields", metavar="FIELD,...", help="Select and order output fields")
@@ -1160,6 +1202,17 @@ def main() -> int:
     ]
     if args.require_tool:
         rows = [row for row in rows if all(row["_tools"][tool] for tool in args.require_tool)]
+    for patterns, counter in (
+        (args.require_mcp, "_mcp_tools"),
+        (args.require_plugin, "_mcp_plugins"),
+        (args.require_app, "_mcp_apps"),
+        (args.require_skill_reference, "_skill_references"),
+    ):
+        if patterns:
+            rows = [
+                row for row in rows
+                if all(any(fnmatchcase(name, pattern) for name in row[counter]) for pattern in patterns)
+            ]
     rows.sort(key=lambda row: _summary_sort_value(row, args.sort), reverse=True)
     if args.limit:
         rows = rows[: args.limit]

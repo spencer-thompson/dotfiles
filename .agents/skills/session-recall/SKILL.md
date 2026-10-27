@@ -34,6 +34,9 @@ Optimize for answering the user's question, not collecting a complete activity i
    refine or split the window before claiming coverage. Deduplicate thread IDs across searches.
 4. Batch known IDs through `show`. Use `--family` or `--children` when the answer depends on delegated work.
    Use catalog-provided IDs and rollout paths; do not rescan the sessions directory to reconstruct metadata.
+5. For sessions involving a tool, MCP server, plugin, app, or skill, use the [usage filters](references/cli.md#find-sessions-by-tool-plugin-app-or-skill-reference) on catalog-selected rollout
+   paths. `--require-mcp 'SERVER/TOOL_GLOB'` checks recorded executions inside wrappers such as `exec`; `--require-tool` checks only model-visible calls. Include child threads
+   when delegated usage matters.
 
 Read [the CLI reference](references/cli.md) for exact filters, output contracts, family navigation,
 workload analytics, or schema compatibility checks.
@@ -53,8 +56,13 @@ Token totals can rank expensive sessions when relevant; they do not measure impo
   artifact evidence. If only an assistant report is available, attribute it as a historical report.
 - Check later relevant messages for reversals, failed validation, or superseding decisions. Previous recall summaries
   are leads, not independent corroboration. Follow their original thread evidence when status matters.
-- Stop once the requested answer has sufficient evidence. Use rollout `summary` only for requested metrics that
-  SQLite cannot answer, not as a prerequisite to ordinary recall.
+- Inspect MCP evidence with `show --kind mcp --metadata-only --match REGEX --events-only`. Each event includes its timestamp, rollout line, server, tool, status, and available
+  app/plugin identity. Inspect status before claiming success; omit `--metadata-only` when arguments or results are needed. See the
+  reference for a complete example.
+- `--require-skill-reference NAME` finds `skills/NAME/SKILL.md` paths in tool inputs. Report this as a reference, not
+  proof of loading or following the skill. Available-skills listings and ordinary message mentions do not count.
+- Stop once the requested answer has sufficient evidence. Use rollout `summary` for usage filters or requested metrics
+  that SQLite cannot answer, not as a prerequisite to ordinary recall.
 
 ## Synthesize
 

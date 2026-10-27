@@ -1264,6 +1264,101 @@ class InspectorTests(unittest.TestCase):
         rows = [json.loads(line) for line in output.getvalue().splitlines()]
         self.assertEqual(rows, [{"session_id": "matching", "tools": {"exec": 1, "spawn_agent": 1}}])
 
+    def test_summary_filters_recorded_mcp_identity_and_skill_references(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            paths = []
+            for session_id, timestamp in (
+                ("matching", "2026-10-27T12:00:00Z"),
+                ("outside", "2026-10-26T12:00:00Z"),
+                ("unknown-identity", "2026-10-27T12:00:00Z"),
+                ("mentioned-only", "2026-10-27T12:00:00Z"),
+            ):
+                path = Path(directory) / f"{session_id}.jsonl"
+                records = [
+                    {"type": "session_meta", "payload": {"id": session_id}},
+                    {
+                        "timestamp": timestamp, "type": "response_item",
+                        "payload": {
+                            "type": "message", "role": "user", "id": session_id + "-instructions",
+                            "content": "<skills_instructions>Available: skills/unused/SKILL.md</skills_instructions>",
+                        },
+                    },
+                ]
+                if session_id == "mentioned-only":
+                    records.append({
+                        "timestamp": timestamp, "type": "response_item",
+                        "payload": {
+                            "type": "function_call_output", "call_id": session_id + "-output",
+                            "output": "skills/typst/SKILL.md Slack supabase/execute_sql",
+                        },
+                    })
+                else:
+                    records.append({
+                        "timestamp": timestamp, "type": "response_item",
+                        "payload": {
+                            "type": "custom_tool_call", "name": "exec", "call_id": session_id + "-exec",
+                            "input": 'await tools.exec_command({cmd:"cat skills/typst/SKILL.md skills/typst/SKILL.md"})',
+                        },
+                    })
+                    for server, tool in (("codex_apps", "slack.slack_read_thread"), ("supabase", "execute_sql")):
+                        records.append({
+                            "timestamp": timestamp, "type": "event_msg",
+                            "payload": {
+                                "type": "item_completed",
+                                "item": {
+                                    "type": "McpToolCall", "id": session_id + server,
+                                    "server": server, "tool": tool, "status": "failed",
+                                    **({"pluginId": "slack@example", "appName": "Slack"}
+                                       if server == "codex_apps" and session_id != "unknown-identity" else {}),
+                                },
+                            },
+                        })
+                self._write(path, records)
+                paths.append(path)
+
+            cases = [
+                (["--require-mcp", "codex_apps/slack.*", "--require-mcp", "supabase/*"],
+                 {"matching", "unknown-identity"}),
+                (["--require-plugin", "slack@*"], {"matching"}),
+                (["--require-app", "Slack"], {"matching"}),
+                (["--require-app", "slack"], set()),
+                (["--require-app", "Slack", "--require-app", "Notion"], set()),
+                (["--require-skill-reference", "typst"], {"matching", "unknown-identity"}),
+                (["--require-skill-reference", "unused"], set()),
+                (["--require-tool", "slack.slack_read_thread"], set()),
+                (["--require-tool", "exec", "--require-app", "Slack", "--require-skill-reference", "typst"],
+                 {"matching"}),
+            ]
+            for filters, expected in cases:
+                with self.subTest(filters=filters):
+                    output = StringIO()
+                    with (
+                        patch.object(sys, "argv", [
+                            "inspect_sessions.py", "summary", *(str(path) for path in paths),
+                            "--since", "2026-10-27T00:00:00Z", "--until", "2026-10-27T23:59:59Z",
+                            "--counter-limit", "0", "--fields", "session_id,mcp_apps,skill_references", *filters,
+                        ]),
+                        redirect_stdout(output),
+                    ):
+                        self.assertEqual(inspect_sessions.main(), 0)
+                    rows = [json.loads(line) for line in output.getvalue().splitlines()]
+                    self.assertEqual({row["session_id"] for row in rows}, expected)
+                    self.assertTrue(all(row["mcp_apps"] == row["skill_references"] == {} for row in rows))
+
+            summary = summarize_rollout(paths[0])
+            public = public_summary(aggregate_summaries([summary]), counter_limit=0)
+            self.assertEqual(summary["_skill_references"], {"typst": 1})
+            self.assertEqual(public["mcp_plugin_calls_omitted"], 1)
+            self.assertEqual(public["mcp_app_calls_omitted"], 1)
+            self.assertEqual(public["skill_references_omitted"], 1)
+            self.assertTrue(public["mcp_plugins_truncated"])
+            self.assertEqual(public["mcp_apps_distinct"], 1)
+            events = extract_events([paths[0]], kinds={"mcp"}, metadata_only=True)
+            self.assertEqual(events[0]["plugin_id"], "slack@example")
+            self.assertEqual(events[0]["app"], "Slack")
+            self.assertEqual(events[0]["status"], "failed")
+            self.assertNotIn("arguments_preview", events[0])
+
     def test_compact_summary_limits_counters_without_changing_totals(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "session.jsonl"

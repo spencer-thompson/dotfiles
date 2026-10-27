@@ -122,6 +122,59 @@ always emits one thread envelope per line.
 Stats token fields are `cumulative_tokens`, `average_cumulative_tokens`, `median_cumulative_tokens`,
 `p90_cumulative_tokens`, and `max_cumulative_tokens`.
 
+### Find Sessions By Tool, Plugin, App, Or Skill Reference
+
+SQLite has no tool-usage index. Select candidate paths by date/project, then use rollout `summary` filters:
+
+```bash
+python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py list \
+  --since START_ISO --until REVIEW_CUTOFF_ISO --limit 0 \
+  --exclude-family CURRENT_THREAD_ID --exclude-thread-source guardian_review --format paths \
+| python3 ~/.agents/skills/session-recall/scripts/inspect_sessions.py summary \
+  --paths-from-stdin --since START_ISO --until REVIEW_CUTOFF_ISO \
+  --require-mcp 'codex_apps/slack.*' \
+  --fields session_id,mcp_tools,mcp_apps,mcp_plugins,skill_references
+```
+
+The explicit date window bounds candidate discovery; `--limit 0` avoids silently searching only the first 40 threads. Omit `--top-level-only` to
+include calls made by spawned agents. Each result identifies the thread containing the evidence; use catalog `--family` afterward
+if its parent conversation is needed.
+
+| Filter | Matches |
+| --- | --- |
+| `--require-tool exec` | Exact model-visible tool name; does not inspect nested MCP calls |
+| `--require-mcp 'supabase/*'` | Recorded `server/tool` pairs; supports a whole server or selected tools |
+| `--require-plugin 'unified-computer-use@*'` | Recorded MCP `pluginId` |
+| `--require-app 'Slack'` | Recorded MCP `appName` |
+| `--require-skill-reference typst` | Tool inputs referencing `skills/typst/SKILL.md` |
+
+MCP, plugin, app, and skill-reference filters accept case-sensitive globs (`*`, `?`, `[abc]`); quote patterns. Repeated
+filters use AND, including across filter types, within the same rollout and requested time range. Different calls may
+satisfy different filters. Filtering precedes sorting, limiting, aggregation, and counter truncation.
+
+MCP filters use structured `event_msg/item_completed/McpToolCall` records, including nested executions inside `exec`. They include failed calls: inspect event
+status to distinguish an attempted operation from a successful result. Plugin IDs and app names are optional and
+separate identities. Missing metadata is not guessed from tool prefixes; use `--require-mcp` when identity fields are absent. Inspect
+the summary counters or metadata-only events for exact labels.
+
+Skill references are weaker evidence. They count at most once per skill per tool call, using complete tool inputs;
+they can describe a read, an edit, a proposed command, or quoted text. They exclude messages, tool outputs, and injected
+skill catalogs, and do not establish that a read succeeded or instructions were followed. Non-path loading mechanisms
+and relative paths without `skills/NAME/SKILL.md` are not detected.
+
+To inspect the matching calls in selected sessions:
+
+```bash
+python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py show THREAD_ID ... \
+  --events-only --kind mcp --metadata-only --match 'slack\.' \
+  --since START_ISO --until REVIEW_CUTOFF_ISO --tail 20 --format jsonl
+```
+
+This existing event workflow returns timestamped, line-numbered evidence with `server`, `tool`, `status`, `app`, and `plugin_id`. `--match` is a regex over normalized
+event fields, whereas summary usage filters use globs. `--metadata-only` keeps argument/result contents out of matching and output; omit
+it for bounded, redacted payload previews. Some selected threads may have empty event arrays. The summary filters above
+select sessions; this command selects evidence.
+
 ## Rollout Inspector
 
 `inspect_sessions.py` accepts explicit rollout files only. It never discovers directories, ranks threads, reconstructs
@@ -195,6 +248,9 @@ command_executions,command_successes,command_failures,command_duration_ms,
 command_families,command_families_truncated,command_families_distinct,
 command_executions_omitted,file_change_events,files_changed,mcp_calls,mcp_failures,
 mcp_duration_ms,mcp_tools,mcp_tools_truncated,mcp_tools_distinct,mcp_calls_omitted,
+mcp_plugins,mcp_plugins_truncated,mcp_plugins_distinct,mcp_plugin_calls_omitted,
+mcp_apps,mcp_apps_truncated,mcp_apps_distinct,mcp_app_calls_omitted,
+skill_references,skill_references_truncated,skill_references_distinct,skill_references_omitted,
 compactions,image_inputs,audio_inputs,replayed_events,model_context_window,
 token_snapshots_in_range,token_delta_complete,input_tokens,cached_input_tokens,
 cache_write_input_tokens,output_tokens,reasoning_output_tokens,total_tokens,models,
@@ -219,7 +275,9 @@ times:
 These are observed execution intervals. `execution_overlap_ms` is not a claim about end-to-end latency saved.
 Aggregate summaries sum interval metrics across rollouts and take the maximum `max_concurrency`.
 
-Counters `tools`, `command_families`, and `mcp_tools` are JSON objects. Without `--counter-limit`, all entries are
+Counters `tools`, `command_families`, `mcp_tools`, `mcp_plugins`, `mcp_apps`, and `skill_references` are JSON objects.
+The last three are available in full output or via `--fields`; the existing compact preset is unchanged.
+Without `--counter-limit`, all entries are
 included. `--counter-limit N` retains the N largest entries in each counter; `0` emits empty objects. Compact mode
 defaults to five entries unless overridden.
 
@@ -230,6 +288,9 @@ distinct keys, and the workload omitted from the rendered counter:
 tools_truncated,tools_distinct,tool_calls_omitted
 command_families_truncated,command_families_distinct,command_executions_omitted
 mcp_tools_truncated,mcp_tools_distinct,mcp_calls_omitted
+mcp_plugins_truncated,mcp_plugins_distinct,mcp_plugin_calls_omitted
+mcp_apps_truncated,mcp_apps_distinct,mcp_app_calls_omitted
+skill_references_truncated,skill_references_distinct,skill_references_omitted
 ```
 
 Each rollout has `sessions: 1`; aggregate output reports its actual session count. Full TSV uses the same public field
