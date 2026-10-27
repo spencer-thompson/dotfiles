@@ -244,7 +244,7 @@ def _add_catalog_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--archived", choices=("active", "archived", "all"), default="all")
     parser.add_argument("--days", type=float, default=None)
     parser.add_argument("--since", help="Include threads updated at or after this ISO timestamp or local YYYY-MM-DD")
-    parser.add_argument("--until", help="Include threads updated through this ISO timestamp or local YYYY-MM-DD")
+    parser.add_argument("--until", help="Include threads created through this ISO timestamp or local YYYY-MM-DD")
     parser.add_argument("--cwd", help="Require this cwd prefix")
     parser.add_argument("--query", help="Search name, title, first user message, and cwd")
     parser.add_argument("--source", help="Require this source substring")
@@ -262,6 +262,10 @@ def _add_catalog_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--children", metavar="THREAD_ID", help="Alias for --parent-thread-id")
     parser.add_argument("--top-level-only", action="store_true")
     parser.add_argument("--exclude-thread", action="append", default=[], metavar="THREAD_ID")
+    parser.add_argument(
+        "--exclude-family", action="append", default=[], metavar="THREAD_ID",
+        help="Exclude the spawn family containing this thread; repeatable",
+    )
     parser.add_argument(
         "--exclude-thread-source",
         action="append",
@@ -322,7 +326,8 @@ def _time_filters(*, days: float, since: str | None, until: str | None) -> tuple
         params.append(math.ceil(parse_boundary(since, end=False)[0] * 1000))
     if until:
         value, inclusive = parse_boundary(until, end=True)
-        where.append(f"updated_at_ms {'<=' if inclusive else '<'} ?")
+        # A thread can contain in-range events even if it continued after the cutoff.
+        where.append(f"created_at_ms {'<=' if inclusive else '<'} ?")
         params.append(math.floor(value * 1000))
     return where, params
 
@@ -395,6 +400,7 @@ def query_catalog(
     parent_thread_id: str | None = None,
     top_level_only: bool = False,
     excluded_threads: set[str] | None = None,
+    excluded_families: set[str] | None = None,
     excluded_thread_sources: set[str] | None = None,
     limit: int = 40,
     preview_chars: int = 180,
@@ -455,7 +461,16 @@ def query_catalog(
             where.append("coalesce(agent_role, '') = ''")
             where.append("coalesce(agent_path, '') = ''")
             where.append("NOT EXISTS (SELECT 1 FROM thread_spawn_edges e WHERE e.child_thread_id = threads.id)")
-        excluded = excluded_threads or set()
+        excluded = set(excluded_threads or ())
+        excluded_roots: set[str] = set()
+        for thread_id in excluded_families or ():
+            if thread_id not in families:
+                raise CatalogUnavailable(f"thread not found: {thread_id}")
+            excluded_roots.add(families[thread_id]["root_thread_id"])
+        excluded.update(
+            thread_id for thread_id, metadata in families.items()
+            if metadata["root_thread_id"] in excluded_roots
+        )
         if excluded:
             placeholders = ", ".join("?" for _ in excluded)
             where.append(f"id NOT IN ({placeholders})")
@@ -710,6 +725,7 @@ def main() -> int:
                 parent_thread_id=args.parent_thread_id,
                 top_level_only=args.top_level_only,
                 excluded_threads=set(args.exclude_thread),
+                excluded_families=set(args.exclude_family),
                 excluded_thread_sources=set(args.exclude_thread_source),
                 limit=0 if args.command == "stats" else args.limit,
                 preview_chars=args.preview_chars,

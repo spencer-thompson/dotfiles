@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import sqlite3
 import sys
 import tempfile
+import time
 import unittest
 from contextlib import closing, redirect_stderr, redirect_stdout
 from io import StringIO
@@ -279,6 +281,50 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(total["median_cumulative_tokens"], 200)
         self.assertEqual([row["group"] for row in grouped], ["gpt-a", "gpt-b"])
 
+    def test_date_discovery_includes_threads_that_continued_after_cutoff(self) -> None:
+        def ms(value: str) -> int:
+            return round(inspect_sessions.parse_boundary(value, end=False)[0] * 1000)
+
+        with tempfile.TemporaryDirectory() as directory:
+            database = Path(directory) / "state.sqlite"
+            self._create_catalog(database)
+            for thread_id, created, updated in (
+                ("continued", "2026-10-20", "2026-10-27"),
+                ("inside", "2026-10-23", "2026-10-24"),
+                ("too-old", "2026-10-19", "2026-10-20"),
+                ("too-new", "2026-10-26", "2026-10-27"),
+            ):
+                self._insert_thread(
+                    database, thread_id=thread_id,
+                    created_at_ms=ms(created + "T12:00:00Z"),
+                    updated_at_ms=ms(updated + "T12:00:00Z"),
+                )
+            rows = self._query(database, since="2026-10-22T00:00:00Z", until="2026-10-25T23:59:59Z")
+        self.assertEqual({row["thread_id"] for row in rows}, {"continued", "inside"})
+
+    def test_excludes_entire_family_from_any_member_before_limit(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database = Path(directory) / "state.sqlite"
+            self._create_catalog(database)
+            for index, thread_id in enumerate(("other", "root", "child", "grandchild")):
+                self._insert_thread(database, thread_id=thread_id, recency_at_ms=index)
+            self._insert_edge(database, "root", "child")
+            self._insert_edge(database, "child", "grandchild")
+            rows = self._query(database, excluded_families={"child"}, limit=1)
+            with self.assertRaisesRegex(CatalogUnavailable, "thread not found"):
+                self._query(database, excluded_families={"unknown"})
+            output = StringIO()
+            with (
+                patch.object(sys, "argv", [
+                    "catalog_sessions.py", "list", "--db", str(database), "--days", "0",
+                    "--exclude-family", "grandchild", "--limit", "1", "--fields", "thread_id", "--format", "jsonl",
+                ]),
+                redirect_stdout(output),
+            ):
+                self.assertEqual(catalog_sessions.main(), 0)
+        self.assertEqual([row["thread_id"] for row in rows], ["other"])
+        self.assertEqual(json.loads(output.getvalue()), {"thread_id": "other"})
+
     def test_redacts_catalog_preview_and_requires_current_schema(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database = Path(directory) / "state.sqlite"
@@ -508,6 +554,46 @@ class CatalogTests(unittest.TestCase):
 class InspectorTests(unittest.TestCase):
     def _write(self, path: Path, records: list[dict[str, object]]) -> None:
         path.write_text("".join(f"{json.dumps(record)}\n" for record in records), encoding="utf-8")
+
+    def test_match_searches_beyond_preview_without_exposing_secrets(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "rollout.jsonl"
+            self._write(path, [
+                {
+                    "type": "response_item",
+                    "payload": {
+                        "type": "message", "role": "assistant", "id": "answer",
+                        "content": "password=hunter2 " + "padding " * 100 + "needle",
+                    },
+                },
+                {
+                    "type": "response_item",
+                    "payload": {
+                        "type": "function_call_output", "call_id": "result",
+                        "output": "padding " * 100 + "needle",
+                    },
+                },
+            ])
+            events = extract_events([path], patterns=[re.compile("needle")], max_chars=60)
+            secret_matches = extract_events([path], patterns=[re.compile("hunter2")], max_chars=60)
+        self.assertEqual([event["kind"] for event in events], ["assistant", "tool_output"])
+        self.assertEqual(secret_matches, [])
+        self.assertIn("[REDACTED]", events[0]["preview"])
+        self.assertEqual(len(events[0]["preview"]), 60)
+        self.assertEqual(len(events[1]["output_preview"]), 60)
+        self.assertNotIn("hunter2", json.dumps(events))
+
+    def test_local_date_boundaries_follow_daylight_saving_transitions(self) -> None:
+        try:
+            with patch.dict(os.environ, {"TZ": "US/Eastern"}):
+                time.tzset()
+                for day, hours in (("2026-03-08", 23), ("2026-11-01", 25)):
+                    start, _ = inspect_sessions.parse_boundary(day, end=False)
+                    end, inclusive = inspect_sessions.parse_boundary(day, end=True)
+                    self.assertEqual(end - start, hours * 3600)
+                    self.assertFalse(inclusive)
+        finally:
+            time.tzset()
 
     def test_events_are_range_scoped_redacted_and_optionally_raw(self) -> None:
         records: list[dict[str, object]] = [

@@ -5,7 +5,7 @@ detailed workload evidence is required.
 
 ## Catalog
 
-`catalog_sessions.py` queries the current `state_5.sqlite` schema read-only.
+`catalog_sessions.py` queries `state_5.sqlite` read-only under `$CODEX_HOME` (default `~/.codex`); `--db` overrides it.
 
 ### List And Rank Threads
 
@@ -20,10 +20,16 @@ Filtering and ranking run before output projection. `--sort` accepts `recency`, 
 `tokens`. `--top-by-tokens N` aliases `--sort tokens --limit N`; `--min-tokens N` filters first.
 
 Discovery filters include `--since`, `--until`, `--query`, `--cwd`, `--source`, `--model`, `--reasoning-effort`,
-`--git-project`, `--git-branch`, `--named-only`, `--archived`, `--top-level-only`, repeatable `--exclude-thread`, and
-repeatable case-insensitive exact `--exclude-thread-source`. Exclusions apply before sorting and limiting.
-Use the same exact start and cutoff for catalog discovery and rollout inspection so out-of-range rollouts are never
-selected merely to produce empty summaries.
+`--git-project`, `--git-branch`, `--named-only`, `--archived`, `--top-level-only`, repeatable `--exclude-thread`,
+repeatable `--exclude-family`, and repeatable case-insensitive exact `--exclude-thread-source`. Exclusions apply before
+sorting and limiting. `--exclude-family THREAD` removes its root, siblings, and descendants through spawn edges;
+any member can identify the family. Unknown IDs fail explicitly.
+
+Date filters select possible activity: `updated_at_ms >= since` and `created_at_ms <= until` (a date-only `until`
+excludes the next local midnight). This includes threads that continued after the cutoff. Use the same exact start and
+cutoff in rollout inspection to select actual events; some candidate threads may have no events in that interval.
+Catalog metadata, sorting, and cumulative totals reflect the current database, not a historical snapshot at `until`.
+The implicit discovery window is three days; use `--days 0` for all dates. Explicit date bounds disable that default.
 
 Use `--fields FIELD,...` to select and order TSV or JSONL fields. Unknown, empty, or duplicate fields fail. Use
 `--compact` for this preset:
@@ -132,6 +138,10 @@ python3 ~/.agents/skills/session-recall/scripts/inspect_sessions.py events ROLLO
 Events are timestamped, line-numbered JSONL. Stable IDs are deduplicated across selected rollouts unless
 `--no-dedupe` is supplied.
 
+`--match` searches complete normalized event text before preview truncation, with redaction still applied by default. It does not
+search encrypted reasoning, injected instructions, or payloads omitted by `--metadata-only`. A match can fall beyond the displayed
+preview; use the returned path and `--line-range LINE:LINE --max-chars N` to inspect that evidence. `--tail` limits matched events, not the search itself.
+
 By default, messages and payload details are bounded by `--max-chars` and known secret patterns are replaced with
 `[REDACTED]`. Tool calls, outputs, commands, file changes, and MCP events expose string previews rather than their raw
 structured values. Use `--metadata-only` to omit payload previews. Use `--raw` for complete unredacted messages and
@@ -233,3 +243,23 @@ Catalog cumulative tokens rank whole-thread workload; inspector deltas describe 
 Message counts, tokens, tools, bytes, and duration measure different things. Output projections (`--compact`,
 `--fields`, metadata modes, and counter limits) do not change filtering, ranking, calculations, or evidence collection.
 Preserve truncation, distinct-count, and omitted-count fields when handing off or storing limited counters.
+
+## Schema Compatibility
+
+Checked locally on 2026-10-27 with `codex-cli 0.165.0`: the database is still `state_5.sqlite`, with successful migrations through 62 (`threads attached parent`). Newer metadata
+includes originator, creator identity, attachments, read receipts, and `attached_thread_parent_id`. These additions do not replace the `threads` and `thread_spawn_edges` fields
+used here. Family navigation means **spawn relationships**; it does not currently follow attached-thread links.
+
+All 2,786 catalog rows at inspection used `history_mode=paginated`; sampled current rollout paths were readable JSONL
+and retained the message, tool, execution, and `token_count` shapes used by these scripts. They also contained
+`token_usage_record` entries. Summary token deltas currently use cumulative `event_msg/token_count` snapshots only,
+not both streams. This is a local compatibility check, not a promise that future Codex versions preserve internal files.
+
+If discovery fails after an upgrade, inspect `PRAGMA table_info(threads)`, `PRAGMA table_info(thread_spawn_edges)`, and
+`_sqlx_migrations` using SQLite `mode=ro`. Check catalog-selected rollout record types and payload keys without dumping
+private message contents. Do not edit or migrate Codex storage to satisfy this skill, or silently switch to an older
+database. Extra columns are harmless; removed fields or changed record shapes need a parser update and a focused test.
+
+The [official app-server API](https://learn.chatgpt.com/docs/app-server#api-overview) also offers read-only `thread/list`, `thread/read`, `thread/turns/list`, and `thread/items/list`.
+Consider that interface if local history storage stops being compatible; the scripts currently use local SQLite and
+JSONL directly.

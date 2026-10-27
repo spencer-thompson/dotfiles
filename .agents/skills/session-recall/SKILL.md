@@ -14,7 +14,9 @@ Optimize for answering the user's question, not collecting a complete activity i
 
 1. Capture one timezone-aware `review_cutoff`. Honor the requested range; otherwise start with today for recent-work
    reviews. For an older named topic, use the known period or expand the date window until useful candidates appear.
-   Keep each chosen start and cutoff consistent between discovery and event inspection.
+   Use US/Eastern for relative dates unless the user specifies otherwise, and explicit ISO offsets for boundaries.
+   Keep each chosen start and cutoff consistent between discovery and event inspection. Catalog dates select threads
+   whose lifetimes overlap the window; rollout dates select actual events. A thread may have continued after the cutoff.
 2. Query the catalog before reading rollouts. Exclude the current recall thread or family and `guardian_review` threads
    from ordinary reviews. Include approval threads separately only when the question concerns approvals or sandboxing.
 
@@ -22,7 +24,7 @@ Optimize for answering the user's question, not collecting a complete activity i
    python3 ~/.agents/skills/session-recall/scripts/catalog_sessions.py list \
      --since START_ISO --until REVIEW_CUTOFF_ISO \
      --archived all --top-level-only --exclude-thread-source guardian_review \
-     --exclude-thread CURRENT_THREAD_ID --sort recency --limit 40 --compact
+     --exclude-family CURRENT_THREAD_ID --sort recency --limit 40 --compact
    ```
 
 3. Narrow by `--query`, `--git-project`, `--cwd`, or `--named-only` when useful. Catalog queries search metadata, not
@@ -34,14 +36,15 @@ Optimize for answering the user's question, not collecting a complete activity i
    Use catalog-provided IDs and rollout paths; do not rescan the sessions directory to reconstruct metadata.
 
 Read [the CLI reference](references/cli.md) for exact filters, output contracts, family navigation,
-or workload analytics.
+workload analytics, or schema compatibility checks.
 Token totals can rank expensive sessions when relevant; they do not measure importance or completion.
 
 ## Inspect Evidence
 
 - For a known fact, search selected threads with `show --match REGEX --ignore-case`; use `--input-match` for complete
   tool inputs. Select user, assistant, or tool events according to the question. Batch IDs with `--events-only` once
-  metadata is known, and bound output with `--tail` and `--max-chars`.
+  metadata is known, and bound output with `--tail` and `--max-chars`. Text matching precedes preview truncation; if a
+  hit is outside the returned preview, inspect its cited rollout line with a larger preview.
 - `--kind assistant --tail 1` is a cheap first peek, not a complete session summary. If it is administrative,
   unrelated, empty, or too terse, inspect matching outcomes and nearby user messages. For multi-task threads, search
   each relevant topic instead of repeatedly increasing an unfiltered tail.

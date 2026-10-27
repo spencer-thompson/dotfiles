@@ -170,10 +170,11 @@ SUMMARY_COMPACT_FIELDS = (
 def parse_boundary(value: str, *, end: bool) -> tuple[float, bool]:
     """Parse an ISO timestamp or local date into an epoch boundary."""
     if re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
-        parsed = datetime.combine(date.fromisoformat(value), time.min).astimezone()
+        parsed = datetime.combine(date.fromisoformat(value), time.min)
         if end:
-            return (parsed + timedelta(days=1)).timestamp(), False
-        return parsed.timestamp(), True
+            parsed += timedelta(days=1)
+        # Resolve each local midnight independently across daylight-saving changes.
+        return parsed.astimezone().timestamp(), not end
 
     normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
     parsed = datetime.fromisoformat(normalized)
@@ -612,7 +613,7 @@ def extract_events(
                     path,
                     line_number,
                     record,
-                    max_chars=max_chars,
+                    max_chars=0 if patterns else max_chars,
                     redact=redact,
                     metadata_only=metadata_only,
                 )
@@ -631,6 +632,13 @@ def extract_events(
                     )
                     if not any(pattern.search(visible) for pattern in patterns):
                         continue
+                    # Match complete redacted evidence; bound only the returned preview.
+                    if max_chars:
+                        event = _normalized_event(
+                            path, line_number, record, max_chars=max_chars,
+                            redact=redact, metadata_only=metadata_only,
+                        )
+                        event.pop("_event_id", None)
                 events.append(event)
     return events
 
