@@ -80,6 +80,20 @@ function M.setup(opts)
 		scroll_touchpad = 2.5,
 	})
 
+	-- The annotation popup has a large transparent surface around its editor.
+	-- Compositor effects expose that surface as a blurred, bordered rectangle.
+	hl.window_rule({
+		name = "chatgpt-browser-comment",
+		match = {
+			class = "^chatgpt$",
+			initial_title = "^Browser comment$",
+		},
+		decorate = false,
+		no_shadow = true,
+		no_blur = true,
+		no_anim = true,
+	})
+
 	hl.window_rule({
 		name = "codex-pet-overlay",
 		match = {
