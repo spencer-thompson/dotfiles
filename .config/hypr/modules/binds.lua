@@ -372,8 +372,8 @@ bind("XF86AudioRaiseVolume", exec("noctalia msg volume-up 1%"), "Volume up", { r
 bind("XF86AudioPrev", exec("playerctl previous"), "Previous track", { locked = true })
 bind("XF86AudioPlay", exec("playerctl play-pause"), "Play/pause", { locked = true })
 bind("XF86AudioNext", exec("playerctl next"), "Next track", { locked = true })
-bind("XF86MonBrightnessDown", exec("noctalia msg brightness-down"), "Brightness down", { repeating = true, locked = true })
-bind("XF86MonBrightnessUp", exec("noctalia msg brightness-up"), "Brightness up", { repeating = true, locked = true })
+bind("XF86MonBrightnessDown", exec("noctalia msg brightness-down all"), "Brightness down", { repeating = true, locked = true })
+bind("XF86MonBrightnessUp", exec("noctalia msg brightness-up all"), "Brightness up", { repeating = true, locked = true })
 
 -- Move focus with mainMod + arrow keys
 bind(mod .. " + left", hl.dsp.focus({ direction = "left" }), "Focus left")
