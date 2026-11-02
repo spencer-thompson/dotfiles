@@ -53,7 +53,6 @@ hl.config({
     },
     master = {
         mfact = 0.5,
-        special_scale_factor = 0.95,
         new_status = "slave",
         new_on_top = false,
         orientation = "center",

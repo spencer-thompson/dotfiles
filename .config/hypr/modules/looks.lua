@@ -23,10 +23,10 @@ hl.curve("auto_default", {
 -- 	type = "spring",
 -- 	mass = 1,
 -- 	stiffness = 70,
--- 	dampening = 10,
+-- 	damping = 10,
 -- })
-hl.curve("rubber", { type = "spring", mass = 1, stiffness = 70, dampening = 12 })
-hl.curve("damp", { type = "spring", mass = 1, stiffness = 100, dampening = 20 })
+hl.curve("rubber", { type = "spring", mass = 1, stiffness = 70, damping = 12 })
+hl.curve("damp", { type = "spring", mass = 1, stiffness = 100, damping = 20 })
 
 hl.curve("linear", {
 	type = "bezier",

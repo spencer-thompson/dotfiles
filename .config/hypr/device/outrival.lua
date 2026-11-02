@@ -89,6 +89,14 @@ return {
 		},
 	},
 
+	window_rules = {
+		{
+			name = "slack-no-auto-hdr",
+			match = { class = "^slack$" },
+			no_auto_hdr = true,
+		},
+	},
+
 	workspace_routing = {
 		monitors = { work_external_dp_monitor, work_external_hdmi_monitor, home_external_monitor },
 		workspaces = routed_workspaces,
