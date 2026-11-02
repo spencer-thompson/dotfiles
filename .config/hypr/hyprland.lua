@@ -93,11 +93,15 @@ hl.config({
         rounding_power = 4.0,
         blur = {
             enabled = true,
+            variant = 1, -- Frost.
             size = 12,
             passes = 3,
             ignore_opacity = true,
             new_optimizations = true,
             xray = true,
+        },
+        wobble = {
+            enabled = true,
         },
         motion_blur = {
             enabled = false,
