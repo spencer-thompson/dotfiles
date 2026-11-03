@@ -20,6 +20,7 @@ require("modules.looks")
 require("modules.exec")
 require("modules.layouts")
 local device = require("device")
+require("modules.looks").setup(device)
 require("modules.binds")
 require("modules.lid").setup(device)
 require("modules.gestures")
@@ -50,7 +51,7 @@ That includes:
 - fallback color values, including glow color
 
 Avoid adding new tracked `hl.config()` calls in modules unless there is a deliberate reason. The generated
-`~/.config/hypr/noctalia.lua` file is the intentional local exception.
+`~/.config/hypr/noctalia.lua` file, device profile overrides, and runtime effects toggles are intentional exceptions.
 
 ## Modules
 
@@ -144,6 +145,16 @@ The user D-Bus Secret Service entry routes activation to the existing GNOME Keyr
 second daemon. Login unlocking also requires `pam_gnome_keyring.so` in the machine's PAM login configuration and
 a `login` keyring encrypted with the login password; Stow does not configure PAM or move keyrings.
 
+## Light Effects Mode
+
+`Super+Ctrl+G` toggles light effects mode: border and glow gradients stop rotating, and wobble is disabled.
+Static border/glow colors, blur, shadows, and ordinary window/workspace animations remain unchanged. It does not
+change Do Not Disturb. Toggling while game mode is active selects the effects to restore after game mode ends.
+
+The `outrival` work laptop starts in light effects mode and uses standard Kawase blur instead of Frost, on every
+connected display. Other devices retain their existing defaults. Reloading the config restores the device default;
+the light effects toggle does not change the blur variant.
+
 ## Steam Gaming
 
 `Super+G` (or `Super+0`) focuses workspace 10, launching Steam when it is created empty. Steam and game windows route
@@ -152,8 +163,9 @@ marked as game content, allowing `render.direct_scanout = 2` to attempt direct s
 permit it. Direct scanout can reduce compositor work and latency by presenting an eligible fullscreen game directly.
 
 While workspace 10 is visible and occupied on any monitor, performance mode disables animations, blur, motion
-blur, shadows, glow, and rounding. Leaving or emptying the workspace restores the settings captured when automation
-enabled the mode. `Super+Shift+G` remains the manual toggle and can suppress automation for the current Steam session.
+blur, shadows, glow, wobble, and rounding. Leaving or emptying the workspace restores the settings captured when
+automation enabled the mode. `Super+Shift+G` remains the manual toggle and can suppress automation for the current
+Steam session.
 Game mode temporarily enables Do Not Disturb and restores the prior setting on exit, including after a config reload.
 Turning DND off yourself during a game is respected. The snapshot lives in the compositor session's runtime directory.
 
@@ -203,6 +215,8 @@ loader applies the data.
 Supported profile fields:
 
 - `main_monitor`
+- `config` (device-specific compositor overrides)
+- `light_effects` (default state of the light effects toggle)
 - `secondary_monitor`
 - `laptop_monitor`
 - `monitors`

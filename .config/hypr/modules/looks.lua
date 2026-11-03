@@ -1,4 +1,7 @@
 local M = {}
+local light_mode = false
+local performance_mode = false
+local default_wobble = true
 
 function M.set_angle_loops_enabled(enabled)
 	if not enabled then
@@ -9,6 +12,32 @@ function M.set_angle_loops_enabled(enabled)
 
 	hl.animation({ leaf = "borderangle", enabled = true, speed = 40, bezier = "linear", style = "loop" })
 	hl.animation({ leaf = "glowangle", enabled = true, speed = 40, bezier = "linear", style = "loop" })
+end
+
+local function apply_effects()
+	local reduced = light_mode or performance_mode
+	M.set_angle_loops_enabled(not reduced)
+	hl.config({ decoration = { wobble = { enabled = default_wobble and not reduced } } })
+end
+
+function M.setup(device)
+	default_wobble = hl.get_config("decoration.wobble.enabled")
+	light_mode = device.light_effects == true
+	apply_effects()
+end
+
+function M.toggle_light_effects()
+	light_mode = not light_mode
+	apply_effects()
+end
+
+function M.set_performance_mode(enabled)
+	performance_mode = enabled
+	apply_effects()
+end
+
+function M.light_effects_enabled()
+	return light_mode
 end
 
 hl.curve("auto_default", {

@@ -7,6 +7,7 @@ local monitors = {}
 local dispatched = {}
 local active_window = nil
 local windows = {}
+local light_default = arg[1] == "light"
 
 local config_values = {
 	["animations.enabled"] = true,
@@ -14,6 +15,7 @@ local config_values = {
 	["decoration.blur.enabled"] = false,
 	["decoration.motion_blur.enabled"] = true,
 	["decoration.glow.enabled"] = true,
+	["decoration.wobble.enabled"] = true,
 	["decoration.rounding"] = 12,
 }
 
@@ -32,7 +34,7 @@ local function apply_config(spec)
 		config_values["animations.enabled"] = spec.animations.enabled
 	end
 
-	for _, name in ipairs({ "shadow", "blur", "motion_blur", "glow" }) do
+	for _, name in ipairs({ "shadow", "blur", "motion_blur", "glow", "wobble" }) do
 		local decoration = spec.decoration and spec.decoration[name]
 		if decoration and decoration.enabled ~= nil then
 			config_values["decoration." .. name .. ".enabled"] = decoration.enabled
@@ -105,6 +107,9 @@ _G.hl = {
 	end,
 }
 
+local looks = require("modules.looks")
+looks.setup({ light_effects = light_default })
+assert(config_values["decoration.wobble.enabled"] == not light_default, "applied the device's effects default")
 local binding_module = require("modules.binds")
 
 config_updates = {}
@@ -205,23 +210,34 @@ assert(#config_updates == 0, "ignored an empty Steam workspace")
 
 steam.windows = 1
 event_handlers["window.open"]()
-assert(#config_updates == 1, "enabled performance mode for an occupied Steam workspace")
+assert(#config_updates == 2, "enabled performance mode for an occupied Steam workspace")
 assert(config_values["animations.enabled"] == false, "disabled animations")
 assert(config_values["decoration.blur.enabled"] == false, "disabled blur")
 assert(config_values["decoration.rounding"] == 0, "disabled rounding")
-assert(#angle_updates == 2 and angle_updates[1].enabled == false and angle_updates[2].enabled == false, "disabled angle loops")
+assert(config_values["decoration.wobble.enabled"] == false, "disabled wobble in game mode")
+assert(
+	#angle_updates == 2 and angle_updates[1].enabled == false and angle_updates[2].enabled == false,
+	"disabled angle loops"
+)
 assert(binding_module.performance_mode_enabled(), "exposed the current mode to asynchronous DND synchronization")
 assert(executed_commands[#executed_commands] == "~/.config/hypr/scripts/game-dnd.sh", "synchronized do not disturb")
 
 steam.windows = 0
 event_handlers["window.destroy"]()
-assert(#config_updates == 2, "restored settings after the Steam workspace emptied")
+assert(#config_updates == 4, "restored settings after the Steam workspace emptied")
 assert(config_values["animations.enabled"] == true, "restored animations")
 assert(config_values["decoration.blur.enabled"] == false, "preserved a pre-existing blur override")
 assert(config_values["decoration.rounding"] == 12, "restored the captured rounding")
-assert(angle_updates[3].enabled == true and angle_updates[4].enabled == true, "restored angle loops")
+assert(
+	angle_updates[3].enabled == not light_default and angle_updates[4].enabled == not light_default,
+	"restored the device's angle loops"
+)
+assert(config_values["decoration.wobble.enabled"] == not light_default, "restored the device's wobble setting")
 assert(not binding_module.performance_mode_enabled(), "exposed the restored mode")
-assert(executed_commands[#executed_commands] == "~/.config/hypr/scripts/game-dnd.sh", "restored the previous DND preference")
+assert(
+	executed_commands[#executed_commands] == "~/.config/hypr/scripts/game-dnd.sh",
+	"restored the previous DND preference"
+)
 
 steam.windows = 1
 event_handlers["window.open"]()
@@ -248,7 +264,48 @@ toggle()
 assert(config_values["animations.enabled"] == true, "manually disabled performance mode")
 
 event_handlers["config.reloaded"]()
-assert(executed_commands[#executed_commands] == "~/.config/hypr/scripts/game-dnd.sh", "reconciled saved DND after reload")
+assert(
+	executed_commands[#executed_commands] == "~/.config/hypr/scripts/game-dnd.sh",
+	"reconciled saved DND after reload"
+)
+
+-- Light mode preserves ordinary effects and remains subordinate to game mode.
+monitors = { { active_workspace = { name = "2", windows = 1 } } }
+event_handlers["workspace.active"]()
+local light_toggle = assert(binds["SUPER + CTRL + G"], "registered the light-effects bind").action
+if not looks.light_effects_enabled() then
+	light_toggle()
+end
+config_values["decoration.blur.enabled"] = true
+local commands_before = #executed_commands
+for _, enabled in ipairs({ false, true }) do
+	light_toggle()
+	assert(looks.light_effects_enabled() == enabled, "toggled light effects")
+	assert(config_values["animations.enabled"] == true, "kept window animations")
+	assert(config_values["decoration.blur.enabled"] == true, "kept blur")
+	assert(config_values["decoration.glow.enabled"] == true, "kept static glow")
+	assert(config_values["decoration.shadow.enabled"] == true, "kept shadows")
+	assert(config_values["decoration.wobble.enabled"] == not enabled, "toggled wobble")
+	assert(angle_updates[#angle_updates].enabled == not enabled, "toggled angle loops")
+end
+assert(#executed_commands == commands_before, "light mode left DND alone")
+
+toggle()
+light_toggle()
+assert(config_values["decoration.wobble.enabled"] == false, "game mode overrode the light toggle")
+assert(angle_updates[#angle_updates].enabled == false, "game mode kept angle loops disabled")
+assert(config_values["animations.enabled"] == false, "game mode kept animations disabled")
+assert(config_values["decoration.blur.enabled"] == false, "game mode kept blur disabled")
+toggle()
+assert(config_values["decoration.wobble.enabled"] == true, "restored the changed light-mode preference")
+assert(angle_updates[#angle_updates].enabled == true, "restored angle loops after game mode")
+assert(config_values["decoration.blur.enabled"] == true, "restored blur after game mode")
+
+light_toggle()
+toggle()
+toggle()
+assert(config_values["decoration.wobble.enabled"] == false, "game mode preserved light mode on exit")
+assert(angle_updates[#angle_updates].enabled == false, "game mode did not restart light mode's angle loops")
 
 for _, command in ipairs(executed_commands) do
 	assert(not command:find("hyprctl reload", 1, true), "never reloaded Hyprland to restore performance settings")

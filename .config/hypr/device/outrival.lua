@@ -32,6 +32,12 @@ for workspace = 2, 10 do
 end
 
 return {
+	light_effects = true,
+	config = {
+		decoration = {
+			blur = { variant = 0 }, -- Standard Kawase blur.
+		},
+	},
 	main_monitor = main_monitor,
 	secondary_monitor = main_monitor,
 	laptop_monitor = laptop_monitor,

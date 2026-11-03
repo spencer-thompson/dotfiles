@@ -214,7 +214,7 @@ local function enable_performance_mode(source)
 			rounding = 0,
 		},
 	})
-	looks.set_angle_loops_enabled(false)
+	looks.set_performance_mode(true)
 	-- hl.exec_cmd([[notify-send -a Hyprland -i noctalia-glyph:bolt-filled -t 2000 "Performance mode enabled"]])
 	sync_game_dnd()
 end
@@ -229,7 +229,7 @@ local function disable_performance_mode()
 	performance_mode_source = nil
 
 	hl.config(snapshot)
-	looks.set_angle_loops_enabled(true)
+	looks.set_performance_mode(false)
 	-- hl.exec_cmd([[notify-send -a Hyprland -i noctalia-glyph:bolt-off -t 2000 "Performance mode disabled"]])
 	sync_game_dnd()
 end
@@ -298,6 +298,7 @@ bind(mod .. " + U", toggle_floating, "Toggle floating")
 bind(mod .. " + C", float_and_center, "Float and center")
 bind("SHIFT + " .. mod .. " + C", tile_active_window, "Tile window")
 bind(mod .. " + SHIFT + G", toggle_performance_mode, "Toggle performance mode")
+bind(mod .. " + CTRL + G", looks.toggle_light_effects, "Toggle light effects mode")
 bind(mod .. " + G", hl.dsp.focus({ workspace = 10 }), "Steam workspace")
 bind("SHIFT + " .. mod .. " + R", hl.dsp.force_renderer_reload(), "Reload renderer")
 bind(mod .. " + F", hl.dsp.window.fullscreen(0), "Toggle fullscreen")
