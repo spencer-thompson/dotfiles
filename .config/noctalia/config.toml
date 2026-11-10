@@ -569,3 +569,8 @@ show_labels = false
 
 [widget.sky-hyprland]
 type = "sthom/sky-hyprland:activity"
+
+# Live colors for the tp Typst editor.
+[theme.templates.user.tp]
+input_path = "$XDG_DATA_HOME/tp/noctalia.toml"
+output_path = "$XDG_CONFIG_HOME/tp/noctalia.toml"
