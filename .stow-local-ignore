@@ -3,6 +3,9 @@ install.sh
 # Repository instructions stay here; .codex/AGENTS.md must still be stowed.
 ^/AGENTS\.md$
 
+# Never deploy machine-local ai schedules, enablement links, or drop-ins.
+^/\.config/systemd/user/(.*/)?ai-job-[^/]*(/|$)
+
 ricing-todo.md
 
 \.git
