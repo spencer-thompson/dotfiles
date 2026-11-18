@@ -24,7 +24,7 @@ set -gx STARSHIP_CACHE "$XDG_CACHE_HOME/starship/cache"
 set -gx R_HOME_USER "$XDG_CONFIG_HOME/R"
 set -gx R_PROFILE_USER "$XDG_CONFIG_HOME/R/profile"
 set -gx MOZ_ENABLE_WAYLAND 1
-set -gx HOSTNAME $(hostname)
+# set -gx HOSTNAME $(hostname)
 set -gx SHELL /usr/bin/fish
 
 set -gx RESUME_FILE ~/projects/my-resume/resume.toml
@@ -141,7 +141,7 @@ if status is-interactive
     abbr --add .... cd ../../..
     abbr --add ..... cd ../../../..
     abbr --add ...... cd ../../../../..
-    abbr --add ai aichat
+    # abbr --add ai aichat
     abbr --add oc opencode
     abbr --add ultradark noctalia msg nightlight-force-toggle
 

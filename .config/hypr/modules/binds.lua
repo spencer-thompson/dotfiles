@@ -122,11 +122,13 @@ local function focus_nearest_opposite_window()
 	local nearest = nil
 	local nearest_distance = math.huge
 
-	for _, candidate in ipairs(hl.get_windows({
-		floating = not window.floating,
-		mapped = true,
-		workspace = window.workspace,
-	})) do
+	for _, candidate in
+		ipairs(hl.get_windows({
+			floating = not window.floating,
+			mapped = true,
+			workspace = window.workspace,
+		}))
+	do
 		if candidate.visible then
 			local distance = squared_distance_to_window(center_x, center_y, candidate)
 
@@ -291,7 +293,6 @@ end)
 
 -- Hyprland utility binds
 bind(mod .. " + Return", exec(programs.terminal), "Open terminal")
-bind(mod .. " + Escape", exec(programs.terminal), "Open terminal")
 bind(mod .. " + Q", hl.dsp.window.close(), "Close window")
 bind("SHIFT + " .. mod .. " + Q", hl.dsp.window.kill(), "Force kill window")
 bind(mod .. " + U", toggle_floating, "Toggle floating")
@@ -360,10 +361,12 @@ bind(mod .. " + mouse:273", hl.dsp.window.resize(), "Resize window", { mouse = t
 
 -- Special workspaces
 bind(mod .. " + M", hl.dsp.workspace.toggle_special("spotify"), "Show/hide Spotify")
-bind("CTRL + Space", hl.dsp.workspace.toggle_special(), "Toggle scratchpad")
-bind(mod .. " + Space", hl.dsp.workspace.toggle_special(), "Toggle scratchpad")
-bind("SHIFT + CTRL + Space", move_to_workspace("special"), "Move to scratchpad")
-bind("SHIFT + " .. mod .. " + Space", move_to_workspace("special"), "Move to scratchpad")
+
+bind(mod .. " + Escape", hl.dsp.workspace.toggle_special(), "Toggle scratchpad")
+bind(mod .. " + SHIFT + Escape", move_to_workspace("special"), "Move to scratchpad")
+-- bind("CTRL + Space", hl.dsp.workspace.toggle_special(), "Toggle scratchpad")
+-- bind(mod .. " + Space", hl.dsp.workspace.toggle_special(), "Toggle scratchpad")
+-- bind("SHIFT + CTRL + Space", move_to_workspace("special"), "Move to scratchpad")
 
 -- Laptop keys
 bind("XF86AudioMute", exec("noctalia msg volume-mute"), "Mute audio", { locked = true })
@@ -373,8 +376,18 @@ bind("XF86AudioRaiseVolume", exec("noctalia msg volume-up 1%"), "Volume up", { r
 bind("XF86AudioPrev", exec("playerctl previous"), "Previous track", { locked = true })
 bind("XF86AudioPlay", exec("playerctl play-pause"), "Play/pause", { locked = true })
 bind("XF86AudioNext", exec("playerctl next"), "Next track", { locked = true })
-bind("XF86MonBrightnessDown", exec("noctalia msg brightness-down all"), "Brightness down", { repeating = true, locked = true })
-bind("XF86MonBrightnessUp", exec("noctalia msg brightness-up all"), "Brightness up", { repeating = true, locked = true })
+bind(
+	"XF86MonBrightnessDown",
+	exec("noctalia msg brightness-down all"),
+	"Brightness down",
+	{ repeating = true, locked = true }
+)
+bind(
+	"XF86MonBrightnessUp",
+	exec("noctalia msg brightness-up all"),
+	"Brightness up",
+	{ repeating = true, locked = true }
+)
 
 -- Move focus with mainMod + arrow keys
 bind(mod .. " + left", hl.dsp.focus({ direction = "left" }), "Focus left")
