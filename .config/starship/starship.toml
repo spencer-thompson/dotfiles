@@ -6,10 +6,14 @@ add_newline = false
 continuation_prompt = "[∙ ](dimmed white)"
 # format = """[┌ ](green)$battery$shell$all\
 # [└ ](green)$jobs$directory$character"""
-format = """\n [](dimmed purple) $fill $cmd_duration$time $fill [](dimmed purple) 
+
+format = """ [](dimmed purple) $fill $git_metrics $fill [](dimmed purple) 
 $jobs$directory$character"""
 
-right_format = """$git_metrics$all"""
+# format = """  [](dimmed purple) $fill $cmd_duration $fill [](dimmed purple) 
+# $jobs$directory$character"""
+
+right_format = """$all"""
 
 [fill]
 symbol = '─'

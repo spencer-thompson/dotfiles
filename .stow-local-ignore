@@ -6,6 +6,9 @@ install.sh
 # Never deploy machine-local ai schedules, enablement links, or drop-ins.
 ^/\.config/systemd/user/(.*/)?ai-job-[^/]*(/|$)
 
+# Machine-local Fish universal variables
+^/\.config/fish/fish_variables$
+
 ricing-todo.md
 
 \.git

@@ -67,8 +67,8 @@ local profile = {
 	},
 }
 
-local laptop = { name = "eDP-1", description = "Laptop", disabled = true }
-local external = { name = "DP-1", description = "External", disabled = false }
+local laptop = { name = "eDP-1", description = "Laptop", enabled = false }
+local external = { name = "DP-1", description = "External", enabled = true }
 
 lid_state = "closed"
 monitors = { laptop, external }
@@ -94,7 +94,7 @@ assert(#timers == 1, "scheduled closed-lid reconciliation")
 timers[1].callback()
 assert(#applied_monitor_rules == 0, "did not disable an already-disabled laptop panel again")
 
-laptop.disabled = false
+laptop.enabled = true
 timers = {}
 lid.setup(profile)
 assert(#timers == 1, "scheduled closed-lid reconciliation for an enabled laptop panel")

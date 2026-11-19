@@ -47,7 +47,7 @@ end
 local function monitor_is_enabled(selector)
 	for _, monitor in ipairs(hl.get_monitors()) do
 		if selector_matches_monitor(selector, monitor) then
-			return monitor.disabled ~= true
+			return monitor.enabled == true
 		end
 	end
 

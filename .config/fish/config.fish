@@ -50,12 +50,13 @@ fish_add_path --global "$HOME/.cargo/bin"
 function starship_transient_prompt_func
     starship module directory
     starship module character
+    # printf "\n\n"
 end
 
 function starship_transient_rprompt_func
-    starship module cmd_duration
-    starship module time
-    printf " "
+    # starship module cmd_duration
+    # starship module time
+    # printf "\n\n"
 end
 
 # YAZI
@@ -157,3 +158,6 @@ if status is-interactive
     # alias nvim="bob run 0.12.0"
 
 end
+
+# Added by Antigravity CLI installer
+set -gx PATH "/home/sthom/.local/bin" $PATH

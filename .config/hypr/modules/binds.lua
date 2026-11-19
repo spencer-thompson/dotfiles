@@ -304,11 +304,11 @@ bind(mod .. " + G", hl.dsp.focus({ workspace = 10 }), "Steam workspace")
 bind("SHIFT + " .. mod .. " + R", hl.dsp.force_renderer_reload(), "Reload renderer")
 bind(mod .. " + F", hl.dsp.window.fullscreen(0), "Toggle fullscreen")
 bind(mod .. " + P", exec("hyprpicker -a"), "Pick color")
-bind(
-	mod .. " + E",
-	exec([[wl-copy $(cut -d ';' -f1 ~/.config/hypr/scripts/*.txt | tofi | sed "s/ .*//")]]),
-	"Copy symbol"
-)
+-- bind(
+-- 	mod .. " + E",
+-- 	exec([[wl-copy $(cut -d ';' -f1 ~/.config/hypr/scripts/*.txt | tofi | sed "s/ .*//")]]),
+-- 	"Copy symbol"
+-- )
 bind("F11", hl.dsp.window.fullscreen(0), "Toggle fullscreen")
 
 bind(mod .. " + O", exec("~/.config/hypr/scripts/ocr.sh"), "OCR selection")
